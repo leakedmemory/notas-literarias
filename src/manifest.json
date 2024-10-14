@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "author": "leaked memory",
+  "name": "Book Ratings on Amazon",
+  "short_name": "BookRatings",
+  "description": "Integrates book ratings from popular platforms such as Goodreads directly into Amazon's book pages.",
+  "version": "0.0.1",
+  "homepage_url": "https://github.com/leakedmemory/book-ratings-on-amazon"
+}
