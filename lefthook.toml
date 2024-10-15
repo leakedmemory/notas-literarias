@@ -1,0 +1,7 @@
+[pre-commit]
+parallel = true
+
+[pre-commit.commands.fix]
+run = "pnpm run fix"
+stage_fixed = true
+exit_on_fail = true

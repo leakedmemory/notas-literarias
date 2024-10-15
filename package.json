@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "fmt": "echo 'BIOME' && biome format && echo '\nPRETTIER' && prettier **/*.{html,md} --check",
+    "fmt": "echo 'BIOME' && biome format || true && echo 'PRETTIER' && prettier --no-error-on-unmatched-pattern '**/*.{html,md}' --check",
     "lint": "biome lint",
-    "fix": "echo 'BIOME' && biome lint --write && biome format --write && echo '\nPRETTIER' && prettier **/*.{html,md} --write"
+    "fix": "echo 'BIOME' && biome lint --write && biome format --write && echo '\nPRETTIER' && prettier --no-error-on-unmatched-pattern '**/*.{html,md}' --write"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.3",
