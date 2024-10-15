@@ -5,5 +5,39 @@
   "short_name": "BookRatings",
   "description": "Integrates book ratings from popular platforms such as Goodreads directly into Amazon's book pages.",
   "version": "0.0.1",
-  "homepage_url": "https://github.com/leakedmemory/book-ratings-on-amazon"
+  "homepage_url": "https://github.com/leakedmemory/book-ratings-on-amazon",
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.amazon.com/*",
+
+        "*://*.amazon.ae/*",
+        "*://*.amazon.ca/*",
+        "*://*.amazon.cn/*",
+        "*://*.amazon.de/*",
+        "*://*.amazon.es/*",
+        "*://*.amazon.eg/*",
+        "*://*.amazon.fr/*",
+        "*://*.amazon.in/*",
+        "*://*.amazon.it/*",
+        "*://*.amazon.nl/*",
+        "*://*.amazon.pl/*",
+        "*://*.amazon.sa/*",
+        "*://*.amazon.se/*",
+        "*://*.amazon.sg/*",
+
+        "*://*.amazon.co.jp/*",
+        "*://*.amazon.co.uk/*",
+        "*://*.amazon.co.za/*",
+
+        "*://*.amazon.com.au/*",
+        "*://*.amazon.com.be/*",
+        "*://*.amazon.com.br/*",
+        "*://*.amazon.com.mx/*",
+        "*://*.amazon.com.tr/*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
 }
