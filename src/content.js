@@ -1,6 +1,28 @@
 const ASIN_INDEX = 1;
 const ISBN13_INDEX = 9;
 
+const logger = {
+  prefix: "BOOK RATINGS",
+
+  /**
+   * Logs `msg` with the extension's prefix.
+   *
+   * @param {string} msg - Message to be logged.
+   */
+  log(msg) {
+    console.log(`${this.prefix}: ${msg}`);
+  },
+
+  /**
+   * Logs `msg` with the extension's prefix at "error" level.
+   *
+   * @param {string} msg - Error message to be logged.
+   */
+  error(msg) {
+    console.error(`${this.prefix}: ${msg}`);
+  },
+};
+
 const product_details = Array.from(
   document
     .querySelectorAll("#detailBullets_feature_div > ul > li > span > span")
@@ -9,11 +31,11 @@ const product_details = Array.from(
 
 (async function main() {
   if (product_details.length > 1 && isKindle()) {
-    console.log(`BOOK RATINGS: found book with ${getASIN()} ASIN code`);
+    logger.log(`found book with ${getASIN()} ASIN code`);
   } else if (product_details.length > 1 && isPrinted()) {
-    console.log(`BOOK RATINGS: found book with ${getISBN()} ISBN-13 code`);
+    logger.log(`found book with ${getISBN()} ISBN-13 code`);
   } else {
-    console.log("BOOK RATINGS: product is not a book");
+    logger.log("product is not a book");
   }
 })();
 
