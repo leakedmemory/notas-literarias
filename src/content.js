@@ -7,7 +7,7 @@ const product_details = Array.from(
     .values(),
 );
 
-function getBookRating() {
+(async function main() {
   if (product_details.length > 1 && isKindle()) {
     console.log(`BOOK RATINGS: found book with ${getASIN()} ASIN code`);
   } else if (product_details.length > 1 && isPrinted()) {
@@ -15,22 +15,32 @@ function getBookRating() {
   } else {
     console.log("BOOK RATINGS: product is not a book");
   }
-}
+})();
 
+/**
+ * @returns {boolean} If it is an ebook or not based on whether it has an ASIN code.
+ */
 function isKindle() {
   return product_details[ASIN_INDEX - 1].innerText === "ASIN  : ";
 }
 
+/**
+ * @returns {string} ASIN code of the ebook.
+ */
 function getASIN() {
   return product_details[ASIN_INDEX].innerText;
 }
 
+/**
+ * @returns {boolean} If it is a printed book or not based on whether it has an ISBN-13 code.
+ */
 function isPrinted() {
   return product_details[ISBN13_INDEX - 1].innerText === "ISBN-13  : ";
 }
 
+/**
+ * @returns {string} ISBN-13 code of the book.
+ */
 function getISBN() {
   return product_details[ISBN13_INDEX].innerText;
 }
-
-getBookRating();
