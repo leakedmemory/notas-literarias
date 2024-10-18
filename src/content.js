@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 const ASIN_INDEX = 1;
 const ISBN13_INDEX = 9;
 
@@ -29,11 +31,18 @@ const product_details = Array.from(
     .values(),
 );
 
-(async function main() {
+(function main() {
   if (product_details.length > 1 && isKindle()) {
     logger.log(`found book with ${getASIN()} ASIN code`);
   } else if (product_details.length > 1 && isPrinted()) {
-    logger.log(`found book with ${getISBN()} ISBN-13 code`);
+    const isbn = getISBN();
+    const message = {
+      type: "getRating",
+      isbn: isbn,
+    };
+
+    logger.log(`found book with ${isbn} ISBN-13 code`);
+    browser.runtime.sendMessage(message).then(handleGetRatingMessageResponse);
   } else {
     logger.log("product is not a book");
   }
@@ -65,4 +74,15 @@ function isPrinted() {
  */
 function getISBN() {
   return product_details[ISBN13_INDEX].innerText;
+}
+
+/**
+ * @param {{rating: string, err: null} | {rating: null, err: Error}} response
+ */
+function handleGetRatingMessageResponse(response) {
+  if (response.err === null) {
+    logger.log(response.rating);
+  } else {
+    logger.error(response.err);
+  }
 }

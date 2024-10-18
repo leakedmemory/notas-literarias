@@ -2,6 +2,7 @@ vscode/
 .idea/
 
 node_modules/
+dist/
 tmp/
 
 .env

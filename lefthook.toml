@@ -2,6 +2,10 @@
 parallel = true
 
 [pre-commit.commands.lint-and-format]
-run = "pnpm run fix"
+run = "pnpm fix"
 stage_fixed = true
+exit_on_fail = true
+
+[pre-commit.commands.build]
+run = "pnpm build"
 exit_on_fail = true

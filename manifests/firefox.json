@@ -7,6 +7,12 @@
   "version": "0.0.1",
   "homepage_url": "https://github.com/leakedmemory/book-ratings-on-amazon",
 
+  "host_permissions": ["*://*.goodreads.com/*"],
+
+  "background": {
+    "scripts": ["background.bundle.js"]
+  },
+
   "content_scripts": [
     {
       "matches": [
@@ -37,7 +43,7 @@
         "*://*.amazon.com.mx/*",
         "*://*.amazon.com.tr/*"
       ],
-      "js": ["content.js"]
+      "js": ["content.bundle.js"]
     }
   ]
 }
