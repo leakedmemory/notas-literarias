@@ -1,29 +1,9 @@
 import browser from "webextension-polyfill";
 
+import logger from "./logger.js";
+
 const ASIN_INDEX = 1;
 const ISBN13_INDEX = 9;
-
-const logger = {
-  prefix: "BOOK RATINGS",
-
-  /**
-   * Logs `msg` with the extension's prefix.
-   *
-   * @param {string} msg - Message to be logged.
-   */
-  log(msg) {
-    console.log(`${this.prefix}: ${msg}`);
-  },
-
-  /**
-   * Logs `msg` with the extension's prefix at "error" level.
-   *
-   * @param {string} msg - Error message to be logged.
-   */
-  error(msg) {
-    console.error(`${this.prefix}: ${msg}`);
-  },
-};
 
 const product_details = Array.from(
   document
