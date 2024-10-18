@@ -5,6 +5,8 @@ import logger from "./logger.js";
 const ASIN_INDEX = 1;
 const ISBN13_INDEX = 9;
 
+const isProductPage =
+  document.querySelector("#detailBullets_feature_div") !== null;
 const product_details = Array.from(
   document
     .querySelectorAll("#detailBullets_feature_div > ul > li > span > span")
@@ -25,8 +27,7 @@ const product_details = Array.from(
 
     logger.log(`found book with ${isbn} ISBN-13 code`);
     browser.runtime.sendMessage(message).then(handleGetRatingMessageResponse);
-  } else {
-    // FIX: being printed on goodreads and on amazon, but outside products.
+  } else if (isProductPage()) {
     logger.log("product is not a book");
   }
 })();
