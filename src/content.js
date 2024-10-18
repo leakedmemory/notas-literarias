@@ -12,18 +12,21 @@ const product_details = Array.from(
 );
 
 (function main() {
-  if (product_details.length > 1 && isKindle()) {
+  if (product_details.length > ASIN_INDEX && isKindle()) {
     logger.log(`found book with ${getASIN()} ASIN code`);
-  } else if (product_details.length > 1 && isPrinted()) {
+  } else if (product_details.length > ISBN13_INDEX && isPrinted()) {
     const isbn = getISBN();
     const message = {
       type: "getRating",
-      isbn: isbn,
+      site: "goodreads",
+      codeFormat: "isbn",
+      code: isbn,
     };
 
     logger.log(`found book with ${isbn} ISBN-13 code`);
     browser.runtime.sendMessage(message).then(handleGetRatingMessageResponse);
   } else {
+    // FIX: being printed on goodreads and on amazon, but outside products.
     logger.log("product is not a book");
   }
 })();
