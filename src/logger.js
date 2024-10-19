@@ -1,6 +1,6 @@
 const PREFIX = "BOOK RATINGS";
 
-export default {
+module.exports = {
   /**
    * Logs `msg` with the extension's prefix.
    *
