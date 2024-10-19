@@ -1,0 +1,16 @@
+/**
+ * Adds the missing styles that cannot be copied to our rating elements.
+ *
+ * Needed because of the following:
+ * SecurityError: CSSStyleSheet.cssRules getter: Not allowed to access
+ * cross-origin stylesheet.
+ */
+
+div#bookratings_averageCustomerReviews_feature_div {
+  display: inline-block;
+  margin-bottom: 7px;
+}
+
+div#bookratings_averageCustomerReviews {
+  display: inline-block;
+}

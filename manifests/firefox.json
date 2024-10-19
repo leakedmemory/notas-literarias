@@ -43,7 +43,8 @@
         "*://*.amazon.com.mx/*",
         "*://*.amazon.com.tr/*"
       ],
-      "js": ["content.bundle.js"]
+      "js": ["content.bundle.js"],
+      "css": ["content.css"]
     }
   ]
 }

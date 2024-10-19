@@ -34,7 +34,7 @@ function messageHandler(message, sender, sendResponse) {
  *
  * @throws On fetch errors and query selection `null` return.
  * @param {string} isbn ISBN-13 code of the book.
- * @returns {Promise<string>} Rating with 2 decimal places.
+ * @returns {Promise<string>} Rating with 1 decimal place.
  */
 async function getGoodreadsRatingByISBN(isbn) {
   const url = `https://www.goodreads.com/search?q=${isbn}/`;
@@ -47,8 +47,8 @@ async function getGoodreadsRatingByISBN(isbn) {
   const ratingElement = doc.querySelector(qSelector);
 
   if (!ratingElement) {
-    throw new Error(`No element: ${qSelector}`);
+    throw new Error("rating element not found while fetching goodreads rating");
   }
 
-  return ratingElement.innerText.trim();
+  return ratingElement.innerText.trim().substring(0, 3);
 }

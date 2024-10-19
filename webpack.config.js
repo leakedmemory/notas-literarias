@@ -15,7 +15,10 @@ module.exports = {
   devtool: "inline-source-map",
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [{ from: "manifests/firefox.json", to: "manifest.json" }],
+      patterns: [
+        { from: "manifests/firefox.json", to: "manifest.json" },
+        { from: "src/content.css", to: "." },
+      ],
     }),
   ],
 };
