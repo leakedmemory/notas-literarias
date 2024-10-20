@@ -5,21 +5,29 @@ import logger from "./logger.js";
 const ASIN_INDEX = 1;
 const ISBN13_INDEX = 9;
 
-const productDetails = Array.from(
-  document
-    .querySelectorAll("#detailBullets_feature_div > ul > li > span > span")
-    .values(),
-);
-
 (function main() {
-  if (isKindle()) {
-    logger.log(`found book with ${getASIN()} ASIN code`);
-  } else if (isPrinted()) {
+  if (!isProductPage()) {
+    return;
+  }
+
+  const details = Array.from(
+    document
+      .querySelectorAll("#detailBullets_feature_div > ul > li > span > span")
+      .values(),
+  );
+  if (!details) {
+    logger.error("product details section not found");
+    return;
+  }
+
+  if (isKindle(details)) {
+    logger.log(`found book with ${getASIN(details)} ASIN code`);
+  } else if (isPrinted(details)) {
     const message = {
       type: "getRating",
       site: "goodreads",
       codeFormat: "isbn",
-      code: getISBN(),
+      code: getISBN(details),
     };
 
     logger.log(`found book with ${message.code} ISBN-13 code`);
@@ -35,7 +43,7 @@ const productDetails = Array.from(
       .catch((err) => {
         logger.error(err);
       });
-  } else if (isProductPage()) {
+  } else {
     logger.log("product is not a book");
   }
 })();
@@ -43,12 +51,13 @@ const productDetails = Array.from(
 /**
  * Whether it is an ebook based on having an ASIN code on `ASIN_INDEX`.
  *
+ * @param {Element[]} details
  * @returns {boolean}
  */
-function isKindle() {
+function isKindle(details) {
   return (
-    productDetails.length > ASIN_INDEX &&
-    productDetails[ASIN_INDEX - 1].innerText === "ASIN  : "
+    details.length > ASIN_INDEX &&
+    details[ASIN_INDEX - 1].innerText === "ASIN  : "
   );
 }
 
@@ -56,12 +65,13 @@ function isKindle() {
  * Whether it is a printed book based on having an ISBN-13 code
  * on `ISBN13_INDEX`.
  *
+ * @param {Element[]} details
  * @returns {boolean}
  */
-function isPrinted() {
+function isPrinted(details) {
   return (
-    productDetails.length > ISBN13_INDEX &&
-    productDetails[ISBN13_INDEX - 1].innerText === "ISBN-13  : "
+    details.length > ISBN13_INDEX &&
+    details[ISBN13_INDEX - 1].innerText === "ISBN-13  : "
   );
 }
 
@@ -76,17 +86,19 @@ function isProductPage() {
 }
 
 /**
+ * @param {Element[]} details
  * @returns {string} ASIN code of the ebook.
  */
-function getASIN() {
-  return productDetails[ASIN_INDEX].innerText;
+function getASIN(details) {
+  return details[ASIN_INDEX].innerText;
 }
 
 /**
+ * @param {Element[]} details
  * @returns {string} ISBN-13 code of the book.
  */
-function getISBN() {
-  return productDetails[ISBN13_INDEX].innerText;
+function getISBN(details) {
+  return details[ISBN13_INDEX].innerText;
 }
 
 /**
