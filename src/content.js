@@ -27,16 +27,23 @@ const productDetails = Array.from(
     insertCustomStyles();
 
     logger.log(`fetching ${message.site} rating`);
-    browser.runtime.sendMessage(message).then((response) => {
-      handleGetRatingResponse(message.site, response);
-    });
+    browser.runtime
+      .sendMessage(message)
+      .then((response) => {
+        handleGetRatingResponse(message.site, response);
+      })
+      .catch((err) => {
+        logger.error(err);
+      });
   } else if (isProductPage()) {
     logger.log("product is not a book");
   }
 })();
 
 /**
- * @returns {boolean} Whether it is an ebook based on having an ASIN code.
+ * Whether it is an ebook based on having an ASIN code on `ASIN_INDEX`.
+ *
+ * @returns {boolean}
  */
 function isKindle() {
   return (
@@ -46,7 +53,10 @@ function isKindle() {
 }
 
 /**
- * @returns {boolean} Whether it is a printed book based on having an ISBN-13 code.
+ * Whether it is a printed book based on having an ISBN-13 code
+ * on `ISBN13_INDEX`.
+ *
+ * @returns {boolean}
  */
 function isPrinted() {
   return (
@@ -56,7 +66,10 @@ function isPrinted() {
 }
 
 /**
- * @returns {boolean} Whether the current page is an amazon product one.
+ * Whether the current page is an amazon product based on the page having a
+ * details section.
+ *
+ * @returns {boolean}
  */
 function isProductPage() {
   return document.querySelector("#detailBullets_feature_div") !== null;
@@ -123,34 +136,56 @@ function handleGetRatingResponse(site, response) {
  *
  * @todo Current approach still have problems when the book is part of a collection.
  *
+ * @throws When some element is not found in the DOM.
  * @param {string} site Site where the rating was obtained.
  * @param {string} rating Rating with 1 decimal place.
  */
 function insertBookRatingElement(site, rating) {
+  /**
+   * Element containing the literal rating value, the starts representation,
+   * and how many reviews the product has.
+   */
   const refElement = document.querySelector(
     "div#averageCustomerReviews_feature_div",
   );
-
   if (!refElement) {
-    logger.error("amazon's rating element not found");
-    return;
+    throw new Error("rating reference element not found");
   }
 
-  // boolean value whether to copy element subtree
   const clonedElement = refElement.cloneNode(true);
   clonedElement.id = `bookratings_${clonedElement.id}`;
   for (const child of clonedElement.querySelectorAll("[id]")) {
     child.id = `bookratings_${child.id}`;
   }
 
-  const ratingSpan = clonedElement.querySelector("a > span");
-  ratingSpan.innerText = rating;
+  /** Literal rating value before the stars. */
+  const literalRating = clonedElement.querySelector("a > span");
+  if (!literalRating) {
+    throw new Error("literal rating element not found");
+  }
 
+  literalRating.innerText = rating;
+
+  /** Rating's stars representation. */
   const stars = clonedElement.querySelector("a > i");
-  const starClass = Array.from(stars.classList)[2];
-  stars.classList.replace(starClass, generateStarClass(rating));
+  if (!stars) {
+    throw new Error("stars representation element not found");
+  }
 
+  /** Class that controls how many stars are filled. */
+  const starsFilledClass = Array.from(stars.classList)[2];
+  if (!starsFilledClass.includes("a-star-")) {
+    throw new Error("star class not found");
+  }
+
+  stars.classList.replace(starsFilledClass, generateStarClass(rating));
+
+  /** Alt representation of the stars, which is a separate element. */
   const starsAlt = stars.firstElementChild;
+  if (!starsAlt) {
+    throw new Error("stars alt element not found");
+  }
+
   starsAlt.innerText = `${rating}${starsAlt.innerText.substring(3)}`;
 
   logger.log(`inserting ${site} rating element`);
@@ -159,24 +194,24 @@ function insertBookRatingElement(site, rating) {
 
 /**
  * Generate the class responsible of controlling how many stars are
- * displayed in the stars element.
+ * filled in the stars representation.
  *
  * @param {string} rating Rating with 1 decimal place.
  * @returns {string} Class to add to the stars element.
  */
 function generateStarClass(rating) {
-  const baseClass = "a-star-";
+  const base = "a-star-";
 
   // 4.8+ rating does not follow the pattern of half star and
   // goes directly to 5 stars
   if (Number.parseFloat(rating) >= 4.8) {
-    return `${baseClass}5`;
+    return `${base}5`;
   }
 
   // with half star
   if (Number.parseInt(rating[2]) >= 5) {
-    return `${baseClass}${rating[0]}-5`;
+    return `${base}${rating[0]}-5`;
   }
 
-  return `${baseClass}${rating[0]}`;
+  return `${base}${rating[0]}`;
 }
