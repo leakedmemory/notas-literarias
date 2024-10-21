@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 
-import logger from "./logger.js";
+import logger from "./logger";
+import { type SupportedSite, createGetReviewsMessage } from "./messages";
 
 const ASIN_INDEX = 1;
 const ISBN13_INDEX = 9;
@@ -14,7 +15,7 @@ const ISBN13_INDEX = 9;
     document
       .querySelectorAll("#detailBullets_feature_div > ul > li > span > span")
       .values(),
-  );
+  ) as HTMLSpanElement[];
   if (!details) {
     logger.error("product details section not found");
     return;
@@ -23,22 +24,19 @@ const ISBN13_INDEX = 9;
   if (isKindle(details)) {
     logger.log(`found book with ${getASIN(details)} ASIN code`);
   } else if (isPrinted(details)) {
-    const message = {
-      type: "getRating",
-      site: "goodreads",
-      codeFormat: "isbn",
-      code: getISBN(details),
-    };
+    const message = createGetReviewsMessage(
+      "goodreads",
+      getISBN(details),
+      "isbn",
+    );
 
     logger.log(`found book with ${message.code} ISBN-13 code`);
-
-    insertCustomStyles();
-
     logger.log(`fetching ${message.site} rating`);
+
     browser.runtime
       .sendMessage(message)
       .then((response) => {
-        handleGetRatingResponse(message.site, response);
+        handleGetReviewsResponse(message.site, response);
       })
       .catch((err) => {
         logger.error(err);
@@ -48,63 +46,59 @@ const ISBN13_INDEX = 9;
   }
 })();
 
-/**
- * Whether it is an ebook based on having an ASIN code on `ASIN_INDEX`.
- *
- * @param {Element[]} details
- * @returns {boolean}
- */
-function isKindle(details) {
+function isKindle(details: HTMLSpanElement[]): boolean {
   return (
     details.length > ASIN_INDEX &&
     details[ASIN_INDEX - 1].innerText === "ASIN  : "
   );
 }
 
-/**
- * Whether it is a printed book based on having an ISBN-13 code
- * on `ISBN13_INDEX`.
- *
- * @param {Element[]} details
- * @returns {boolean}
- */
-function isPrinted(details) {
+function isPrinted(details: HTMLSpanElement[]): boolean {
   return (
     details.length > ISBN13_INDEX &&
     details[ISBN13_INDEX - 1].innerText === "ISBN-13  : "
   );
 }
 
-/**
- * Whether the current page is an amazon product based on the page having a
- * details section.
- *
- * @returns {boolean}
- */
-function isProductPage() {
+function isProductPage(): boolean {
   return document.querySelector("#detailBullets_feature_div") !== null;
 }
 
-/**
- * @param {Element[]} details
- * @returns {string} ASIN code of the ebook.
- */
-function getASIN(details) {
+function getASIN(details: HTMLSpanElement[]): string {
   return details[ASIN_INDEX].innerText;
 }
 
-/**
- * @param {Element[]} details
- * @returns {string} ISBN-13 code of the book.
- */
-function getISBN(details) {
+function getISBN(details: HTMLSpanElement[]): string {
   return details[ISBN13_INDEX].innerText;
+}
+
+type GetReviewsResponse =
+  | {
+      rating: string;
+      err: null;
+    }
+  | {
+      rating: null;
+      err: Error;
+    };
+
+function handleGetReviewsResponse(site: SupportedSite, response: unknown) {
+  const reviewsResponse = response as GetReviewsResponse;
+
+  if (!reviewsResponse.err) {
+    logger.log(`${site} rating: ${reviewsResponse.rating}`);
+
+    insertCustomStyles();
+    insertBookRatingElement(site, reviewsResponse.rating);
+  } else {
+    logger.error(reviewsResponse.err);
+  }
 }
 
 /**
  * Modifies the default product page style to better fit other book ratings.
  *
- * @todo Books that are part of a collection for some reason shrink at 1193px
+ * @todo Books that are part of a collection for some reason shrink at 1193px.
  */
 function insertCustomStyles() {
   const css = `
@@ -128,31 +122,14 @@ function insertCustomStyles() {
 }
 
 /**
- * Handles the response of a "getRating" message from the background.
- *
- * @param {string} site Site where the rating was obtained.
- * @param {{rating: string, err: null} | {rating: null, err: Error}} response Response from background.
- */
-function handleGetRatingResponse(site, response) {
-  if (response.err === null) {
-    logger.log(`${site} rating: ${response.rating}`);
-    insertBookRatingElement(site, response.rating);
-  } else {
-    logger.error(response.err);
-  }
-}
-
-/**
  * Inserts `rating` from `site` by copying the rating element of the product
  * page and changing its properties.
  *
  * @todo Current approach still have problems when the book is part of a collection.
  *
  * @throws When some element is not found in the DOM.
- * @param {string} site Site where the rating was obtained.
- * @param {string} rating Rating with 1 decimal place.
  */
-function insertBookRatingElement(site, rating) {
+function insertBookRatingElement(site: SupportedSite, rating: string) {
   /**
    * Element containing the literal rating value, the starts representation,
    * and how many reviews the product has.
@@ -164,14 +141,16 @@ function insertBookRatingElement(site, rating) {
     throw new Error("rating reference element not found");
   }
 
-  const clonedElement = refElement.cloneNode(true);
+  const clonedElement = refElement.cloneNode(true) as HTMLDivElement;
   clonedElement.id = `bookratings_${clonedElement.id}`;
   for (const child of clonedElement.querySelectorAll("[id]")) {
     child.id = `bookratings_${child.id}`;
   }
 
   /** Literal rating value before the stars. */
-  const literalRating = clonedElement.querySelector("a > span");
+  const literalRating = clonedElement.querySelector(
+    "a > span",
+  ) as HTMLSpanElement;
   if (!literalRating) {
     throw new Error("literal rating element not found");
   }
@@ -179,7 +158,7 @@ function insertBookRatingElement(site, rating) {
   literalRating.innerText = rating;
 
   /** Rating's stars representation. */
-  const stars = clonedElement.querySelector("a > i");
+  const stars = clonedElement.querySelector("a > i") as HTMLElement;
   if (!stars) {
     throw new Error("stars representation element not found");
   }
@@ -193,7 +172,7 @@ function insertBookRatingElement(site, rating) {
   stars.classList.replace(starsFilledClass, generateStarClass(rating));
 
   /** Alt representation of the stars, which is a separate element. */
-  const starsAlt = stars.firstElementChild;
+  const starsAlt = stars.firstElementChild as HTMLSpanElement;
   if (!starsAlt) {
     throw new Error("stars alt element not found");
   }
@@ -208,10 +187,9 @@ function insertBookRatingElement(site, rating) {
  * Generate the class responsible of controlling how many stars are
  * filled in the stars representation.
  *
- * @param {string} rating Rating with 1 decimal place.
- * @returns {string} Class to add to the stars element.
+ * @returns Class to add to the stars element.
  */
-function generateStarClass(rating) {
+function generateStarClass(rating: string): string {
   const base = "a-star-";
 
   // 4.8+ rating does not follow the pattern of half star and
