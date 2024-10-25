@@ -1,11 +1,15 @@
 [pre-commit]
 parallel = true
 
-[pre-commit.commands.lint-and-format]
-run = "pnpm fix"
-stage_fixed = true
-exit_on_fail = true
-
 [pre-commit.commands.build]
 run = "pnpm build"
-exit_on_fail = true
+glob = "*.ts,{package,tsconfig}.json"
+
+[pre-commit.commands.lint-and-format]
+run = "pnpm fix"
+glob = "*.{css,html,json,md,ts}"
+stage_fixed = true
+
+[pre-commit.commands.typos]
+run = "typos --write-changes {staged_files}"
+stage_fixed = true
