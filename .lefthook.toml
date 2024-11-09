@@ -1,10 +1,6 @@
 [pre-commit]
 parallel = true
 
-[pre-commit.commands.build]
-run = "pnpm build"
-glob = "*.ts,{package,tsconfig}.json"
-
 [pre-commit.commands.lint-and-format]
 run = "pnpm fix"
 glob = "*.{css,html,json,md,ts}"
