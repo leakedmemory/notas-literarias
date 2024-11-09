@@ -54,9 +54,10 @@ async function getGoodreadsReviewsByISBN(isbn: string): Promise<Reviews> {
     throw new Error("ratings count not found");
   }
 
-  const ratingsCount = ratingsCountElement.innerHTML.slice(
-    0,
-    ratingsCountElement.innerHTML.indexOf("<"),
+  const reviewsAmount = Number.parseInt(
+    ratingsCountElement.innerHTML
+      .slice(0, ratingsCountElement.innerHTML.indexOf("<"))
+      .replace(",", ""),
   );
 
   const starsElement = Array.from(
@@ -75,10 +76,8 @@ async function getGoodreadsReviewsByISBN(isbn: string): Promise<Reviews> {
     return {
       rank: 5 - idx,
       selector: selector,
-      amount: amount,
-      percentage: percentage
-        .slice(1, percentage.indexOf("%"))
-        .replace(",", "."),
+      amount: Number.parseInt(amount.replace(",", "")),
+      percentage: percentage.slice(1, percentage.indexOf("%")),
     };
   });
 
@@ -87,8 +86,8 @@ async function getGoodreadsReviewsByISBN(isbn: string): Promise<Reviews> {
   const reviews: Reviews = {
     site: "goodreads",
     rating: rating,
-    ratingsCount: ratingsCount,
-    reviewsSectionLink: reviewsSectionLink,
+    amount: reviewsAmount,
+    sectionLink: reviewsSectionLink,
     stars: stars,
   };
 

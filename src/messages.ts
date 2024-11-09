@@ -11,15 +11,15 @@ export type GetReviewsMessage = {
 export type Star = {
   rank: number;
   selector: string;
-  amount: string;
+  amount: number;
   percentage: string;
 };
 
 export type Reviews = {
   site: SupportedSite;
   rating: string;
-  ratingsCount: string;
-  reviewsSectionLink: string;
+  amount: number;
+  sectionLink: string;
   stars?: Star[];
 };
 

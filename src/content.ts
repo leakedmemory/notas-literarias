@@ -83,6 +83,7 @@ function handleGetReviewsResponse(response: unknown) {
 
   const reviews = reviewsResponse.reviews;
 
+  logger.log(JSON.stringify(reviews, null, 2)); // NOTE: only for debug
   logger.log(`${reviews.site} rating: ${reviews.rating}`);
 
   insertBookRatingElement(reviews);
@@ -150,6 +151,29 @@ function insertBookRatingElement(reviews: Reviews) {
 
   starsAlt.innerText = `${reviews.rating}${starsAlt.innerText.substring(3)}`;
 
+  const customerReviewsElement = reviewElement.querySelector(
+    "a#bookratings_acrCustomerReviewLink",
+  ) as HTMLAnchorElement;
+  if (!customerReviewsElement) {
+    throw new Error("customer reviews element not found");
+  }
+
+  customerReviewsElement.href = reviews.sectionLink;
+  customerReviewsElement.target = "_blank";
+  customerReviewsElement.rel = "noopener noreferrer";
+
+  const customerReviewsCountElement =
+    customerReviewsElement.firstElementChild as HTMLSpanElement;
+  if (!customerReviewsCountElement) {
+    throw new Error("customer reviews count element not found");
+  }
+
+  updateRatingsCountElement(
+    customerReviewsCountElement,
+    reviews.amount,
+    reviews.site,
+  );
+
   logger.log(`inserting ${reviews.site} rating element`);
   reviewElementReference.insertAdjacentElement("afterend", reviewElement);
 }
@@ -177,6 +201,29 @@ function generateStarClass(rating: string): string {
   return `${prefix}${rating[0]}`;
 }
 
+function updateRatingsCountElement(
+  element: HTMLElement,
+  ratingsCount: number,
+  site: string,
+): void {
+  const currentText = element.innerText;
+  const match = currentText.match(/(\d{1,3}(?:[.,]\d{3})*(?:\d)*)/);
+
+  if (match) {
+    const separator = match[0].includes(",") ? "," : ".";
+
+    const formattedRatingsCount = ratingsCount
+      .toLocaleString("en-US", {
+        useGrouping: true,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })
+      .replace(/,/g, separator);
+
+    element.innerText = `${currentText.replace(match[0], formattedRatingsCount)} (${site})`;
+  }
+}
+
 /**
  * Modifies the default product page style to better fit other book ratings.
  *
@@ -188,7 +235,7 @@ function insertCustomStyles() {
       min-width: fit-content;
     }
 
-    @media (max-width: 1183px) {
+    @media (max-width: 1302px) {
       div#centerAttributesColumns {
         flex-direction: column;
       }
