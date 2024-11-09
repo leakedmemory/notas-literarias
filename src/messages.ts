@@ -8,35 +8,27 @@ export type GetReviewsMessage = {
   format: CodeFormat;
 };
 
-export type StarRank = {
-  link?: string;
-  amount?: string;
-  percentage?: number;
+export type Star = {
+  rank: number;
+  selector: string;
+  amount: string;
+  percentage: string;
 };
 
-export type StarRanks = {
-  five: StarRank;
-  four: StarRank;
-  three: StarRank;
-  two: StarRank;
-  one: StarRank;
-};
-
-export type GetReviewsResponse = {
-  bookRating: string;
-  reviewsAmount: string;
+export type Reviews = {
+  site: SupportedSite;
+  rating: string;
+  ratingsCount: string;
   reviewsSectionLink: string;
-  stars: StarRanks;
+  stars?: Star[];
 };
 
-export function createGetReviewsMessage(
-  site: SupportedSite,
-  code: string,
-  format: CodeFormat,
-): GetReviewsMessage {
-  return {
-    site: site,
-    code: code,
-    format: format,
-  };
-}
+export type GetReviewsResponse =
+  | {
+      reviews: Reviews;
+      err: null;
+    }
+  | {
+      reviews: null;
+      err: Error;
+    };
