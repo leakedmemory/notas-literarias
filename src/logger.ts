@@ -2,12 +2,14 @@ const PREFIX = "BOOK RATINGS";
 
 const logger = {
   /** Logs `msg` with the extension's prefix. */
-  log(msg: string) {
+  // biome-ignore lint: accept explicit `any` in this case
+  log(msg: any) {
     console.log(`${PREFIX}: ${msg}`);
   },
 
   /** Logs `msg` with the extension's prefix at "error" level. */
-  error(msg: string | Error) {
+  // biome-ignore lint: accept explicit `any` in this case
+  error(msg: any) {
     console.error(`${PREFIX}: ${msg}`);
   },
 };
