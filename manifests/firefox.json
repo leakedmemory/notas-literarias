@@ -15,34 +15,7 @@
 
   "content_scripts": [
     {
-      "matches": [
-        "*://*.amazon.com/*",
-
-        "*://*.amazon.ae/*",
-        "*://*.amazon.ca/*",
-        "*://*.amazon.cn/*",
-        "*://*.amazon.de/*",
-        "*://*.amazon.es/*",
-        "*://*.amazon.eg/*",
-        "*://*.amazon.fr/*",
-        "*://*.amazon.in/*",
-        "*://*.amazon.it/*",
-        "*://*.amazon.nl/*",
-        "*://*.amazon.pl/*",
-        "*://*.amazon.sa/*",
-        "*://*.amazon.se/*",
-        "*://*.amazon.sg/*",
-
-        "*://*.amazon.co.jp/*",
-        "*://*.amazon.co.uk/*",
-        "*://*.amazon.co.za/*",
-
-        "*://*.amazon.com.au/*",
-        "*://*.amazon.com.be/*",
-        "*://*.amazon.com.br/*",
-        "*://*.amazon.com.mx/*",
-        "*://*.amazon.com.tr/*"
-      ],
+      "matches": ["*://*.amazon.com.br/*"],
       "js": ["content.bundle.js"],
       "css": ["content.css"]
     }
