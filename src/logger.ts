@@ -12,6 +12,16 @@ const logger = {
   error(msg: any) {
     console.error(`${PREFIX}: ${msg}`);
   },
+
+  /**
+   * Logs `obj`, identified by `name`, in JSON format and with
+   * the extension's prefix.
+   *
+   * Should only be used for debugging purposes.
+   */
+  pretty(obj: object, name: string) {
+    console.log(`${PREFIX}: ${name} = ${JSON.stringify(obj, null, 2)}`);
+  },
 };
 
 export default logger;

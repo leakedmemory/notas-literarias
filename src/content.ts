@@ -83,7 +83,6 @@ function handleGetReviewsResponse(response: unknown) {
 
   const reviews = reviewsResponse.reviews;
 
-  logger.log(JSON.stringify(reviews, null, 2)); // NOTE: only for debug
   logger.log(`${reviews.site} rating: ${reviews.rating}`);
 
   insertBookRatingElement(reviews);
