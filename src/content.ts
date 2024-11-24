@@ -3,13 +3,11 @@ import browser from "webextension-polyfill";
 import logger from "./logger";
 
 import type {
+  Product,
   GetReviewsMessage,
   GetReviewsResponse,
   Reviews,
 } from "./messages";
-
-const ASIN_INDEX = 1;
-const ISBN13_INDEX = 9;
 
 (function main() {
   if (!isProductPage()) {
@@ -26,67 +24,75 @@ const ISBN13_INDEX = 9;
     return;
   }
 
-  if (isKindle(details)) {
-    logger.log(`found book with ${getASIN(details)} ASIN code`);
-  } else if (isPrinted(details)) {
-    const message: GetReviewsMessage = {
+  const productInfo = getProductInfo(details);
+  if (!productInfo) {
+    logger.log("product does not have ISBN-13 nor ASIN code");
+    return;
+  }
+
+  if (productInfo.codeFormat === "isbn") {
+    logger.log(`found book with ${productInfo.code} ISBN-13 code`);
+
+    fetchAndInsertReviews({
       site: "goodreads",
-      code: getISBN(details),
-      format: "isbn",
-    };
-
-    logger.log(`found book with ${message.code} ISBN-13 code`);
-    logger.log(`fetching ${message.site} rating`);
-
-    browser.runtime
-      .sendMessage(message)
-      .then(handleGetReviewsResponse)
-      .catch((err) => {
-        logger.error(`${err} [while fetching ${message.site} rating]`);
-      });
+      product: productInfo,
+    });
   } else {
-    logger.log("product is not a book");
+    /** Even if the product has an ASIN code, it does not mean it is a book. */
+    logger.log(`found product with ${productInfo.code} ASIN code`);
+    /** @todo Reviews fetching using ASIN code. */
   }
 })();
-
-function isKindle(details: HTMLSpanElement[]): boolean {
-  return (
-    details.length > ASIN_INDEX &&
-    details[ASIN_INDEX - 1].innerText === "ASIN  : "
-  );
-}
-
-function isPrinted(details: HTMLSpanElement[]): boolean {
-  return (
-    details.length > ISBN13_INDEX &&
-    details[ISBN13_INDEX - 1].innerText === "ISBN-13  : "
-  );
-}
 
 function isProductPage(): boolean {
   return document.querySelector("#detailBullets_feature_div") !== null;
 }
 
-function getASIN(details: HTMLSpanElement[]): string {
-  return details[ASIN_INDEX].innerText;
-}
+function getProductInfo(details: HTMLSpanElement[]): Product | null {
+  for (const [i, detail] of details.entries()) {
+    if (detail.innerText === "ISBN-13  : ") {
+      return {
+        code: details[i + 1].innerText,
+        codeFormat: "isbn",
+      };
+    }
 
-function getISBN(details: HTMLSpanElement[]): string {
-  return details[ISBN13_INDEX].innerText;
-}
-
-function handleGetReviewsResponse(response: unknown) {
-  const reviewsResponse = response as GetReviewsResponse;
-  if (reviewsResponse.err) {
-    throw reviewsResponse.err;
+    if (detail.innerText === "ASIN  : ") {
+      return {
+        code: details[i + 1].innerText,
+        codeFormat: "asin",
+      };
+    }
   }
 
-  const reviews = reviewsResponse.reviews;
+  return null;
+}
 
-  logger.log(`${reviews.site} rating: ${reviews.rating}`);
+function fetchAndInsertReviews(msg: GetReviewsMessage) {
+  logger.log(`fetching ${msg.site} rating`);
 
-  insertBookRatingElement(reviews);
-  insertCustomStyles();
+  browser.runtime.sendMessage(msg).then((response: unknown) => {
+    const reviewsResponse = response as GetReviewsResponse;
+    if (reviewsResponse.err) {
+      logger.error(
+        `${reviewsResponse.err} [while fetching ${msg.site} rating]`,
+      );
+      return;
+    }
+
+    const reviews = reviewsResponse.reviews;
+    logger.log(`${reviews.site} rating: ${reviews.rating}`);
+    insertReviews(reviews);
+  });
+}
+
+function insertReviews(reviews: Reviews) {
+  try {
+    insertBookRatingElement(reviews);
+    insertCustomStyles();
+  } catch (err: unknown) {
+    logger.log(`${err} [while inserting ${reviews.site} rating]`);
+  }
 }
 
 /**
@@ -102,19 +108,14 @@ function insertBookRatingElement(reviews: Reviews) {
    * Element containing the rating value, the starts representation,
    * and how many reviews the product has.
    */
-  const reviewElementReference = document.querySelector(
+  const reviewElementRef = document.querySelector(
     "div#averageCustomerReviews_feature_div",
   );
-  if (!reviewElementReference) {
+  if (!reviewElementRef) {
     throw new Error("rating reference element not found");
   }
 
-  /**
-   * Copy to be transformed and inserted.
-   */
-  const reviewElement = reviewElementReference.cloneNode(
-    true,
-  ) as HTMLDivElement;
+  const reviewElement = reviewElementRef.cloneNode(true) as HTMLDivElement;
   reviewElement.id = `bookratings_${reviewElement.id}`;
   for (const child of reviewElement.querySelectorAll("[id]")) {
     child.id = `bookratings_${child.id}`;
@@ -174,7 +175,7 @@ function insertBookRatingElement(reviews: Reviews) {
   );
 
   logger.log(`inserting ${reviews.site} rating element`);
-  reviewElementReference.insertAdjacentElement("afterend", reviewElement);
+  reviewElementRef.insertAdjacentElement("afterend", reviewElement);
 }
 
 /**

@@ -2,10 +2,14 @@ export type SupportedSite = "goodreads";
 
 export type CodeFormat = "asin" | "isbn";
 
+export type Product = {
+  code: string;
+  codeFormat: CodeFormat;
+};
+
 export type GetReviewsMessage = {
   site: SupportedSite;
-  code: string;
-  format: CodeFormat;
+  product: Product;
 };
 
 export type Star = {

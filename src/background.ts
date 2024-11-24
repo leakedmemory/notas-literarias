@@ -15,8 +15,11 @@ function messageHandler(
 ): true | Promise<unknown> | undefined {
   const reviewsMessage = message as GetReviewsMessage;
 
-  if (reviewsMessage.site === "goodreads" && reviewsMessage.format === "isbn") {
-    getGoodreadsReviewsByISBN(reviewsMessage.code)
+  if (
+    reviewsMessage.site === "goodreads" &&
+    reviewsMessage.product.codeFormat === "isbn"
+  ) {
+    getGoodreadsReviewsByISBN(reviewsMessage.product.code)
       .then((reviews) => {
         sendResponse({ reviews: reviews, err: null });
       })
