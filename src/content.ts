@@ -86,6 +86,9 @@ function fetchAndInsertReviews(msg: GetReviewsMessage) {
   });
 }
 
+/**
+ * @todo: Also create the modal with the reviews.
+ */
 function insertReviews(reviews: Reviews) {
   try {
     insertBookRatingElement(reviews);
@@ -116,28 +119,56 @@ function insertBookRatingElement(reviews: Reviews) {
   }
 
   const reviewElement = reviewElementRef.cloneNode(true) as HTMLDivElement;
-  reviewElement.id = `bookratings_${reviewElement.id}`;
-  for (const child of reviewElement.querySelectorAll("[id]")) {
-    child.id = `bookratings_${child.id}`;
+  addExtensionPrefixToElementIDs(reviewElement);
+
+  /**
+   * Span with the rating value, stars, and arrow down icon.
+   *
+   * Currently used to remove the hover aspect, since the modal is not done yet.
+   */
+  const ratingSpan = reviewElement.querySelector(
+    "div#bookratings_averageCustomerReviews > span",
+  ) as HTMLSpanElement;
+  if (!ratingSpan) {
+    throw new Error("rating span element not found");
   }
 
+  ratingSpan.style.pointerEvents = "none";
+
+  const titleSpan = reviewElement.querySelector(
+    "span#bookratings_acrPopover",
+  ) as HTMLSpanElement;
+  if (!titleSpan) {
+    throw new Error("title span element not found");
+  }
+
+  const newTitle = titleSpan.title.split(" ");
+  if (newTitle[0][1] === ".") {
+    newTitle[0] = reviews.rating;
+  } else {
+    newTitle[0] = reviews.rating.replace(".", ",");
+  }
+  titleSpan.title = newTitle.join(" ");
+
   /** Rating value before the stars. */
-  const rating = reviewElement.querySelector("a > span") as HTMLSpanElement;
-  if (!rating) {
+  const ratingValue = reviewElement.querySelector(
+    "a > span",
+  ) as HTMLSpanElement;
+  if (!ratingValue) {
     throw new Error("literal rating element not found");
   }
 
-  rating.innerText = reviews.rating;
+  ratingValue.innerText = titleSpan.title.split(" ")[0];
 
   /** Rating's stars representation. */
-  const stars = reviewElement.querySelector("a > i") as HTMLElement;
+  const stars = reviewElement.querySelector("a > i.a-icon-star") as HTMLElement;
   if (!stars) {
     throw new Error("stars representation element not found");
   }
 
   /** Class that controls how many stars are filled. */
   const starsFilledClass = Array.from(stars.classList)[2];
-  if (!starsFilledClass.includes("a-star-")) {
+  if (!starsFilledClass.startsWith("a-star-")) {
     throw new Error("star class not found");
   }
 
@@ -150,6 +181,16 @@ function insertBookRatingElement(reviews: Reviews) {
   }
 
   starsAlt.innerText = `${reviews.rating}${starsAlt.innerText.substring(3)}`;
+
+  /** Arrow down icon. */
+  const arrowPopover = reviewElement.querySelector(
+    "a > i.a-icon-popover",
+  ) as HTMLElement;
+  if (!arrowPopover) {
+    throw new Error("arrow down popover element not found");
+  }
+
+  arrowPopover.style.visibility = "hidden";
 
   const customerReviewsElement = reviewElement.querySelector(
     "a#bookratings_acrCustomerReviewLink",
@@ -176,6 +217,16 @@ function insertBookRatingElement(reviews: Reviews) {
 
   logger.log(`inserting ${reviews.site} rating element`);
   reviewElementRef.insertAdjacentElement("afterend", reviewElement);
+}
+
+/**
+ * Adds "bookratings_" prefix to `element` and all of its children.
+ */
+function addExtensionPrefixToElementIDs(element: HTMLElement) {
+  element.id = `bookratings_${element.id}`;
+  for (const child of element.querySelectorAll("[id]")) {
+    child.id = `bookratings_${child.id}`;
+  }
 }
 
 /**
