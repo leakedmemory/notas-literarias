@@ -102,8 +102,6 @@ function insertReviews(reviews: Reviews) {
  * Inserts `reviews` by copying the review element of the product page and
  * changing its properties.
  *
- * @todo Current approach still have problems when the book is part of a collection.
- *
  * @throws When some element is not found in the DOM.
  */
 function insertBookRatingElement(reviews: Reviews) {
@@ -161,7 +159,9 @@ function insertBookRatingElement(reviews: Reviews) {
   ratingValue.innerText = titleSpan.title.split(" ")[0];
 
   /** Rating's stars representation. */
-  const stars = reviewElement.querySelector("a > i.a-icon-star") as HTMLElement;
+  const stars = reviewElement.querySelector(
+    "a > i.a-icon-star-mini",
+  ) as HTMLElement;
   if (!stars) {
     throw new Error("stars representation element not found");
   }
@@ -236,7 +236,7 @@ function addExtensionPrefixToElementIDs(element: HTMLElement) {
  * @returns Class to add to the stars element.
  */
 function generateStarClass(rating: string): string {
-  const prefix = "a-star-";
+  const prefix = "a-star-mini-";
 
   // 4.8+ rating does not follow the pattern of half star and
   // goes directly to 5 stars
@@ -277,19 +277,13 @@ function updateRatingsCountElement(
 
 /**
  * Modifies the default product page style to better fit other book ratings.
- *
- * @todo Books that are part of a collection for some reason shrink at 1193px.
  */
 function insertCustomStyles() {
   const css = `
-    div#centerAttributesRightColumn {
+    div#centerAttributesLeftColumn {
+      display: flex;
+      flex-direction: column;
       min-width: fit-content;
-    }
-
-    @media (max-width: 1302px) {
-      div#centerAttributesColumns {
-        flex-direction: column;
-      }
     }
   `;
 
