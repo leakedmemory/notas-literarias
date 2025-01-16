@@ -26,7 +26,7 @@ import type {
 
   const productInfo = getProductInfo(details);
   if (!productInfo) {
-    logger.log("product does not have ISBN-13 nor ASIN code");
+    logger.error("product does not have ISBN-13 or ASIN code");
     return;
   }
 
@@ -94,7 +94,7 @@ function insertReviews(reviews: Reviews) {
     insertBookRatingElement(reviews);
     insertCustomStyles();
   } catch (err: unknown) {
-    logger.log(`${err} [while inserting ${reviews.site} rating]`);
+    logger.error(`${err} [while inserting ${reviews.site} rating]`);
   }
 }
 
