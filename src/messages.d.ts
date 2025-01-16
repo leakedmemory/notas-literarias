@@ -1,9 +1,11 @@
 export type SupportedSite = "goodreads";
 
 export type CodeFormat = "asin" | "isbn";
+export type ISBN = string;
+export type ASIN = string;
 
 export type Product = {
-  code: string;
+  code: ISBN | ASIN;
   codeFormat: CodeFormat;
 };
 
