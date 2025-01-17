@@ -1,13 +1,27 @@
-import type { Reviews, Star, ISBN } from "../messages";
+import type { Reviews, Star, CodeFormat, ISBN, ASIN } from "../messages";
 import { roundRating } from "./utils";
 import type { ReviewsParser } from "./reviews-parser";
 
 export class GoodreadsParser implements ReviewsParser {
+  private readonly _origin = "https://www.goodreads.com";
+
   /**
    * @throws On fetch errors and query selections `null` returns.
    */
-  public async getReviewsByISBN(isbn: ISBN): Promise<Reviews> {
-    const url = `https://www.goodreads.com/search?q=${isbn}/`;
+  public async getReviews(
+    code: ISBN | ASIN,
+    codeFormat: CodeFormat,
+  ): Promise<Reviews> {
+    switch (codeFormat) {
+      case "isbn":
+        return this._getReviewsByISBN(code);
+      case "asin":
+        return this._getReviewsByASIN(code);
+    }
+  }
+
+  private async _getReviewsByISBN(isbn: ISBN): Promise<Reviews> {
+    const url = `${this._origin}/search?q=${isbn}`;
     const response = await fetch(url);
     const html = await response.text();
     const parser = new DOMParser();
@@ -17,12 +31,38 @@ export class GoodreadsParser implements ReviewsParser {
     return reviews;
   }
 
+  private async _getReviewsByASIN(asin: ASIN): Promise<Reviews> {
+    const url = `${this._origin}/search?q=${asin}`;
+    const response = await fetch(url);
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const bookAnchorElement = doc.querySelector(
+      "a.bookTitle",
+    ) as HTMLAnchorElement;
+    if (!bookAnchorElement) {
+      throw new Error("book not found for the given ASIN");
+    }
+
+    const href = bookAnchorElement.href;
+    // the href's origin is the extension
+    const bookURL = `${this._origin}${href.slice(href.indexOf("/book"))}`;
+    const bookResponse = await fetch(bookURL);
+    const bookHTML = await bookResponse.text();
+    const bookDoc = parser.parseFromString(bookHTML, "text/html");
+
+    const reviews = this._getGoodreadsReviews(bookDoc, bookURL);
+
+    return reviews;
+  }
+
   private _getGoodreadsReviews(doc: Document, bookURL: string): Reviews {
     const reviews: Reviews = {
       site: "goodreads",
       rating: this._getRating(doc),
       amount: this._getAmountOfReviews(doc),
-      sectionLink: `${bookURL}#CommunityReviews`,
+      sectionURL: `${bookURL}#CommunityReviews`,
       stars: this._getStars(doc),
     };
 

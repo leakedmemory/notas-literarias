@@ -32,22 +32,24 @@ import type {
 
   if (productInfo.codeFormat === "isbn") {
     logger.log(`found book with ${productInfo.code} ISBN-13 code`);
-
-    fetchAndInsertReviews({
-      site: "goodreads",
-      product: productInfo,
-    });
   } else {
-    /** Even if the product has an ASIN code, it does not mean it is a book. */
+    // NOTE: even if the product has an ASIN code, it does not mean it is a book
     logger.log(`found product with ${productInfo.code} ASIN code`);
-    /** @todo Reviews fetching using ASIN code. */
   }
+
+  fetchAndInsertReviews({
+    site: "goodreads",
+    product: productInfo,
+  });
 })();
 
 function isProductPage(): boolean {
   return document.querySelector("#detailBullets_feature_div") !== null;
 }
 
+/**
+ * @todo Prefer ISBN over ASIN instead of picking the one that appears first.
+ */
 function getProductInfo(details: HTMLSpanElement[]): Product | null {
   for (const [i, detail] of details.entries()) {
     if (detail.innerText === "ISBN-13  : ") {
@@ -69,7 +71,7 @@ function getProductInfo(details: HTMLSpanElement[]): Product | null {
 }
 
 function fetchAndInsertReviews(msg: GetReviewsMessage) {
-  logger.log(`fetching ${msg.site} rating`);
+  logger.log(`trying to fetch ${msg.site} rating`);
 
   browser.runtime.sendMessage(msg).then((response: unknown) => {
     const reviewsResponse = response as GetReviewsResponse;
@@ -87,7 +89,7 @@ function fetchAndInsertReviews(msg: GetReviewsMessage) {
 }
 
 /**
- * @todo: Also create the modal with the reviews.
+ * @todo Create the modal with the reviews.
  */
 function insertReviews(reviews: Reviews) {
   try {
@@ -109,9 +111,9 @@ function insertBookRatingElement(reviews: Reviews) {
    * Element containing the rating value, the starts representation,
    * and how many reviews the product has.
    */
-  const reviewElementRef = document.querySelector(
-    "div#averageCustomerReviews_feature_div",
-  );
+  const reviewElementRef =
+    document.querySelector("div#averageCustomerReviews") ||
+    document.querySelector("div#averageCustomerReviews_feature_div");
   if (!reviewElementRef) {
     throw new Error("rating reference element not found");
   }
@@ -199,7 +201,7 @@ function insertBookRatingElement(reviews: Reviews) {
     throw new Error("customer reviews element not found");
   }
 
-  customerReviewsElement.href = reviews.sectionLink;
+  customerReviewsElement.href = reviews.sectionURL;
   customerReviewsElement.target = "_blank";
   customerReviewsElement.rel = "noopener noreferrer";
 
@@ -284,6 +286,16 @@ function insertCustomStyles() {
       display: flex;
       flex-direction: column;
       min-width: fit-content;
+    }
+
+    div#averageCustomerReviews_feature_div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* KINDLE ONLY */
+    div#reviewFeatureGroup {
+      margin-bottom: 7px;
     }
   `;
 

@@ -16,8 +16,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.amazon.com.br/*"],
-      "js": ["content.bundle.js"],
-      "css": ["content.css"]
+      "js": ["content.bundle.js"]
     }
   ]
 }

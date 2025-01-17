@@ -1,5 +1,5 @@
-import type { Reviews, ISBN } from "../messages";
+import type { Reviews, CodeFormat, ISBN, ASIN } from "../messages";
 
 export interface ReviewsParser {
-  getReviewsByISBN(isbn: ISBN): Promise<Reviews>;
+  getReviews(code: ISBN | ASIN, codeFormat: CodeFormat): Promise<Reviews>;
 }

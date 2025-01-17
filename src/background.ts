@@ -17,20 +17,19 @@ function messageHandler(
   sendResponse: (response: unknown) => void,
 ): true | Promise<unknown> | undefined {
   const reviewsMessage = message as GetReviewsMessage;
-
   if (reviewsMessage.site === "goodreads") {
     const parser = new GoodreadsParser();
-
-    if (reviewsMessage.product.codeFormat === "isbn") {
-      parser
-        .getReviewsByISBN(reviewsMessage.product.code)
-        .then((reviews) => {
-          sendResponse({ reviews: reviews, err: null });
-        })
-        .catch((error) => {
-          sendResponse({ reviews: null, err: error });
-        });
-    }
+    parser
+      .getReviews(
+        reviewsMessage.product.code,
+        reviewsMessage.product.codeFormat,
+      )
+      .then((reviews) => {
+        sendResponse({ reviews: reviews, err: null });
+      })
+      .catch((error) => {
+        sendResponse({ reviews: null, err: error });
+      });
 
     return true;
   }

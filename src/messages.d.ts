@@ -25,7 +25,7 @@ export type Reviews = {
   site: SupportedSite;
   rating: string;
   amount: number;
-  sectionLink: string;
+  sectionURL: string;
   stars?: Star[];
 };
 

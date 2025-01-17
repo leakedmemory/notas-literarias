@@ -3,6 +3,7 @@ import type { Configuration } from "webpack";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 
 // TODO: split file into dev and prod <https://webpack.js.org/guides/production/>
+
 const config: Configuration = {
   mode: "development",
   entry: {
@@ -29,10 +30,7 @@ const config: Configuration = {
   devtool: "inline-source-map",
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [
-        { from: "manifests/firefox.json", to: "manifest.json" },
-        { from: "src/content.css", to: "." },
-      ],
+      patterns: [{ from: "manifests/firefox.json", to: "manifest.json" }],
     }),
   ],
 };
