@@ -48,9 +48,12 @@ function isProductPage(): boolean {
 }
 
 /**
- * @todo Prefer ISBN over ASIN instead of picking the one that appears first.
+ * Gets the ISBN-13 or ASIN code of the product. If both are present,
+ * the ISBN-13 will be returned.
  */
 function getProductInfo(details: HTMLSpanElement[]): Product | null {
+  const product: Product = { code: "", codeFormat: "asin" };
+  let foundASIN = false;
   for (const [i, detail] of details.entries()) {
     if (detail.innerText === "ISBN-13  : ") {
       return {
@@ -60,11 +63,13 @@ function getProductInfo(details: HTMLSpanElement[]): Product | null {
     }
 
     if (detail.innerText === "ASIN  : ") {
-      return {
-        code: details[i + 1].innerText,
-        codeFormat: "asin",
-      };
+      product.code = details[i + 1].innerText;
+      foundASIN = true;
     }
+  }
+
+  if (foundASIN) {
+    return product;
   }
 
   return null;
