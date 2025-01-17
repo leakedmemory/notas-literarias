@@ -107,26 +107,57 @@ function insertReviews(reviews: Reviews) {
  * @throws When some element is not found in the DOM.
  */
 function insertBookRatingElement(reviews: Reviews) {
-  /**
-   * Element containing the rating value, the starts representation,
-   * and how many reviews the product has.
-   */
-  const reviewElementRef =
+  const ratingRef = getRatingReference();
+  const ratingElement = ratingRef.cloneNode(true) as HTMLDivElement;
+  addExtensionPrefixToElementIDs(ratingElement);
+
+  // delete following function after creating modal
+  removeHover(ratingElement);
+  // poptitle not shown since hover is disabled
+  const popTitle = changePopTitle(ratingElement, reviews);
+  changeRatingValue(ratingElement, popTitle);
+  changeStarsRepresentation(ratingElement, reviews);
+  // delete following function after creating modal
+  deleteArrowPopover(ratingElement);
+  changeCustomerReviewsRedirection(ratingElement, reviews);
+
+  logger.log(`inserting ${reviews.site} rating element`);
+
+  ratingRef.insertAdjacentElement("afterend", ratingElement);
+}
+
+/**
+ * Gets the element containing the rating value, the starts representation,
+ * and how many reviews the product has.
+ *
+ * @throws On `null` query selection.
+ */
+function getRatingReference(): Element {
+  const ref =
     document.querySelector("div#averageCustomerReviews") ||
     document.querySelector("div#averageCustomerReviews_feature_div");
-  if (!reviewElementRef) {
+  if (!ref) {
     throw new Error("rating reference element not found");
   }
 
-  const reviewElement = reviewElementRef.cloneNode(true) as HTMLDivElement;
-  addExtensionPrefixToElementIDs(reviewElement);
+  return ref;
+}
 
-  /**
-   * Span with the rating value, stars, and arrow down icon.
-   *
-   * Currently used to remove the hover aspect, since the modal is not done yet.
-   */
-  const ratingSpan = reviewElement.querySelector(
+/**
+ * Adds "bookratings_" prefix to `element` and all of its children.
+ */
+function addExtensionPrefixToElementIDs(element: HTMLElement) {
+  element.id = `bookratings_${element.id}`;
+  for (const child of element.querySelectorAll("[id]")) {
+    child.id = `bookratings_${child.id}`;
+  }
+}
+
+/**
+ * @throws On `null` query selection.
+ */
+function removeHover(rating: HTMLElement) {
+  const ratingSpan = rating.querySelector(
     "div#bookratings_averageCustomerReviews > span",
   ) as HTMLSpanElement;
   if (!ratingSpan) {
@@ -134,36 +165,49 @@ function insertBookRatingElement(reviews: Reviews) {
   }
 
   ratingSpan.style.pointerEvents = "none";
+}
 
-  const titleSpan = reviewElement.querySelector(
+/**
+ * Changes the message that appears when hovering the rating.
+ *
+ * @throws On `null` query selection.
+ *
+ * @returns The new title.
+ */
+function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
+  const title = rating.querySelector(
     "span#bookratings_acrPopover",
   ) as HTMLSpanElement;
-  if (!titleSpan) {
+  if (!title) {
     throw new Error("title span element not found");
   }
 
-  const newTitle = titleSpan.title.split(" ");
-  if (newTitle[0][1] === ".") {
-    newTitle[0] = reviews.rating;
-  } else {
-    newTitle[0] = reviews.rating.replace(".", ",");
-  }
-  titleSpan.title = newTitle.join(" ");
+  const newTitle = title.title.split(" ");
+  newTitle[0] = reviews.rating.replace(".", ",");
+  title.title = newTitle.join(" ");
 
-  /** Rating value before the stars. */
-  const ratingValue = reviewElement.querySelector(
-    "a > span",
-  ) as HTMLSpanElement;
+  return title.title;
+}
+
+/**
+ * Changes the rating value before the stars.
+ *
+ * @throws On `null` query selection.
+ */
+function changeRatingValue(rating: HTMLElement, title: string) {
+  const ratingValue = rating.querySelector("a > span") as HTMLSpanElement;
   if (!ratingValue) {
     throw new Error("literal rating element not found");
   }
 
-  ratingValue.innerText = titleSpan.title.split(" ")[0];
+  ratingValue.innerText = title.split(" ")[0];
+}
 
-  /** Rating's stars representation. */
-  const stars = reviewElement.querySelector(
-    "a > i.a-icon-star-mini",
-  ) as HTMLElement;
+/**
+ * @throws On `null` query selection.
+ */
+function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
+  const stars = rating.querySelector("a > i.a-icon-star-mini") as HTMLElement;
   if (!stars) {
     throw new Error("stars representation element not found");
   }
@@ -183,52 +227,6 @@ function insertBookRatingElement(reviews: Reviews) {
   }
 
   starsAlt.innerText = `${reviews.rating}${starsAlt.innerText.substring(3)}`;
-
-  /** Arrow down icon. */
-  const arrowPopover = reviewElement.querySelector(
-    "a > i.a-icon-popover",
-  ) as HTMLElement;
-  if (!arrowPopover) {
-    throw new Error("arrow down popover element not found");
-  }
-
-  arrowPopover.style.visibility = "hidden";
-
-  const customerReviewsElement = reviewElement.querySelector(
-    "a#bookratings_acrCustomerReviewLink",
-  ) as HTMLAnchorElement;
-  if (!customerReviewsElement) {
-    throw new Error("customer reviews element not found");
-  }
-
-  customerReviewsElement.href = reviews.sectionURL;
-  customerReviewsElement.target = "_blank";
-  customerReviewsElement.rel = "noopener noreferrer";
-
-  const customerReviewsCountElement =
-    customerReviewsElement.firstElementChild as HTMLSpanElement;
-  if (!customerReviewsCountElement) {
-    throw new Error("customer reviews count element not found");
-  }
-
-  updateRatingsCountElement(
-    customerReviewsCountElement,
-    reviews.amount,
-    reviews.site,
-  );
-
-  logger.log(`inserting ${reviews.site} rating element`);
-  reviewElementRef.insertAdjacentElement("afterend", reviewElement);
-}
-
-/**
- * Adds "bookratings_" prefix to `element` and all of its children.
- */
-function addExtensionPrefixToElementIDs(element: HTMLElement) {
-  element.id = `bookratings_${element.id}`;
-  for (const child of element.querySelectorAll("[id]")) {
-    child.id = `bookratings_${child.id}`;
-  }
 }
 
 /**
@@ -254,18 +252,64 @@ function generateStarClass(rating: string): string {
   return `${prefix}${rating[0]}`;
 }
 
-function updateRatingsCountElement(
-  element: HTMLElement,
-  ratingsCount: number,
+/**
+ * @throws On `null` query selection.
+ */
+function deleteArrowPopover(rating: HTMLElement) {
+  const arrowPopover = rating.querySelector(
+    "a > i.a-icon-popover",
+  ) as HTMLElement;
+  if (!arrowPopover) {
+    throw new Error("arrow down popover element not found");
+  }
+
+  arrowPopover.style.visibility = "hidden";
+}
+
+/**
+ * Changes the rating count and adds from which site it was taken.
+ *
+ * @throws On `null` query selection.
+ */
+function changeCustomerReviewsRedirection(
+  rating: HTMLElement,
+  reviews: Reviews,
+) {
+  const customerReviewsElement = rating.querySelector(
+    "a#bookratings_acrCustomerReviewLink",
+  ) as HTMLAnchorElement;
+  if (!customerReviewsElement) {
+    throw new Error("customer reviews element not found");
+  }
+
+  customerReviewsElement.href = reviews.sectionURL;
+  customerReviewsElement.target = "_blank";
+  customerReviewsElement.rel = "noopener noreferrer";
+
+  const customerReviewsCountElement =
+    customerReviewsElement.firstElementChild as HTMLSpanElement;
+  if (!customerReviewsCountElement) {
+    throw new Error("customer reviews count element not found");
+  }
+
+  changeRatingCount(customerReviewsCountElement, reviews.amount, reviews.site);
+}
+
+/**
+ * Changes the rating count following the pattern of `separator` and adds
+ * from which site the rating was taken.
+ */
+function changeRatingCount(
+  rating: HTMLElement,
+  ratingCount: number,
   site: string,
 ): void {
-  const currentText = element.innerText;
+  const currentText = rating.innerText;
   const match = currentText.match(/(\d{1,3}(?:[.,]\d{3})*(?:\d)*)/);
 
   if (match) {
-    const separator = match[0].includes(",") ? "," : ".";
-
-    const formattedRatingsCount = ratingsCount
+    const separator = ".";
+    const formattedRatingsCount = ratingCount
       .toLocaleString("en-US", {
         useGrouping: true,
         minimumFractionDigits: 0,
@@ -273,7 +317,7 @@ function updateRatingsCountElement(
       })
       .replace(/,/g, separator);
 
-    element.innerText = `${currentText.replace(match[0], formattedRatingsCount)} (${site})`;
+    rating.innerText = `${currentText.replace(match[0], formattedRatingsCount)} (${site})`;
   }
 }
 
