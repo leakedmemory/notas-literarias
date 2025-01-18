@@ -1,12 +1,16 @@
-export type SupportedSite = "goodreads";
+// NOTE(leaked): string representation needed when logging
+export enum SupportedSite {
+  Goodreads = "Goodreads",
+}
 
-export type CodeFormat = "asin" | "isbn";
-export type ISBN = string;
-export type ASIN = string;
+export enum CodeFormat {
+  ISBN,
+  ASIN,
+}
 
 export type Product = {
-  code: ISBN | ASIN;
-  codeFormat: CodeFormat;
+  code: string;
+  format: CodeFormat;
 };
 
 export type GetReviewsMessage = {

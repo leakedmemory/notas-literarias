@@ -1,6 +1,12 @@
-import type { Reviews, Star, CodeFormat, ISBN, ASIN } from "../messages";
 import { roundRating } from "./utils";
 import type { ReviewsParser } from "./reviews-parser";
+
+import {
+  type Reviews,
+  type Star,
+  CodeFormat,
+  SupportedSite,
+} from "../messages";
 
 export class GoodreadsParser implements ReviewsParser {
   private readonly _origin = "https://www.goodreads.com";
@@ -8,20 +14,17 @@ export class GoodreadsParser implements ReviewsParser {
   /**
    * @throws On fetch errors and query selections `null` returns.
    */
-  public async getReviews(
-    code: ISBN | ASIN,
-    codeFormat: CodeFormat,
-  ): Promise<Reviews> {
-    switch (codeFormat) {
-      case "isbn":
+  public async getReviews(code: string, format: CodeFormat): Promise<Reviews> {
+    switch (format) {
+      case CodeFormat.ISBN:
         return this._getReviewsByISBN(code);
-      case "asin":
+      case CodeFormat.ASIN:
         return this._getReviewsByASIN(code);
     }
   }
 
-  private async _getReviewsByISBN(isbn: ISBN): Promise<Reviews> {
-    const url = `${this._origin}/search?q=${isbn}`;
+  private async _getReviewsByISBN(code: string): Promise<Reviews> {
+    const url = `${this._origin}/search?q=${code}`;
     const response = await fetch(url);
     const html = await response.text();
     const parser = new DOMParser();
@@ -31,8 +34,8 @@ export class GoodreadsParser implements ReviewsParser {
     return reviews;
   }
 
-  private async _getReviewsByASIN(asin: ASIN): Promise<Reviews> {
-    const url = `${this._origin}/search?q=${asin}`;
+  private async _getReviewsByASIN(code: string): Promise<Reviews> {
+    const url = `${this._origin}/search?q=${code}`;
     const response = await fetch(url);
     const html = await response.text();
     const parser = new DOMParser();
@@ -59,7 +62,7 @@ export class GoodreadsParser implements ReviewsParser {
 
   private _getGoodreadsReviews(doc: Document, bookURL: string): Reviews {
     const reviews: Reviews = {
-      site: "goodreads",
+      site: SupportedSite.Goodreads,
       rating: this._getRating(doc),
       amount: this._getAmountOfReviews(doc),
       sectionURL: `${bookURL}#CommunityReviews`,

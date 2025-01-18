@@ -9,6 +9,8 @@ import type {
   Reviews,
 } from "./messages";
 
+import { CodeFormat, SupportedSite } from "./messages";
+
 (function main() {
   if (!isProductPage()) {
     return;
@@ -30,7 +32,7 @@ import type {
     return;
   }
 
-  if (productInfo.codeFormat === "isbn") {
+  if (CodeFormat.ISBN === productInfo.format) {
     logger.log(`found book with ${productInfo.code} ISBN-13 code`);
   } else {
     // NOTE: even if the product has an ASIN code, it does not mean it is a book
@@ -38,7 +40,7 @@ import type {
   }
 
   fetchAndInsertReviews({
-    site: "goodreads",
+    site: SupportedSite.Goodreads,
     product: productInfo,
   });
 })();
@@ -52,14 +54,13 @@ function isProductPage(): boolean {
  * the ISBN-13 will be returned.
  */
 function getProductInfo(details: HTMLSpanElement[]): Product | null {
-  const product: Product = { code: "", codeFormat: "asin" };
+  const product: Product = { code: "", format: CodeFormat.ASIN };
   let foundASIN = false;
   for (const [i, detail] of details.entries()) {
     if (detail.innerText === "ISBN-13  : ") {
-      return {
-        code: details[i + 1].innerText,
-        codeFormat: "isbn",
-      };
+      product.code = details[i + 1].innerText;
+      product.format = CodeFormat.ISBN;
+      return product;
     }
 
     if (detail.innerText === "ASIN  : ") {
@@ -307,7 +308,7 @@ function changeCustomerReviewsRedirection(
 function changeRatingCount(
   rating: HTMLElement,
   ratingCount: number,
-  site: string,
+  site: SupportedSite,
 ): void {
   const currentText = rating.innerText;
   const match = currentText.match(/(\d{1,3}(?:[.,]\d{3})*(?:\d)*)/);
