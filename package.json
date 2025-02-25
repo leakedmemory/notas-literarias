@@ -1,8 +1,10 @@
 {
   "scripts": {
-    "fmt": "echo 'BIOME' && biome format || true && echo 'PRETTIER' && prettier --no-error-on-unmatched-pattern '**/*.{html,md}' --check",
-    "lint": "biome lint",
-    "fix": "echo 'BIOME' && biome lint --write && biome format --write && echo '\nPRETTIER' && prettier --no-error-on-unmatched-pattern '**/*.{html,md}' --write",
+    "prebuild": "pnpm lint",
+    "lint": "biome lint --write",
+    "fmt:biome": "biome format --write",
+    "fmt:prettier": "prettier '**/*.{html,md}' --write",
+    "fix": "pnpm lint && pnpm fmt:biome && pnpm fmt:prettier",
     "watch": "webpack --watch",
     "build": "tsc && webpack"
   },
@@ -20,5 +22,6 @@
     "webextension-polyfill": "^0.12.0",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
-  }
+  },
+  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
 }
