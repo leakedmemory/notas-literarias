@@ -9,7 +9,7 @@ import type {
   Reviews,
 } from "./messages";
 
-import { CodeFormat, SupportedSite } from "./messages";
+import { CodeFormat } from "./messages";
 
 (function main() {
   if (!isProductPage()) {
@@ -39,10 +39,7 @@ import { CodeFormat, SupportedSite } from "./messages";
     logger.log(`found product with ${productInfo.code} ASIN code`);
   }
 
-  fetchAndInsertReviews({
-    site: SupportedSite.Goodreads,
-    product: productInfo,
-  });
+  fetchAndInsertReviews(productInfo);
 })();
 
 function isProductPage(): boolean {
@@ -76,20 +73,19 @@ function getProductInfo(details: HTMLSpanElement[]): Product | null {
   return null;
 }
 
-function fetchAndInsertReviews(msg: GetReviewsMessage) {
-  logger.log(`trying to fetch ${msg.site} rating`);
+function fetchAndInsertReviews(product: Product) {
+  logger.log("trying to fetch goodreads rating");
 
+  const msg: GetReviewsMessage = { msg: "fetchGoodreads", product: product };
   browser.runtime.sendMessage(msg).then((response: unknown) => {
     const reviewsResponse = response as GetReviewsResponse;
     if (reviewsResponse.err) {
-      logger.error(
-        `${reviewsResponse.err} [while fetching ${msg.site} rating]`,
-      );
+      logger.error(`${reviewsResponse.err} [while fetching goodreads rating]`);
       return;
     }
 
     const reviews = reviewsResponse.reviews;
-    logger.log(`${reviews.site} rating: ${reviews.rating}`);
+    logger.log(`goodreads rating: ${reviews.rating}`);
     insertReviews(reviews);
   });
 }
@@ -102,7 +98,7 @@ function insertReviews(reviews: Reviews) {
     insertBookRatingElement(reviews);
     insertCustomStyles();
   } catch (err: unknown) {
-    logger.error(`${err} [while inserting ${reviews.site} rating]`);
+    logger.error(`${err} [while inserting goodreads rating]`);
   }
 }
 
@@ -127,7 +123,7 @@ function insertBookRatingElement(reviews: Reviews) {
   deleteArrowPopover(ratingElement);
   changeCustomerReviewsRedirection(ratingElement, reviews);
 
-  logger.log(`inserting ${reviews.site} rating element`);
+  logger.log("inserting goodreads rating element");
 
   ratingRef.insertAdjacentElement("afterend", ratingElement);
 }
@@ -306,18 +302,14 @@ function changeCustomerReviewsRedirection(
     throw new Error("customer reviews count element not found");
   }
 
-  changeRatingCount(customerReviewsCountElement, reviews.amount, reviews.site);
+  changeRatingCount(customerReviewsCountElement, reviews.amount);
 }
 
 /**
  * Changes the rating count following the pattern of `separator` and adds
  * from which site the rating was taken.
  */
-function changeRatingCount(
-  rating: HTMLElement,
-  ratingCount: number,
-  site: SupportedSite,
-): void {
+function changeRatingCount(rating: HTMLElement, ratingCount: number) {
   const currentText = rating.innerText;
   const match = currentText.match(/(\d{1,3}(?:[.,]\d{3})*(?:\d)*)/);
 
@@ -331,7 +323,7 @@ function changeRatingCount(
       })
       .replace(/,/g, separator);
 
-    rating.innerText = `${currentText.replace(match[0], formattedRatingsCount)} (${site})`;
+    rating.innerText = `${currentText.replace(match[0], formattedRatingsCount)} (goodreads)`;
   }
 }
 

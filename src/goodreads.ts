@@ -1,15 +1,7 @@
-import { roundRating } from "./utils";
-import type { ReviewsParser } from "./reviews-parser";
+import { type Reviews, type Star, CodeFormat } from "./messages";
 
-import {
-  type Reviews,
-  type Star,
-  CodeFormat,
-  SupportedSite,
-} from "../messages";
-
-export class GoodreadsParser implements ReviewsParser {
-  private readonly _origin = "https://www.goodreads.com";
+export class GoodreadsParser {
+  private readonly _ORIGIN = "https://www.goodreads.com";
 
   /**
    * @throws On fetch errors and query selections `null` returns.
@@ -24,7 +16,7 @@ export class GoodreadsParser implements ReviewsParser {
   }
 
   private async _getReviewsByISBN(code: string): Promise<Reviews> {
-    const url = `${this._origin}/search?q=${code}`;
+    const url = `${this._ORIGIN}/search?q=${code}`;
     const response = await fetch(url);
     const html = await response.text();
     const parser = new DOMParser();
@@ -35,7 +27,7 @@ export class GoodreadsParser implements ReviewsParser {
   }
 
   private async _getReviewsByASIN(code: string): Promise<Reviews> {
-    const url = `${this._origin}/search?q=${code}`;
+    const url = `${this._ORIGIN}/search?q=${code}`;
     const response = await fetch(url);
     const html = await response.text();
     const parser = new DOMParser();
@@ -50,7 +42,7 @@ export class GoodreadsParser implements ReviewsParser {
 
     const href = bookAnchorElement.href;
     // the href's origin is the extension
-    const bookURL = `${this._origin}${href.slice(href.indexOf("/book"))}`;
+    const bookURL = `${this._ORIGIN}${href.slice(href.indexOf("/book"))}`;
     const bookResponse = await fetch(bookURL);
     const bookHTML = await bookResponse.text();
     const bookDoc = parser.parseFromString(bookHTML, "text/html");
@@ -62,7 +54,6 @@ export class GoodreadsParser implements ReviewsParser {
 
   private _getGoodreadsReviews(doc: Document, bookURL: string): Reviews {
     const reviews: Reviews = {
-      site: SupportedSite.Goodreads,
       rating: this._getRating(doc),
       amount: this._getAmountOfReviews(doc),
       sectionURL: `${bookURL}#CommunityReviews`,
@@ -80,7 +71,14 @@ export class GoodreadsParser implements ReviewsParser {
       throw new Error("rating not found");
     }
 
-    return roundRating(ratingElement.innerText);
+    return this._roundRating(ratingElement.innerText).replace(".", ",");
+  }
+
+  private _roundRating(rating: string): string {
+    const num = Number.parseFloat(rating);
+    const scaled = num * 10;
+    const rounded = Math.round(scaled);
+    return (rounded / 10).toFixed(1);
   }
 
   private _getAmountOfReviews(doc: Document): number {

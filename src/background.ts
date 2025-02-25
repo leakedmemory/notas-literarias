@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 
-import { type GetReviewsMessage, SupportedSite } from "./messages";
-import { GoodreadsParser } from "./sites/goodreads";
+import type { GetReviewsMessage } from "./messages";
+import { GoodreadsParser } from "./goodreads";
 
 (function main() {
   browser.runtime.onMessage.addListener(messageHandler);
@@ -17,7 +17,7 @@ function messageHandler(
   sendResponse: (response: unknown) => void,
 ): true | Promise<unknown> | undefined {
   const reviewsMessage = message as GetReviewsMessage;
-  if (SupportedSite.Goodreads === reviewsMessage.site) {
+  if (reviewsMessage.msg === "fetchGoodreads") {
     const parser = new GoodreadsParser();
     parser
       .getReviews(reviewsMessage.product.code, reviewsMessage.product.format)

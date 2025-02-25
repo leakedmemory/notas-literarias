@@ -1,8 +1,3 @@
-// NOTE(leaked): string representation needed when logging
-export enum SupportedSite {
-  Goodreads = "Goodreads",
-}
-
 export enum CodeFormat {
   ISBN,
   ASIN,
@@ -14,7 +9,7 @@ export type Product = {
 };
 
 export type GetReviewsMessage = {
-  site: SupportedSite;
+  msg: string;
   product: Product;
 };
 
@@ -26,7 +21,6 @@ export type Star = {
 };
 
 export type Reviews = {
-  site: SupportedSite;
   rating: string;
   amount: number;
   sectionURL: string;
