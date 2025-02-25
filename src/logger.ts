@@ -19,8 +19,10 @@ const logger = {
    *
    * Should only be used for debugging purposes.
    */
-  pretty(obj: object, name: string) {
-    console.log(`${PREFIX}: ${name} = ${JSON.stringify(obj, null, 2)}`);
+  pretty(obj: object, name?: string) {
+    console.log(
+      `${PREFIX}: ${name ?? "obj"} = ${JSON.stringify(obj, null, 2)}`,
+    );
   },
 };
 
