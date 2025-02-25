@@ -213,9 +213,14 @@ function changeRatingValue(rating: HTMLElement, title: string) {
  * @throws On `null` query selection.
  */
 function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
-  const stars = rating.querySelector("a > i.a-icon-star-mini") as HTMLElement;
+  let isMini = false;
+  let stars = rating.querySelector("a > i.a-icon-star") as HTMLElement;
   if (!stars) {
-    throw new Error("stars representation element not found");
+    stars = rating.querySelector("a > i.a-icon-star-mini") as HTMLElement;
+    if (!stars) {
+      throw new Error("stars representation element not found");
+    }
+    isMini = true;
   }
 
   /** Class that controls how many stars are filled. */
@@ -224,7 +229,10 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
     throw new Error("star class not found");
   }
 
-  stars.classList.replace(starsFilledClass, generateStarClass(reviews.rating));
+  stars.classList.replace(
+    starsFilledClass,
+    generateStarClass(reviews.rating, isMini),
+  );
 
   /** Alt representation of the stars, which is a separate element. */
   const starsAlt = stars.firstElementChild as HTMLSpanElement;
@@ -241,8 +249,8 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
  *
  * @returns Class to add to the stars element.
  */
-function generateStarClass(rating: string): string {
-  const prefix = "a-star-mini-";
+function generateStarClass(rating: string, isMini: boolean): string {
+  const prefix = isMini ? "a-star-mini-" : "a-star-";
 
   // 4.8+ rating does not follow the pattern of half star and
   // goes directly to 5 stars
