@@ -340,17 +340,6 @@ function changeRatingCount(
  */
 function insertCustomStyles() {
   const css = `
-    div#centerAttributesLeftColumn {
-      display: flex;
-      flex-direction: column;
-      min-width: fit-content;
-    }
-
-    div#averageCustomerReviews_feature_div {
-      display: flex;
-      flex-direction: column;
-    }
-
     /* KINDLE ONLY */
     div#reviewFeatureGroup {
       margin-bottom: 7px;
