@@ -25,6 +25,10 @@ const config: Configuration = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+      },
     ],
   },
   devtool: "inline-source-map",

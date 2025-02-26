@@ -2,11 +2,15 @@ import browser from "webextension-polyfill";
 
 import logger from "./logger";
 
+import popoverBaseHTML from "./popover/base.html";
+import popoverStarItemHTML from "./popover/star-item.html";
+
 import type {
   Product,
   GetReviewsMessage,
   GetReviewsResponse,
   Reviews,
+  Star,
 } from "./messages";
 
 import { CodeFormat } from "./messages";
@@ -90,13 +94,11 @@ function fetchAndInsertReviews(product: Product) {
   });
 }
 
-/**
- * @todo Create the modal with the reviews.
- */
 function insertReviews(reviews: Reviews) {
   try {
     insertBookRatingElement(reviews);
     insertCustomStyles();
+    insertPopover(reviews);
   } catch (err: unknown) {
     logger.error(`${err} [while inserting goodreads rating]`);
   }
@@ -113,14 +115,9 @@ function insertBookRatingElement(reviews: Reviews) {
   const ratingElement = ratingRef.cloneNode(true) as HTMLDivElement;
   addExtensionPrefixToElementIDs(ratingElement);
 
-  // delete following function after creating modal
-  removeHover(ratingElement);
-  // poptitle not shown since hover is disabled
   const popTitle = changePopTitle(ratingElement, reviews);
   changeRatingValue(ratingElement, popTitle);
   changeStarsRepresentation(ratingElement, reviews);
-  // delete following function after creating modal
-  deleteArrowPopover(ratingElement);
   changeCustomerReviewsRedirection(ratingElement, reviews);
 
   logger.log("inserting goodreads rating element");
@@ -153,20 +150,6 @@ function addExtensionPrefixToElementIDs(element: HTMLElement) {
   for (const child of element.querySelectorAll("[id]")) {
     child.id = `bookratings_${child.id}`;
   }
-}
-
-/**
- * @throws On `null` query selection.
- */
-function removeHover(rating: HTMLElement) {
-  const ratingSpan = rating.querySelector(
-    "div#bookratings_averageCustomerReviews > span",
-  ) as HTMLSpanElement;
-  if (!ratingSpan) {
-    throw new Error("rating span element not found");
-  }
-
-  ratingSpan.style.pointerEvents = "none";
 }
 
 /**
@@ -263,20 +246,6 @@ function generateStarClass(rating: string, isMini: boolean): string {
 }
 
 /**
- * @throws On `null` query selection.
- */
-function deleteArrowPopover(rating: HTMLElement) {
-  const arrowPopover = rating.querySelector(
-    "a > i.a-icon-popover",
-  ) as HTMLElement;
-  if (!arrowPopover) {
-    throw new Error("arrow down popover element not found");
-  }
-
-  arrowPopover.style.visibility = "hidden";
-}
-
-/**
  * Changes the rating count and adds from which site it was taken.
  *
  * @throws On `null` query selection.
@@ -344,4 +313,159 @@ function insertCustomStyles() {
 
   logger.log("inserting custom product page styles");
   document.head.appendChild(styleElement);
+}
+
+function insertPopover(reviews: Reviews) {
+  logger.log("inserting goodreads popover");
+
+  const parser = new DOMParser();
+  const popoverBase = parser.parseFromString(popoverBaseHTML, "text/html").body
+    .firstElementChild as HTMLDivElement;
+
+  const starsFilled = popoverBase.querySelector(
+    "i#bookratings_stars",
+  ) as HTMLElement;
+  starsFilled.classList.add(generateStarClass(reviews.rating, false));
+
+  const ariaHidden = popoverBase.querySelector(
+    "span#bookratings_ariaHidden",
+  ) as HTMLSpanElement;
+  ariaHidden.innerText = `${reviews.rating} de 5`;
+
+  const aokOffscreen = popoverBase.querySelector(
+    "span#bookratings_aokOffscreen",
+  ) as HTMLSpanElement;
+  aokOffscreen.innerText = `Classificação média: ${reviews.rating} de 5 estrelas`;
+
+  const totalReviewCount = popoverBase.querySelector(
+    "span#bookratings_total-review-count",
+  ) as HTMLSpanElement;
+  totalReviewCount.innerText = `${reviews.amount.toLocaleString().replace(",", ".")} classificações globais`;
+
+  const allRatings = popoverBase.querySelector(
+    "a#bookratings_acrPopoverLink",
+  ) as HTMLAnchorElement;
+  allRatings.href = reviews.sectionURL;
+  allRatings.target = "_blank";
+  allRatings.rel = "noopener noreferrer";
+
+  const popoverStarItem = parser.parseFromString(
+    popoverStarItemHTML,
+    "text/html",
+  ).body.firstElementChild as HTMLLIElement;
+
+  const ul = popoverBase.querySelector(
+    "ul#bookratings_histogramTable",
+  ) as HTMLUListElement;
+
+  for (let i = 0; i < 5; i++) {
+    const base = popoverStarItem.cloneNode(true) as HTMLLIElement;
+    createStarItem(base, reviews.stars as Star[], i, reviews.sectionURL);
+    ul.appendChild(base);
+  }
+
+  const container = document.createElement("div");
+  container.appendChild(popoverBase);
+  document.body.appendChild(container);
+
+  setPopoverEventListeners();
+}
+
+function createStarItem(
+  base: HTMLLIElement,
+  stars: Star[],
+  currentStarIdx: number,
+  url: string,
+) {
+  const anchor = base.querySelector(
+    "a#bookratings_popoverRatingAnchor",
+  ) as HTMLAnchorElement;
+  anchor.href = url;
+  anchor.target = "_blank";
+  anchor.rel = "noopener noreferrer";
+  anchor.ariaLabel = `${stars[currentStarIdx].percentage}% de avaliações possuem ${stars[currentStarIdx].rank} estrelas`;
+
+  const columnStars = base.querySelector(
+    "div#bookratings_popoverRatingColumnStars",
+  ) as HTMLDivElement;
+  setInnerTextWithoutRemovingChildElements(
+    columnStars,
+    `${stars[currentStarIdx].rank} estrelas`,
+  );
+
+  const valueNow = base.querySelector(
+    "div#bookratings_popoverAriaValueNow",
+  ) as HTMLDivElement;
+  valueNow.ariaValueNow = `${stars[currentStarIdx].percentage}`;
+
+  const width = base.querySelector(
+    "div#bookratings_popoverPercentageWidth",
+  ) as HTMLDivElement;
+  width.style.width = `${stars[currentStarIdx].percentage}%`;
+
+  const histogramColumns = base.querySelector(
+    "div#bookratings_histogramColumns",
+  ) as HTMLDivElement;
+  setInnerTextWithoutRemovingChildElements(
+    histogramColumns,
+    `${stars[currentStarIdx].percentage}%`,
+  );
+
+  const histogramColumnsChildren = Array.from(
+    histogramColumns.children,
+  ) as HTMLSpanElement[];
+  for (const [i, child] of histogramColumnsChildren.entries()) {
+    child.innerText = `${stars[i].percentage}%`;
+  }
+}
+
+function setInnerTextWithoutRemovingChildElements(
+  el: HTMLElement,
+  txt: string,
+) {
+  const clone = el.cloneNode(true) as HTMLElement;
+  el.innerText = txt;
+  // for some reason, using without wrapping into an Array will not
+  // append all the children
+  for (const c of Array.from(clone.children)) {
+    el.appendChild(c);
+  }
+}
+
+function setPopoverEventListeners() {
+  const span = document.getElementById(
+    "bookratings_acrPopover",
+  ) as HTMLSpanElement;
+  const popover = document.getElementById(
+    "bookratings_popover",
+  ) as HTMLDivElement;
+
+  span.addEventListener("mouseenter", () => {
+    const spanRect = span.getBoundingClientRect();
+    const tryAndErrorNumber = 0.821;
+    const left = spanRect.left - spanRect.width * tryAndErrorNumber;
+    const top = spanRect.bottom + 1;
+
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+    popover.style.display = "block";
+    setAriaHidden(popover, "false");
+  });
+
+  span.addEventListener("mouseleave", () => {
+    popover.style.left = "auto";
+    popover.style.top = "auto";
+    popover.style.display = "none";
+    setAriaHidden(popover, "true");
+  });
+}
+
+function setAriaHidden(el: Element, value: "true" | "false") {
+  if (el.ariaHidden !== null) {
+    el.ariaHidden = value;
+  }
+
+  for (const c of el.children) {
+    setAriaHidden(c, value);
+  }
 }
