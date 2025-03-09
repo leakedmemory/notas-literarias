@@ -1,0 +1,64 @@
+[changelog]
+header = """
+# Changelog\n
+Todas as principais mudanças deste projeto serão documentadas neste arquivo. Veja [conventional commits](https://www.conventionalcommits.org/) para as diretrizes de commit.\n
+"""
+body = """
+---
+
+{% if version %}\
+  {% if previous.version %}\
+    ## [{{ version | trim_start_matches(pat="v") }}]($REPO/compare/{{ previous.version }}..{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
+  {% else %}\
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+  {% endif %}\
+{% else %}\
+    ## [unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+  ### {{ group | striptags | trim | upper_first }}
+  {% for commit in commits
+  | filter(attribute="scope")
+  | sort(attribute="scope") %}
+    - **({{commit.scope}})**{% if commit.breaking %} [**breaking**]{% endif %} \
+      {{ commit.message }} - ([{{ commit.id | truncate(length=7, end="") }}]($REPO/commit/{{ commit.id }})) - {{ commit.author.name }}
+  {%- endfor -%}
+  {% raw %}\n{% endraw %}\
+  {%- for commit in commits %}
+    {%- if commit.scope -%}
+    {% else -%}
+      - {% if commit.breaking %} [**breaking**]{% endif %}\
+        {{ commit.message }} - ([{{ commit.id | truncate(length=7, end="") }}]($REPO/commit/{{ commit.id }})) - {{ commit.author.name }}
+    {% endif -%}
+  {% endfor -%}
+{% endfor %}\n
+"""
+footer = """
+<!-- gerado por git-cliff -->
+"""
+trim = true
+postprocessors = [
+  { pattern = '\$REPO', replace = "https://github.com/leakedmemory/notas-literarias" },
+]
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+commit_preprocessors = []
+commit_parsers = [
+  { message = "^feat", group = "<!-- 0 -->Recursos" },
+  { message = "^fix", group = "<!-- 1 -->Correções de Bugs" },
+  { body = ".*security", group = "<!-- 2 -->Segurança" },
+  { message = "^perf", group = "<!-- 3 -->Performance" },
+  { message = "^refactor", group = "<!-- 4 -->Refatorações" },
+  { message = "^revert", group = "<!-- 5 -->Reversões" },
+  { message = "^doc", group = "<!-- 6 -->Documentação" },
+  { message = "^test", group = "<!-- 7 -->Testes" },
+  { message = "^chore\\(version\\):", skip = true },
+  { message = "^chore", group = "<!-- 8 -->Tarefas Diversas" },
+  { message = "^style", group = "<!-- 9 -->Estilo" },
+]
+filter_commits = false
+topo_order = false
+sort_commits = "oldest"

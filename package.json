@@ -14,6 +14,7 @@
     "@types/webextension-polyfill": "^0.12.1",
     "@types/webpack": "^5.28.5",
     "copy-webpack-plugin": "^12.0.2",
+    "git-cliff": "^2.8.0",
     "lefthook": "^1.8.4",
     "prettier": "^3.3.3",
     "ts-loader": "^9.5.1",
