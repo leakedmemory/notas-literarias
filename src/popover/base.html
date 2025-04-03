@@ -1,0 +1,131 @@
+<!-- Mostly copied from Amazon -->
+<div
+  class="a-popover a-popover-no-header a-declarative a-arrow-bottom"
+  data-action="a-popover-container a-popover-a11y"
+  aria-modal="true"
+  role="dialog"
+  aria-label="Resumo das classificações de avaliações de clients"
+  id="bookratings_popover"
+  aria-hidden="true"
+  style="
+    z-index: 299;
+    max-width: 700px;
+    visibility: visible;
+    top: auto;
+    left: auto;
+    opacity: 1;
+    display: none;
+  "
+>
+  <span tabindex="0" class="a-popover-start a-popover-a11y-offscreen"></span>
+  <div class="a-popover-wrapper" aria-busy="false">
+    <div class="a-popover-inner" style="height: auto; overflow-y: auto">
+      <header>
+        <button
+          data-action="a-popover-close"
+          class="a-button-close a-declarative"
+          aria-label="Fechar"
+        >
+          <i class="a-icon a-icon-close"></i>
+        </button>
+        <span
+          id="bookratings_a-popover-label-1"
+          class="a-popover-a11y-offscreen"
+          aria-hidden="true"
+          >Resumo das classificações de avaliações de clients</span
+        >
+      </header>
+      <div class="a-popover-content" id="bookratings_a-popover-content-1">
+        <div class="a-fixed-left-grid">
+          <div class="a-fixed-left-grid-inner" style="padding-left: 300px">
+            <div
+              class="a-fixed-left-grid-col a-col-left"
+              style="width: 300px; margin-left: -300px; float: left"
+            >
+              <div class="a-icon-row a-spacing-small a-padding-none">
+                <!-- add the stars class just like the rating one -->
+                <i
+                  id="bookratings_stars"
+                  data-hook="average-stars-rating-anywhere"
+                  aria-hidden="true"
+                  class="a-icon a-icon-star"
+                ></i>
+                <h2
+                  id="bookratings_acr-popover-title"
+                  data-hook="acr-average-stars-rating-text"
+                  class="a-size-medium a-spacing-none a-color-base a-text-beside-button"
+                >
+                  <!-- set innerText to "X,X de 5" -->
+                  <span id="bookratings_ariaHidden" aria-hidden="true"></span>
+
+                  <!-- set innerText to "Classificação média: X,X de 5 estrelas" -->
+                  <span
+                    id="bookratings_aokOffscreen"
+                    class="aok-offscreen"
+                  ></span>
+                </h2>
+              </div>
+              <div class="a-row a-spacing-medium">
+                <!-- set innerText to "X classificações globais" -->
+                <span
+                  id="bookratings_total-review-count"
+                  data-hook="total-review-count"
+                  class="a-size-base a-color-secondary totalRatingCount"
+                ></span>
+              </div>
+
+              <style>
+                .histogram {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 14px;
+                }
+
+                .histogram-row-container {
+                  display: flex;
+                  flex-direction: row;
+                  gap: 12px;
+                }
+
+                .histogram-row-container > div:nth-last-of-type(2) {
+                  flex-grow: 1;
+                }
+
+                .histogram-column-space {
+                  display: flex;
+                  flex-direction: column;
+                  height: 0px;
+                  visibility: hidden;
+                }
+              </style>
+
+              <ul
+                id="bookratings_histogramTable"
+                class="a-unordered-list a-nostyle a-vertical a-spacing-none histogram"
+              >
+                <!-- insert popover items here -->
+              </ul>
+              <hr
+                aria-hidden="true"
+                class="a-spacing-large a-spacing-top-base a-divider-normal"
+              />
+              <div class="a-section a-spacing-base a-text-center">
+                <!-- set href manually when inserting -->
+                <a
+                  id="bookratings_acrPopoverLink"
+                  class="a-size-base a-link-emphasis"
+                >
+                  Consulte todas as avaliações dos clients
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="a-arrow-border" style="left: 175px">
+      <div class="a-arrow"></div>
+    </div>
+  </div>
+  <span tabindex="0" class="a-popover-end a-popover-a11y-offscreen"></span>
+</div>

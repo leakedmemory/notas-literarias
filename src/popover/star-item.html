@@ -1,0 +1,62 @@
+<li class="a-align-center a-spacing-none">
+  <span class="a-list-item">
+    <!-- set `aria-label` following the format "X% de avaliações possuem Y estrelas" -->
+    <!-- set href manually when inserting -->
+    <a
+      id="bookratings_popoverRatingAnchor"
+      class="a-link-normal histogram-row-container"
+    >
+      <div
+        id="bookratings_popoverRatingColumnStars"
+        class="a-section a-spacing-none a-text-left aok-nowrap"
+      >
+        <span class="histogram-column-space" aria-hidden="true">
+          5 estrelas
+        </span>
+        <span class="histogram-column-space" aria-hidden="true">
+          4 estrelas
+        </span>
+        <span class="histogram-column-space" aria-hidden="true">
+          3 estrelas
+        </span>
+        <span class="histogram-column-space" aria-hidden="true">
+          2 estrelas
+        </span>
+        <span class="histogram-column-space" aria-hidden="true">
+          1 estrela
+        </span>
+
+        <!-- set innerText following the format "X estrelas" -->
+      </div>
+
+      <div class="a-section a-spacing-none">
+        <!-- set `aria-valuenow` to percentage number (e.g. 90) -->
+        <div
+          id="bookratings_popoverAriaValueNow"
+          class="a-meter"
+          role="progressbar"
+        >
+          <!-- set `width` in `style` to percentage value (e.g. 90%) -->
+          <div
+            id="bookratings_popoverPercentageWidth"
+            class="a-meter-bar a-meter-filled"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        id="bookratings_histogramColumns"
+        class="a-section a-spacing-none a-text-right aok-nowrap"
+      >
+        <!-- set innerText in each span to percentage value (e.g. 90%, 4%, 2%, 3%, 1%) -->
+        <span class="histogram-column-space" aria-hidden="true"></span>
+        <span class="histogram-column-space" aria-hidden="true"></span>
+        <span class="histogram-column-space" aria-hidden="true"></span>
+        <span class="histogram-column-space" aria-hidden="true"></span>
+        <span class="histogram-column-space" aria-hidden="true"></span>
+
+        <!-- set innerText to percentage value (e.g. 90%) -->
+      </div>
+    </a>
+  </span>
+</li>
