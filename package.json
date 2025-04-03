@@ -10,19 +10,19 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@types/node": "^22.9.3",
-    "@types/webextension-polyfill": "^0.12.1",
+    "@types/node": "^22.14.0",
+    "@types/webextension-polyfill": "^0.12.3",
     "@types/webpack": "^5.28.5",
     "copy-webpack-plugin": "^12.0.2",
     "git-cliff": "^2.8.0",
-    "lefthook": "^1.8.4",
-    "prettier": "^3.3.3",
-    "ts-loader": "^9.5.1",
+    "lefthook": "^1.11.6",
+    "prettier": "^3.5.3",
+    "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.2",
     "webextension-polyfill": "^0.12.0",
-    "webpack": "^5.96.1",
+    "webpack": "^5.98.0",
     "webpack-cli": "^5.1.4"
   },
-  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
+  "packageManager": "pnpm@10.7.1"
 }

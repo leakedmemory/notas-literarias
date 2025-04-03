@@ -15,7 +15,7 @@ function messageHandler(
   // @ts-ignore Unused parameter
   sender: browser.Runtime.MessageSender,
   sendResponse: (response: unknown) => void,
-): true | Promise<unknown> | undefined {
+): true {
   const reviewsMessage = message as GetReviewsMessage;
   if (reviewsMessage.msg === "fetchGoodreads") {
     const parser = new GoodreadsParser();
@@ -30,4 +30,7 @@ function messageHandler(
 
     return true;
   }
+
+  sendResponse({ reviews: null, err: "unhandled message type" });
+  return true;
 }
