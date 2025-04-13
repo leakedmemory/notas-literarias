@@ -1,4 +1,4 @@
-import { type Reviews, type Star, CodeFormat } from "./messages";
+import { type Reviews, type Star, CodeFormat } from "../lib/messages";
 
 export class GoodreadsParser {
   private readonly _ORIGIN = "https://www.goodreads.com";

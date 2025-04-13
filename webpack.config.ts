@@ -7,8 +7,8 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 const config: Configuration = {
   mode: "development",
   entry: {
-    background: "./src/background.ts",
-    content: "./src/content.ts",
+    background: "./src/background/background.ts",
+    content: "./src/content/content.ts",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

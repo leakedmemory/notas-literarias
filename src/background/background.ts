@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 
-import type { GetReviewsMessage } from "./messages";
+import type { GetReviewsMessage } from "../lib/messages";
+
 import { GoodreadsParser } from "./goodreads";
 
 (function main() {
