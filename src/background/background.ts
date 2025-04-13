@@ -2,13 +2,15 @@ import browser from "webextension-polyfill";
 
 import type { GetReviewsMessage } from "../lib/messages";
 
-import { GoodreadsParser } from "./goodreads";
+import { getGoodreadsReviews } from "./goodreads";
 
 (function main() {
   browser.runtime.onMessage.addListener(messageHandler);
 })();
 
 /**
+ * Handles incoming messages from the content script.
+ *
  * @see Description of the function parameters: {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage#parameters|runtime.onMessage#Parameters}
  */
 function messageHandler(
@@ -19,9 +21,10 @@ function messageHandler(
 ): true {
   const reviewsMessage = message as GetReviewsMessage;
   if (reviewsMessage.msg === "fetchGoodreads") {
-    const parser = new GoodreadsParser();
-    parser
-      .getReviews(reviewsMessage.product.code, reviewsMessage.product.format)
+    getGoodreadsReviews(
+      reviewsMessage.product.code,
+      reviewsMessage.product.format,
+    )
       .then((reviews) => {
         sendResponse({ reviews: reviews, err: null });
       })
