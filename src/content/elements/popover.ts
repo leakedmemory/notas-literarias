@@ -20,27 +20,27 @@ export function insertPopover(reviews: Reviews) {
     .firstElementChild as HTMLDivElement;
 
   const starsFilled = popoverBase.querySelector(
-    "i#bookratings_stars",
+    "i#notasliterarias-stars",
   ) as HTMLElement;
   starsFilled.classList.add(generateStarClass(reviews.rating, false));
 
   const ariaHidden = popoverBase.querySelector(
-    "span#bookratings_ariaHidden",
+    "span#notasliterarias-ariaHidden",
   ) as HTMLSpanElement;
   ariaHidden.innerText = `${reviews.rating} de 5`;
 
   const aokOffscreen = popoverBase.querySelector(
-    "span#bookratings_aokOffscreen",
+    "span#notasliterarias-aokOffscreen",
   ) as HTMLSpanElement;
   aokOffscreen.innerText = `Classificação média: ${reviews.rating} de 5 estrelas`;
 
   const totalReviewCount = popoverBase.querySelector(
-    "span#bookratings_total-review-count",
+    "span#notasliterarias-total-review-count",
   ) as HTMLSpanElement;
   totalReviewCount.innerText = `${reviews.amount.toLocaleString().replace(",", ".")} classificações globais`;
 
   const allRatings = popoverBase.querySelector(
-    "a#bookratings_acrPopoverLink",
+    "a#notasliterarias-acrPopoverLink",
   ) as HTMLAnchorElement;
   allRatings.href = reviews.sectionURL;
   allRatings.target = "_blank";
@@ -52,7 +52,7 @@ export function insertPopover(reviews: Reviews) {
   ).body.firstElementChild as HTMLLIElement;
 
   const ul = popoverBase.querySelector(
-    "ul#bookratings_histogramTable",
+    "ul#notasliterarias-histogramTable",
   ) as HTMLUListElement;
 
   for (let i = 0; i < 5; i++) {
@@ -78,7 +78,7 @@ function createStarItem(
   url: string,
 ) {
   const anchor = base.querySelector(
-    "a#bookratings_popoverRatingAnchor",
+    "a#notasliterarias-popoverRatingAnchor",
   ) as HTMLAnchorElement;
   anchor.href = url;
   anchor.target = "_blank";
@@ -86,7 +86,7 @@ function createStarItem(
   anchor.ariaLabel = `${stars[currentStarIdx].percentage}% de avaliações possuem ${stars[currentStarIdx].rank} estrelas`;
 
   const columnStars = base.querySelector(
-    "div#bookratings_popoverRatingColumnStars",
+    "div#notasliterarias-popoverRatingColumnStars",
   ) as HTMLDivElement;
   setInnerTextWithoutRemovingChildElements(
     columnStars,
@@ -94,17 +94,17 @@ function createStarItem(
   );
 
   const valueNow = base.querySelector(
-    "div#bookratings_popoverAriaValueNow",
+    "div#notasliterarias-popoverAriaValueNow",
   ) as HTMLDivElement;
   valueNow.ariaValueNow = `${stars[currentStarIdx].percentage}`;
 
   const width = base.querySelector(
-    "div#bookratings_popoverPercentageWidth",
+    "div#notasliterarias-popoverPercentageWidth",
   ) as HTMLDivElement;
   width.style.width = `${stars[currentStarIdx].percentage}%`;
 
   const histogramColumns = base.querySelector(
-    "div#bookratings_histogramColumns",
+    "div#notasliterarias-histogramColumns",
   ) as HTMLDivElement;
   setInnerTextWithoutRemovingChildElements(
     histogramColumns,
@@ -124,10 +124,10 @@ function createStarItem(
  */
 function setPopoverEventListeners() {
   const span = document.getElementById(
-    "bookratings_acrPopover",
+    "notasliterarias-acrPopover",
   ) as HTMLSpanElement;
   const popover = document.getElementById(
-    "bookratings_popover",
+    "notasliterarias-popover",
   ) as HTMLDivElement;
 
   let hoverTimeout: number | null = null;

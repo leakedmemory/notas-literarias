@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "author": "leaked memory",
-  "name": "Book Ratings on Amazon",
-  "short_name": "BookRatings",
-  "description": "Integrates book ratings from popular platforms such as Goodreads directly into Amazon's book pages.",
+  "name": "Notas Literárias",
+  "short_name": "Notas Lit",
+  "description": "Integra avaliações do Goodreads diretamente na página do livro na Amazon Brasil.",
   "version": "0.3.0",
-  "homepage_url": "https://github.com/leakedmemory/book-ratings-on-amazon",
+  "homepage_url": "https://github.com/leakedmemory/notas-literarias",
 
   "host_permissions": ["*://*.goodreads.com/*"],
 

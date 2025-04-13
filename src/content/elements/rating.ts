@@ -55,7 +55,7 @@ export function insertBookRatingElement(reviews: Reviews) {
  */
 function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
   const title = rating.querySelector(
-    "span#bookratings_acrPopover",
+    "span#notasliterarias-acrPopover",
   ) as HTMLSpanElement;
   if (!title) {
     throw new Error("title span element not found");
@@ -149,7 +149,7 @@ function changeCustomerReviewsRedirection(
   reviews: Reviews,
 ) {
   const customerReviewsElement = rating.querySelector(
-    "a#bookratings_acrCustomerReviewLink",
+    "a#notasliterarias-acrCustomerReviewLink",
   ) as HTMLAnchorElement;
   if (!customerReviewsElement) {
     throw new Error("customer reviews element not found");

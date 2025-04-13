@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-const PREFIX = "BOOK RATINGS";
+const PREFIX = "NOTAS LITERARIAS";
 const DATETIME_FORMAT = "HH:mm:ss";
 
 const logger = {

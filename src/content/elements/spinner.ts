@@ -9,18 +9,18 @@ export function insertLoadingSpinner() {
   const ratingRef = getRatingReference();
 
   const spinnerContainer = document.createElement("div");
-  spinnerContainer.id = "bookratings_spinner_container";
+  spinnerContainer.id = "notasliterarias-spinner_container";
   spinnerContainer.style.display = "flex";
   spinnerContainer.style.alignItems = "center";
   spinnerContainer.style.marginTop = "5px";
   spinnerContainer.style.marginBottom = "5px";
 
   const spinner = document.createElement("div");
-  spinner.id = "bookratings_spinner";
-  spinner.className = "bookratings_loader";
+  spinner.id = "notasliterarias-spinner";
+  spinner.className = "notasliterarias-loader";
 
   const loadingText = document.createElement("span");
-  loadingText.id = "bookratings_loading_text";
+  loadingText.id = "notasliterarias-loading_text";
   loadingText.innerText = "Buscando classificações do Goodreads...";
   loadingText.style.marginLeft = "10px";
   loadingText.style.fontSize = "14px";
@@ -38,7 +38,7 @@ export function insertLoadingSpinner() {
  */
 export function removeLoadingSpinner() {
   const spinnerContainer = document.getElementById(
-    "bookratings_spinner_container",
+    "notasliterarias-spinner_container",
   );
   if (spinnerContainer) {
     logger.log("removing loading spinner");
@@ -52,7 +52,7 @@ export function removeLoadingSpinner() {
  */
 export function insertSpinnerStyles() {
   const css = `
-    .bookratings_loader {
+    .notasliterarias-loader {
       width: 24px;
       aspect-ratio: 1;
       border-radius: 50%;
@@ -60,10 +60,10 @@ export function insertSpinnerStyles() {
         radial-gradient(farthest-side,#ffa516 94%,#0000) top/8px 8px no-repeat,
         conic-gradient(#0000 30%,#ffa516);
       -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
-      animation: bookratings_spinner 1s infinite linear;
+      animation: notasliterarias-spinner 1s infinite linear;
     }
     
-    @keyframes bookratings_spinner {
+    @keyframes notasliterarias-spinner {
       100% { transform: rotate(1turn) }
     }
   `;

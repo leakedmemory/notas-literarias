@@ -28,12 +28,14 @@ export function setAriaHidden(el: Element, value: "true" | "false") {
 }
 
 /**
- * Adds "bookratings_" prefix to element and all of its children with IDs.
+ * Adds "notasliterarias-" prefix to element and all of its children with IDs.
  */
 export function addExtensionPrefixToElementIDs(element: HTMLElement) {
-  element.id = `bookratings_${element.id}`;
+  const prefix = "notasliterarias-";
+
+  element.id = `${prefix}${element.id}`;
   for (const child of element.querySelectorAll("[id]")) {
-    child.id = `bookratings_${child.id}`;
+    child.id = `${prefix}${child.id}`;
   }
 }
 

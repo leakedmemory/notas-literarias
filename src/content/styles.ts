@@ -11,13 +11,13 @@ export function insertCustomStyles() {
     }
 
     /* Popover Animation */
-    #bookratings_popover {
+    #notasliterarias-popover {
       opacity: 0;
       display: none;
       transition: opacity 0.2s ease-in-out;
     }
 
-    #bookratings_popover.visible {
+    #notasliterarias-popover.visible {
       opacity: 1;
       display: block;
     }
