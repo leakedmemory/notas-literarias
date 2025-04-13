@@ -1,16 +1,21 @@
+import dayjs from "dayjs";
+
 const PREFIX = "BOOK RATINGS";
+const DATETIME_FORMAT = "HH:mm:ss";
 
 const logger = {
   /** Logs `msg` with the extension's prefix. */
   // biome-ignore lint: accept explicit `any` in this case
   log(msg: any) {
-    console.log(`${PREFIX}: ${msg}`);
+    const now = dayjs().format(DATETIME_FORMAT);
+    console.log(`[${now}] ${PREFIX}: ${msg}`);
   },
 
   /** Logs `msg` with the extension's prefix at "error" level. */
   // biome-ignore lint: accept explicit `any` in this case
   error(msg: any) {
-    console.error(`${PREFIX}: ${msg}`);
+    const now = dayjs().format(DATETIME_FORMAT);
+    console.error(`[${now}] ${PREFIX}: ${msg}`);
   },
 
   /**
@@ -20,8 +25,9 @@ const logger = {
    * Should only be used for debugging purposes.
    */
   pretty(obj: object, name?: string) {
+    const now = dayjs().format(DATETIME_FORMAT);
     console.log(
-      `${PREFIX}: ${name ?? "obj"} = ${JSON.stringify(obj, null, 2)}`,
+      `[${now}] ${PREFIX}: ${name ?? "obj"} = ${JSON.stringify(obj, null, 2)}`,
     );
   },
 };

@@ -26,10 +26,10 @@ import { fetchAndInsertReviews } from "./reviews";
   }
 
   if (CodeFormat.ISBN === productInfo.format) {
-    logger.log(`found book with ${productInfo.code} ISBN-13 code`);
+    logger.log(`found book with ISBN-13 code ${productInfo.code}`);
   } else {
     // NOTE: even if the product has an ASIN code, it does not mean it is a book
-    logger.log(`found product with ${productInfo.code} ASIN code`);
+    logger.log(`found product with ASIN code ${productInfo.code}`);
   }
 
   fetchAndInsertReviews(productInfo);
