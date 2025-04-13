@@ -6,31 +6,27 @@
     "strict": true,
 
     /* Modules */
-    "module": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "rootDir": "src",
 
     /* Emit */
-    "inlineSourceMap": true,
-    "inlineSources": true,
+    "sourceMap": true,
     "noEmitOnError": true,
     "outDir": "dist",
     "removeComments": true,
 
-    /* Interop Contraints */
+    /* Interop Constraints */
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
 
-    /* Backwards Compatibility */
-    "importsNotUsedAsValues": "remove",
-
     /* Language and Environment */
-    "target": "es2016"
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
+    "target": "es2016",
+
+    /* Added for Vite compatibility */
+    "isolatedModules": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"]
 }
