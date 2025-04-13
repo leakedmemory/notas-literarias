@@ -77,21 +77,117 @@ function getProductInfo(details: HTMLSpanElement[]): Product | null {
   return null;
 }
 
+/**
+ * Inserts the loading spinner into the page
+ */
+function insertLoadingSpinner() {
+  logger.log("inserting loading spinner");
+
+  const ratingRef = getRatingReference();
+
+  // Create spinner container
+  const spinnerContainer = document.createElement("div");
+  spinnerContainer.id = "bookratings_spinner_container";
+  spinnerContainer.style.display = "flex";
+  spinnerContainer.style.alignItems = "center";
+  spinnerContainer.style.marginTop = "5px";
+  spinnerContainer.style.marginBottom = "5px";
+
+  // Create spinner element
+  const spinner = document.createElement("div");
+  spinner.id = "bookratings_spinner";
+  spinner.className = "bookratings_loader";
+
+  // Create loading text
+  const loadingText = document.createElement("span");
+  loadingText.id = "bookratings_loading_text";
+  loadingText.innerText = "Buscando classificações do Goodreads...";
+  loadingText.style.marginLeft = "10px";
+  loadingText.style.fontSize = "14px";
+
+  // Append elements
+  spinnerContainer.appendChild(spinner);
+  spinnerContainer.appendChild(loadingText);
+
+  // Insert after rating reference
+  ratingRef.insertAdjacentElement("afterend", spinnerContainer);
+}
+
+/**
+ * Removes the loading spinner from the page
+ */
+function removeLoadingSpinner() {
+  logger.log("removing loading spinner");
+  const spinnerContainer = document.getElementById(
+    "bookratings_spinner_container",
+  );
+  if (spinnerContainer) {
+    spinnerContainer.remove();
+  }
+}
+
 function fetchAndInsertReviews(product: Product) {
   logger.log("trying to fetch goodreads rating");
 
+  // Insert loading spinner first
+  insertLoadingSpinner();
+
+  // Add spinner CSS
+  insertSpinnerStyles();
+
   const msg: GetReviewsMessage = { msg: "fetchGoodreads", product: product };
-  browser.runtime.sendMessage(msg).then((response: unknown) => {
-    const reviewsResponse = response as GetReviewsResponse;
-    if (reviewsResponse.err) {
-      logger.error(`${reviewsResponse.err} [while fetching goodreads rating]`);
-      return;
+  browser.runtime
+    .sendMessage(msg)
+    .then((response: unknown) => {
+      // Remove the spinner when response is received
+      removeLoadingSpinner();
+
+      const reviewsResponse = response as GetReviewsResponse;
+      if (reviewsResponse.err) {
+        logger.error(
+          `${reviewsResponse.err} [while fetching goodreads rating]`,
+        );
+        return;
+      }
+
+      const reviews = reviewsResponse.reviews;
+      logger.log(`goodreads rating: ${reviews.rating}`);
+      insertReviews(reviews);
+    })
+    .catch((error) => {
+      // Also remove spinner on error
+      removeLoadingSpinner();
+      logger.error(`${error} [while fetching goodreads rating]`);
+    });
+}
+
+/**
+ * Inserts the CSS for the spinner
+ */
+function insertSpinnerStyles() {
+  const css = `
+    .bookratings_loader {
+      width: 24px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(farthest-side,#ffa516 94%,#0000) top/8px 8px no-repeat,
+        conic-gradient(#0000 30%,#ffa516);
+      -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+      animation: bookratings_spinner 1s infinite linear;
     }
 
-    const reviews = reviewsResponse.reviews;
-    logger.log(`goodreads rating: ${reviews.rating}`);
-    insertReviews(reviews);
-  });
+    @keyframes bookratings_spinner {
+      100% { transform: rotate(1turn) }
+    }
+  `;
+
+  const styleElement = document.createElement("style");
+  styleElement.type = "text/css";
+  styleElement.appendChild(document.createTextNode(css));
+
+  logger.log("inserting spinner styles");
+  document.head.appendChild(styleElement);
 }
 
 function insertReviews(reviews: Reviews) {
