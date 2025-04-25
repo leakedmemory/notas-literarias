@@ -1,33 +1,41 @@
 {
+  "name": "notas-literarias-webext",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.7.1",
   "scripts": {
-    "prebuild": "pnpm lint",
+    "postinstall": "pnpm lefthook install",
+    "dev": "pnpm run dev:firefox",
+    "dev:firefox": "pnpm run-p build:lib:* start:firefox",
+    "dev:chromium": "BROWSER='chromium' pnpm run-p build:lib:* start:chromium",
+    "start:firefox": "web-ext run --config=tools/web-ext/firefox.mjs",
+    "start:chromium": "web-ext run --target=chromium --config=tools/web-ext/chromium.mjs",
+    "prebuild": "pnpm run lint",
+    "build": "pnpm run-p build:firefox build:chromium",
+    "build:firefox": "NODE_ENV='prod' pnpm run-p build:lib:*",
+    "build:chromium": "NODE_ENV='prod' BROWSER='chromium' pnpm run-p build:lib:*",
+    "build:lib:content": "vite build --config tools/build/vite.config.content.ts",
+    "build:lib:background": "vite build --config tools/build/vite.config.background.ts",
     "lint": "biome lint --write",
+    "fmt": "pnpm run-p fmt:*",
     "fmt:biome": "biome format --write",
     "fmt:prettier": "prettier '**/*.{html,md}' --write",
-    "fix": "pnpm lint && pnpm fmt:biome && pnpm fmt:prettier",
-    "set-hooks": "pnpm lefthook install",
-    "watch": "webpack --watch",
-    "build": "tsc && webpack"
+    "fix": "pnpm run lint && pnpm run fmt"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/node": "^22.14.0",
     "@types/webextension-polyfill": "^0.12.3",
-    "@types/webpack": "^5.28.5",
-    "copy-webpack-plugin": "^12.0.2",
     "git-cliff": "^2.8.0",
-    "html-loader": "^5.1.0",
     "lefthook": "^1.11.6",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",
-    "ts-loader": "^9.5.2",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
-    "webextension-polyfill": "^0.12.0",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^5.1.4"
-  },
-  "packageManager": "pnpm@10.7.1",
-  "dependencies": {
-    "dayjs": "^1.11.13"
+    "vite": "^6.2.6",
+    "web-ext": "^8.6.0",
+    "webextension-polyfill": "^0.12.0"
   }
 }

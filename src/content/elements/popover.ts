@@ -6,8 +6,8 @@ import {
 import type { Reviews, Star } from "../../lib/messages";
 
 import { generateStarClass } from "../styles";
-import popoverBaseHTML from "../../popover/base.html";
-import popoverStarItemHTML from "../../popover/star-item.html";
+import popoverBaseHTML from "../../popover/base.html?raw";
+import popoverStarItemHTML from "../../popover/star-item.html?raw";
 
 /**
  * Inserts the popover element into the page.
