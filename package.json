@@ -5,6 +5,7 @@
     "fmt:biome": "biome format --write",
     "fmt:prettier": "prettier '**/*.{html,md}' --write",
     "fix": "pnpm lint && pnpm fmt:biome && pnpm fmt:prettier",
+    "set-hooks": "pnpm lefthook install",
     "watch": "webpack --watch",
     "build": "tsc && webpack"
   },
