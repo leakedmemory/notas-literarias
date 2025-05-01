@@ -26,7 +26,7 @@ const logger = {
    */
   pretty(obj: object, name?: string) {
     const now = dayjs().format(DATETIME_FORMAT);
-    console.log(
+    console.debug(
       `[${now}] ${PREFIX}: ${name ?? "obj"} = ${JSON.stringify(obj, null, 2)}`,
     );
   },
