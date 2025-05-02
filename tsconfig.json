@@ -27,6 +27,5 @@
     // Added for Vite compatibility
     "isolatedModules": true,
     "resolveJsonModule": true
-  },
-  "include": ["src/**/*"]
+  }
 }
