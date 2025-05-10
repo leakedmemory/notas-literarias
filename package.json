@@ -21,7 +21,8 @@
     "fmt:biome": "biome format --write",
     "fmt:prettier": "prettier '**/*.{html,md}' --write",
     "fix": "pnpm run lint && pnpm run fmt",
-    "clean": "rm -rf dist/"
+    "clean": "rm -rf dist/",
+    "cliff": "pnpm git-cliff -c .cliff.toml -o"
   },
   "dependencies": {
     "dayjs": "^1.11.13"
