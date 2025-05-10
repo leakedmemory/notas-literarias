@@ -1,4 +1,4 @@
-import { type Product, CodeFormat } from "../lib/messages";
+import { type Product, CodeFormat } from "../shared/messages";
 
 /**
  * Checks if the current page is a product page.

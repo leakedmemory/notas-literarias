@@ -1,5 +1,5 @@
-import logger from "../lib/logger";
-import { CodeFormat } from "../lib/messages";
+import logger from "../shared/logger";
+import { CodeFormat } from "../shared/messages";
 
 import { isProductPage, getProductInfo } from "./product";
 import { fetchAndInsertReviews } from "./reviews";

@@ -1,31 +1,14 @@
-import logger from "../lib/logger";
+import logger from "../shared/logger";
+
+import customStyles from "./index.css?raw";
 
 /**
  * Modifies the default product page style to better fit other book ratings.
  */
 export function insertCustomStyles() {
-  const css = `
-    /* KINDLE ONLY */
-    div#reviewFeatureGroup {
-      margin-bottom: 7px;
-    }
-
-    /* Popover Animation */
-    #notasliterarias-popover {
-      opacity: 0;
-      display: none;
-      transition: opacity 0.2s ease-in-out;
-    }
-
-    #notasliterarias-popover.visible {
-      opacity: 1;
-      display: block;
-    }
-  `;
-
   const styleElement = document.createElement("style");
   styleElement.type = "text/css";
-  styleElement.appendChild(document.createTextNode(css));
+  styleElement.appendChild(document.createTextNode(customStyles));
 
   logger.log("inserting custom product page styles");
 

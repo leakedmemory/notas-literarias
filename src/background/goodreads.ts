@@ -1,4 +1,4 @@
-import { type Reviews, type Star, CodeFormat } from "../lib/messages";
+import { type Reviews, type Star, CodeFormat } from "../shared/messages";
 
 const GOODREADS_ORIGIN = "https://www.goodreads.com";
 

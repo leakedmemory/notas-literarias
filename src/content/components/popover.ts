@@ -1,13 +1,12 @@
-import logger from "../../lib/logger";
+import logger from "../../shared/logger";
 import {
   setInnerTextWithoutRemovingChildElements,
   setAriaHidden,
-} from "../../lib/dom";
-import type { Reviews, Star } from "../../lib/messages";
-
+} from "../../shared/dom";
+import type { Reviews, Star } from "../../shared/messages";
 import { generateStarClass } from "../styles";
-import popoverBaseHTML from "../../popover/base.html?raw";
-import popoverStarItemHTML from "../../popover/star-item.html?raw";
+import popoverBaseHTML from "../../templates/popover/base.html?raw";
+import popoverStarItemHTML from "../../templates/popover/star-item.html?raw";
 
 /**
  * Inserts the popover element into the page.

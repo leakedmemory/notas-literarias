@@ -1,10 +1,9 @@
-import logger from "../../lib/logger";
-import type { Reviews } from "../../lib/messages";
+import logger from "../../shared/logger";
+import type { Reviews } from "../../shared/messages";
 import {
   addExtensionPrefixToElementIDs,
   removeAmazonEventAttributes,
-} from "../../lib/dom";
-
+} from "../../shared/dom";
 import { generateStarClass } from "../styles";
 
 /**

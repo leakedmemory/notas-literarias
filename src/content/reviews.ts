@@ -1,18 +1,18 @@
-import logger from "../lib/logger";
+import logger from "../shared/logger";
 import type {
   Product,
   GetReviewsMessage,
   GetReviewsResponse,
   Reviews,
-} from "../lib/messages";
+} from "../shared/messages";
 
 import {
   insertLoadingSpinner,
   removeLoadingSpinner,
   insertSpinnerStyles,
-} from "./elements/spinner";
-import { insertBookRatingElement } from "./elements/rating";
-import { insertPopover } from "./elements/popover";
+} from "./components/spinner";
+import { insertBookRatingElement } from "./components/rating";
+import { insertPopover } from "./components/popover";
 import { insertCustomStyles } from "./styles";
 
 /**

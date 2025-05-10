@@ -1,4 +1,4 @@
-import type { GetReviewsMessage } from "../lib/messages";
+import type { GetReviewsMessage } from "../shared/messages";
 
 import { getGoodreadsReviews } from "./goodreads";
 
