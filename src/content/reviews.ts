@@ -1,5 +1,3 @@
-import browser from "webextension-polyfill";
-
 import logger from "../lib/logger";
 import type {
   Product,

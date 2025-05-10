@@ -6,3 +6,4 @@ dist/
 tmp/
 
 .env
+src/auto-imports.d.ts

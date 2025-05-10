@@ -1,5 +1,3 @@
-import browser from "webextension-polyfill";
-
 import type { GetReviewsMessage } from "../lib/messages";
 
 import { getGoodreadsReviews } from "./goodreads";
