@@ -4,7 +4,7 @@
   "name": "Notas Literárias",
   "short_name": "Notas Lit",
   "description": "Integra avaliações do Goodreads diretamente na página do livro na Amazon Brasil.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "homepage_url": "https://github.com/leakedmemory/notas-literarias",
   "host_permissions": ["*://*.goodreads.com/*"],
   "background": {
