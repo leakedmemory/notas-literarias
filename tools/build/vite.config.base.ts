@@ -1,18 +1,13 @@
 import { type UserConfig, mergeConfig } from "vite";
 import AutoImport from "unplugin-auto-import/vite";
 
-import { res } from "./utils";
-import packageJson from "../../package.json";
-
-export const targetBrowser = process.env.BROWSER || "firefox";
-export const isDev = process.env.NODE_ENV !== "prod";
-export const name = JSON.stringify(packageJson.name);
+import { res, packageName, target, isDev } from "./utils";
 
 const baseConfig: UserConfig = {
   define: {
     __DEV__: isDev,
-    __NAME__: name,
-    __BROWSER__: JSON.stringify(targetBrowser),
+    __NAME__: packageName,
+    __BROWSER__: JSON.stringify(target),
   },
   plugins: [
     // ref: https://github.com/unplugin/unplugin-auto-import?tab=readme-ov-file#configuration
@@ -26,7 +21,7 @@ const baseConfig: UserConfig = {
     }),
   ],
   build: {
-    outDir: `dist/${targetBrowser}`,
+    outDir: `dist/${isDev ? "dev" : "prod"}/${target}`,
     emptyOutDir: false,
   },
   optimizeDeps: {

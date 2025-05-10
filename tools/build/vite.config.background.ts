@@ -1,13 +1,13 @@
 import { mergeConfig, type UserConfig } from "vite";
 
-import { name, devConfig, isDev, prodConfig } from "./vite.config.base";
-import { res } from "./utils";
+import { devConfig, prodConfig } from "./vite.config.base";
+import { res, packageName, isDev } from "./utils";
 
 const backgroundConfig: UserConfig = {
   build: {
     lib: {
       entry: res("src", "background", "index.ts"),
-      name: `${name}-background`,
+      name: `${packageName}-background`,
       formats: ["iife"],
     },
     rollupOptions: {
