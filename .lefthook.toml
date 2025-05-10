@@ -8,3 +8,4 @@ stage_fixed = true
 
 [pre-commit.commands.typos]
 run = "typos {staged_files}"
+exclude = ["CHANGELOG.md"]
