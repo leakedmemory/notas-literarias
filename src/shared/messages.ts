@@ -1,3 +1,5 @@
+export const GOODREADS_ORIGIN = "https://www.goodreads.com";
+
 export enum CodeFormat {
   ISBN,
   ASIN,
@@ -6,11 +8,6 @@ export enum CodeFormat {
 export type Product = {
   code: string;
   format: CodeFormat;
-};
-
-export type GetReviewsMessage = {
-  msg: string;
-  product: Product;
 };
 
 export type Star = {
@@ -27,12 +24,25 @@ export type Reviews = {
   stars?: Star[];
 };
 
-export type GetReviewsResponse =
-  | {
-      reviews: Reviews;
-      err: null;
-    }
-  | {
-      reviews: null;
-      err: Error;
-    };
+export enum MessageType {
+  SearchCode,
+  FetchURL,
+}
+
+export type SearchCodeMessage = {
+  msg: MessageType.SearchCode;
+  code: string;
+};
+
+export type FetchURLMessage = {
+  msg: MessageType.FetchURL;
+  url: string;
+};
+
+export type ContentMessage = SearchCodeMessage | FetchURLMessage;
+
+export type BackgroundResponse = {
+  pageHTML?: string;
+  url?: string;
+  err?: Error;
+};

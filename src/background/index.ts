@@ -1,6 +1,9 @@
-import type { GetReviewsMessage } from "../shared/messages";
-
-import { getGoodreadsReviews } from "./goodreads";
+import {
+  GOODREADS_ORIGIN,
+  MessageType,
+  type ContentMessage,
+  type BackgroundResponse,
+} from "../shared/messages";
 
 (function main() {
   browser.runtime.onMessage.addListener(messageHandler);
@@ -17,22 +20,51 @@ function messageHandler(
   sender: browser.Runtime.MessageSender,
   sendResponse: (response: unknown) => void,
 ): true {
-  const reviewsMessage = message as GetReviewsMessage;
-  if (reviewsMessage.msg === "fetchGoodreads") {
-    getGoodreadsReviews(
-      reviewsMessage.product.code,
-      reviewsMessage.product.format,
-    )
-      .then((reviews) => {
-        sendResponse({ reviews: reviews, err: null });
-      })
-      .catch((error) => {
-        sendResponse({ reviews: null, err: error });
-      });
-
-    return true;
+  const msg = message as ContentMessage;
+  switch (msg.msg) {
+    case MessageType.SearchCode:
+      getPageFromSearchCode(msg.code)
+        .then((resp) => {
+          sendResponse(resp);
+        })
+        .catch((error) => {
+          sendResponse({ err: error });
+        });
+      return true;
+    case MessageType.FetchURL:
+      getPageFromURL(msg.url)
+        .then((resp) => {
+          sendResponse(resp);
+        })
+        .catch((error) => {
+          sendResponse({ err: error });
+        });
+      return true;
+    default:
+      sendResponse({ err: "unhandled message type" });
+      return true;
   }
+}
 
-  sendResponse({ reviews: null, err: "unhandled message type" });
-  return true;
+async function getPageFromSearchCode(
+  code: string,
+): Promise<BackgroundResponse> {
+  const url = `${GOODREADS_ORIGIN}/search?q=${code}`;
+  const response = await fetch(url);
+  const html = await response.text();
+  const resp: BackgroundResponse = {
+    pageHTML: html,
+    url: response.url,
+  };
+  return resp;
+}
+
+async function getPageFromURL(url: string): Promise<BackgroundResponse> {
+  const response = await fetch(url);
+  const html = await response.text();
+  const resp: BackgroundResponse = {
+    pageHTML: html,
+    url: response.url,
+  };
+  return resp;
 }

@@ -1,55 +1,14 @@
-import { type Reviews, type Star, CodeFormat } from "../shared/messages";
+import type { Reviews, Star } from "../shared/messages";
+import { GOODREADS_ORIGIN } from "../shared/messages";
 
-const GOODREADS_ORIGIN = "https://www.goodreads.com";
+const parser = new DOMParser();
 
-/**
- * Fetches and parses reviews from Goodreads based on the product code and format.
- *
- * @param code - The ISBN or ASIN code of the product
- * @param format - The format type (ISBN or ASIN)
- * @returns A promise that resolves to the Reviews object
- * @throws On fetch errors and query selections `null` returns
- */
-export async function getGoodreadsReviews(
-  code: string,
-  format: CodeFormat,
-): Promise<Reviews> {
-  switch (format) {
-    case CodeFormat.ISBN:
-      return getReviewsByISBN(code);
-    case CodeFormat.ASIN:
-      return getReviewsByASIN(code);
-  }
-}
-
-/**
- * Gets reviews for a book using its ISBN code.
- *
- * @param code - The ISBN code of the book
- * @returns A promise that resolves to the Reviews object
- */
-async function getReviewsByISBN(code: string): Promise<Reviews> {
-  const url = `${GOODREADS_ORIGIN}/search?q=${code}`;
-  const response = await fetch(url);
-  const html = await response.text();
-  const parser = new DOMParser();
+export function parseBookPage(html: string, url: string) {
   const doc = parser.parseFromString(html, "text/html");
-
-  return parseGoodreadsReviews(doc, response.url);
+  return parseReviews(doc, url);
 }
 
-/**
- * Gets reviews for a book using its ASIN code.
- *
- * @param code - The ASIN code of the book
- * @returns A promise that resolves to the Reviews object
- * @throws If the book is not found for the given ASIN
- */
-async function getReviewsByASIN(code: string): Promise<Reviews> {
-  const url = `${GOODREADS_ORIGIN}/search?q=${code}`;
-  const response = await fetch(url);
-  const html = await response.text();
-  const parser = new DOMParser();
+export function parseSearchPage(html: string): string {
   const doc = parser.parseFromString(html, "text/html");
 
   const bookAnchorElement = doc.querySelector(
@@ -59,28 +18,17 @@ async function getReviewsByASIN(code: string): Promise<Reviews> {
     throw new Error("book not found for the given ASIN");
   }
 
+  // href's origin is the extension
   const href = bookAnchorElement.href;
-  // the href's origin is the extension
-  const bookURL = `${GOODREADS_ORIGIN}${href.slice(href.indexOf("/book"))}`;
-  const bookResponse = await fetch(bookURL);
-  const bookHTML = await bookResponse.text();
-  const bookDoc = parser.parseFromString(bookHTML, "text/html");
-
-  return parseGoodreadsReviews(bookDoc, bookURL);
+  const url = `${GOODREADS_ORIGIN}${href.slice(href.indexOf("/book"))}`;
+  return url;
 }
 
-/**
- * Parses Goodreads reviews from a document.
- *
- * @param doc - The document to parse
- * @param bookURL - The URL of the book
- * @returns The Reviews object
- */
-function parseGoodreadsReviews(doc: Document, bookURL: string): Reviews {
+function parseReviews(doc: Document, url: string): Reviews {
   const reviews: Reviews = {
     rating: getRating(doc),
     amount: getAmountOfReviews(doc),
-    sectionURL: `${bookURL}#CommunityReviews`,
+    sectionURL: `${url}#CommunityReviews`,
     stars: getStars(doc),
   };
 

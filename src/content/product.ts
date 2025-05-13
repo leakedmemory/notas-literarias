@@ -14,15 +14,24 @@ export function isProductPage(): boolean {
 export function getProductInfo(details: HTMLSpanElement[]): Product | null {
   const product: Product = { code: "", format: CodeFormat.ASIN };
   let foundASIN = false;
+
   for (const [i, detail] of details.entries()) {
-    if (detail.innerText === "ISBN-13  : ") {
-      product.code = details[i + 1].innerText;
+    if (i % 2 !== 0) {
+      continue;
+    }
+
+    // normalize the text by removing all non-alphanumeric characters
+    // (looking at you `&rlm;` on chromium)
+    const normalizedText = detail.innerText.replace(/[^A-Z0-9-]/g, "");
+
+    if (normalizedText === "ISBN-13") {
+      product.code = details[i + 1].innerText.trim();
       product.format = CodeFormat.ISBN;
       return product;
     }
 
-    if (detail.innerText === "ASIN  : ") {
-      product.code = details[i + 1].innerText;
+    if (normalizedText === "ASIN") {
+      product.code = details[i + 1].innerText.trim();
       foundASIN = true;
     }
   }
