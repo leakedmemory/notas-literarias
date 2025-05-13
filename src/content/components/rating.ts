@@ -1,5 +1,7 @@
 import logger from "../../shared/logger";
-import type { Reviews } from "../../shared/messages";
+import type { Reviews } from "../../shared/types";
+import { getElement } from "../../shared/dom";
+import { config } from "../../shared/config";
 import {
   addExtensionPrefixToElementIDs,
   removeAmazonEventAttributes,
@@ -8,23 +10,28 @@ import { generateStarClass } from "../styles";
 
 /**
  * Gets the element containing the rating value, the stars representation,
- * and how many reviews the product has.
+ * and how many reviews the book has.
  *
  * @throws On `null` query selection.
  */
 export function getRatingReference(): Element {
-  const ref =
-    document.querySelector("div#averageCustomerReviews") ||
-    document.querySelector("div#averageCustomerReviews_feature_div");
+  const selectors = config.selectors.ratingContainer.split(", ");
+  let ref: Element | null = null;
+
+  for (const selector of selectors) {
+    ref = document.querySelector(selector);
+    if (ref) break;
+  }
+
   if (!ref) {
-    throw new Error("rating reference element not found");
+    throw new Error("Rating reference element not found");
   }
 
   return ref;
 }
 
 /**
- * Inserts `reviews` by copying the review element of the product page and
+ * Inserts `reviews` by copying the review element of the book page and
  * changing its properties.
  *
  * @throws When some element is not found in the DOM.
@@ -53,9 +60,7 @@ export function insertBookRatingElement(reviews: Reviews) {
  * @returns The new title.
  */
 function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
-  const title = rating.querySelector(
-    "span#notasliterarias-acrPopover",
-  ) as HTMLSpanElement;
+  const title = getElement<HTMLSpanElement>(config.selectors.popTitle, rating);
   if (!title) {
     throw new Error("title span element not found");
   }
@@ -73,7 +78,10 @@ function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
  * @throws On `null` query selection.
  */
 function changeRatingValue(rating: HTMLElement, title: string) {
-  const ratingValue = rating.querySelector("a > span") as HTMLSpanElement;
+  const ratingValue = getElement<HTMLSpanElement>(
+    config.selectors.ratingValue,
+    rating,
+  );
   if (!ratingValue) {
     throw new Error("literal rating element not found");
   }
@@ -88,19 +96,20 @@ function changeRatingValue(rating: HTMLElement, title: string) {
  */
 function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
   let isMini = false;
-  let stars = rating.querySelector("a > i.a-icon-star") as HTMLElement;
+  let stars = getElement<HTMLElement>(config.selectors.ratingStars, rating);
+
   if (!stars) {
-    stars = rating.querySelector("a > i.a-icon-star-mini") as HTMLElement;
+    stars = getElement<HTMLElement>(config.selectors.ratingStarsMini, rating);
     if (!stars) {
-      throw new Error("stars representation element not found");
+      throw new Error("Stars representation element not found");
     }
     isMini = true;
   }
 
-  /** Class that controls how many stars are filled. */
+  // Class that controls how many stars are filled
   const starsFilledClass = Array.from(stars.classList)[2];
   if (!starsFilledClass.startsWith("a-star-")) {
-    throw new Error("star class not found");
+    throw new Error("Star class not found");
   }
 
   stars.classList.replace(
@@ -108,8 +117,14 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
     generateStarClass(reviews.rating, isMini),
   );
 
-  /** Alt representation of the stars, which is a separate element. */
-  const starsAlt = stars.firstElementChild as HTMLSpanElement;
+  // Alt representation of the stars, which is a separate element
+  const selector = isMini
+    ? config.selectors.ratingStarsMiniAlt
+    : config.selectors.ratingStarsAlt;
+  const starsAlt =
+    getElement<HTMLSpanElement>(selector, stars) ||
+    (stars.firstElementChild as HTMLSpanElement);
+
   if (!starsAlt) {
     throw new Error("stars alt element not found");
   }
@@ -125,16 +140,11 @@ function changeRatingCount(rating: HTMLElement, ratingCount: number) {
   const match = currentText.match(/(\d{1,3}(?:[.,]\d{3})*(?:\d)*)/);
 
   if (match) {
-    const separator = ".";
     const formattedRatingsCount = ratingCount
-      .toLocaleString("en-US", {
-        useGrouping: true,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      })
-      .replace(/,/g, separator);
+      .toLocaleString()
+      .replace(",", ".");
 
-    rating.innerText = `${currentText.replace(match[0], formattedRatingsCount)} (goodreads)`;
+    rating.innerText = `${currentText.replace(match[0], formattedRatingsCount)} ${config.ui.goodreadsSource}`;
   }
 }
 
@@ -147,9 +157,10 @@ function changeCustomerReviewsRedirection(
   rating: HTMLElement,
   reviews: Reviews,
 ) {
-  const customerReviewsElement = rating.querySelector(
-    "a#notasliterarias-acrCustomerReviewLink",
-  ) as HTMLAnchorElement;
+  const customerReviewsElement = getElement<HTMLAnchorElement>(
+    config.selectors.customerReviews,
+    rating,
+  );
   if (!customerReviewsElement) {
     throw new Error("customer reviews element not found");
   }
@@ -159,7 +170,9 @@ function changeCustomerReviewsRedirection(
   customerReviewsElement.rel = "noopener noreferrer";
 
   const customerReviewsCountElement =
-    customerReviewsElement.firstElementChild as HTMLSpanElement;
+    getElement<HTMLSpanElement>(":scope > span", customerReviewsElement) ||
+    (customerReviewsElement.firstElementChild as HTMLSpanElement);
+
   if (!customerReviewsCountElement) {
     throw new Error("customer reviews count element not found");
   }

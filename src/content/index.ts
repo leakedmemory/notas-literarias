@@ -1,36 +1,33 @@
 import logger from "../shared/logger";
-import { CodeFormat } from "../shared/messages";
+import { CodeFormat } from "../shared/types";
+import { config } from "../shared/config";
+import { getElements } from "../shared/dom";
 
-import { isProductPage, getProductInfo } from "./product";
+import { isBookPage, getBookInfo } from "./book";
 import { fetchAndInsertReviews } from "./reviews";
 
 (function main() {
-  if (!isProductPage()) {
+  if (!isBookPage()) {
     return;
   }
 
-  const details = Array.from(
-    document.querySelectorAll(
-      "div#detailBullets_feature_div > ul > li > span > span",
-    ),
-  ) as HTMLSpanElement[];
+  const details = getElements<HTMLSpanElement>(config.selectors.bookDetails);
   if (!details) {
-    logger.error("product details section not found");
+    logger.error("book details section not found");
     return;
   }
 
-  const productInfo = getProductInfo(details);
-  if (!productInfo) {
-    logger.error("product does not have ISBN-13 or ASIN code");
+  const bookInfo = getBookInfo(details);
+  if (!bookInfo) {
+    logger.error("failed to get book info");
     return;
   }
 
-  if (CodeFormat.ISBN === productInfo.format) {
-    logger.log(`found book with ISBN-13 code ${productInfo.code}`);
+  if (CodeFormat.ISBN === bookInfo.format) {
+    logger.log(`found book with ISBN-13 code ${bookInfo.code}`);
   } else {
-    // NOTE: even if the product has an ASIN code, it does not mean it is a book
-    logger.log(`found product with ASIN code ${productInfo.code}`);
+    logger.log(`found book with ASIN code ${bookInfo.code}`);
   }
 
-  fetchAndInsertReviews(productInfo);
+  fetchAndInsertReviews(bookInfo);
 })();

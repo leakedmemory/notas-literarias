@@ -1,12 +1,17 @@
+import popoverBaseHTML from "../../templates/popover/base.html?raw";
+import popoverStarItemHTML from "../../templates/popover/star-item.html?raw";
+
 import logger from "../../shared/logger";
 import {
   setInnerTextWithoutRemovingChildElements,
   setAriaHidden,
+  getElement,
+  getElements,
 } from "../../shared/dom";
-import type { Reviews, Star } from "../../shared/messages";
+import type { Reviews, Star } from "../../shared/types";
+import { config } from "../../shared/config";
+
 import { generateStarClass } from "../styles";
-import popoverBaseHTML from "../../templates/popover/base.html?raw";
-import popoverStarItemHTML from "../../templates/popover/star-item.html?raw";
 
 /**
  * Inserts the popover element into the page.
@@ -18,29 +23,34 @@ export function insertPopover(reviews: Reviews) {
   const popoverBase = parser.parseFromString(popoverBaseHTML, "text/html").body
     .firstElementChild as HTMLDivElement;
 
-  const starsFilled = popoverBase.querySelector(
-    "i#notasliterarias-stars",
-  ) as HTMLElement;
+  const starsFilled = getElement<HTMLElement>(
+    config.selectors.popoverStarsFilled,
+    popoverBase,
+  );
   starsFilled.classList.add(generateStarClass(reviews.rating, false));
 
-  const ariaHidden = popoverBase.querySelector(
-    "span#notasliterarias-ariaHidden",
-  ) as HTMLSpanElement;
-  ariaHidden.innerText = `${reviews.rating} de 5`;
+  const ariaHidden = getElement<HTMLSpanElement>(
+    config.selectors.popoverAriaHidden,
+    popoverBase,
+  );
+  ariaHidden.innerText = `${reviews.rating} ${config.ui.ratingOf5}`;
 
-  const aokOffscreen = popoverBase.querySelector(
-    "span#notasliterarias-aokOffscreen",
-  ) as HTMLSpanElement;
-  aokOffscreen.innerText = `Classificação média: ${reviews.rating} de 5 estrelas`;
+  const aokOffscreen = getElement<HTMLSpanElement>(
+    config.selectors.popoverAokOffscreen,
+    popoverBase,
+  );
+  aokOffscreen.innerText = `${config.ui.averageRating}: ${reviews.rating} ${config.ui.ratingOf5} ${config.ui.stars}`;
 
-  const totalReviewCount = popoverBase.querySelector(
-    "span#notasliterarias-total-review-count",
-  ) as HTMLSpanElement;
-  totalReviewCount.innerText = `${reviews.amount.toLocaleString().replace(",", ".")} classificações globais`;
+  const totalReviewCount = getElement<HTMLSpanElement>(
+    config.selectors.popoverTotalReviewCount,
+    popoverBase,
+  );
+  totalReviewCount.innerText = `${reviews.amount.toLocaleString().replace(",", ".")} ${config.ui.globalRatings}`;
 
-  const allRatings = popoverBase.querySelector(
-    "a#notasliterarias-acrPopoverLink",
-  ) as HTMLAnchorElement;
+  const allRatings = getElement<HTMLAnchorElement>(
+    config.selectors.popoverAcrLink,
+    popoverBase,
+  );
   allRatings.href = reviews.sectionURL;
   allRatings.target = "_blank";
   allRatings.rel = "noopener noreferrer";
@@ -50,9 +60,10 @@ export function insertPopover(reviews: Reviews) {
     "text/html",
   ).body.firstElementChild as HTMLLIElement;
 
-  const ul = popoverBase.querySelector(
-    "ul#notasliterarias-histogramTable",
-  ) as HTMLUListElement;
+  const ul = getElement<HTMLUListElement>(
+    config.selectors.popoverHistogramTable,
+    popoverBase,
+  );
 
   for (let i = 0; i < 5; i++) {
     const base = popoverStarItem.cloneNode(true) as HTMLLIElement;
@@ -76,43 +87,49 @@ function createStarItem(
   currentStarIdx: number,
   url: string,
 ) {
-  const anchor = base.querySelector(
-    "a#notasliterarias-popoverRatingAnchor",
-  ) as HTMLAnchorElement;
+  const anchor = getElement<HTMLAnchorElement>(
+    config.selectors.popoverRatingAnchor,
+    base,
+  );
   anchor.href = url;
   anchor.target = "_blank";
   anchor.rel = "noopener noreferrer";
-  anchor.ariaLabel = `${stars[currentStarIdx].percentage}% de avaliações possuem ${stars[currentStarIdx].rank} estrelas`;
+  anchor.ariaLabel = `${stars[currentStarIdx].percentage}% de avaliações possuem ${stars[currentStarIdx].rank} ${config.ui.stars}`;
 
-  const columnStars = base.querySelector(
-    "div#notasliterarias-popoverRatingColumnStars",
-  ) as HTMLDivElement;
+  const columnStars = getElement<HTMLDivElement>(
+    config.selectors.popoverRatingColumnStars,
+    base,
+  );
   setInnerTextWithoutRemovingChildElements(
     columnStars,
-    `${stars[currentStarIdx].rank} estrelas`,
+    `${stars[currentStarIdx].rank} ${config.ui.stars}`,
   );
 
-  const valueNow = base.querySelector(
-    "div#notasliterarias-popoverAriaValueNow",
-  ) as HTMLDivElement;
+  const valueNow = getElement<HTMLDivElement>(
+    config.selectors.popoverAriaValueNow,
+    base,
+  );
   valueNow.ariaValueNow = `${stars[currentStarIdx].percentage}`;
 
-  const width = base.querySelector(
-    "div#notasliterarias-popoverPercentageWidth",
-  ) as HTMLDivElement;
+  const width = getElement<HTMLDivElement>(
+    config.selectors.popoverPercentageWidth,
+    base,
+  );
   width.style.width = `${stars[currentStarIdx].percentage}%`;
 
-  const histogramColumns = base.querySelector(
-    "div#notasliterarias-histogramColumns",
-  ) as HTMLDivElement;
+  const histogramColumns = getElement<HTMLDivElement>(
+    config.selectors.popoverHistogramColumns,
+    base,
+  );
   setInnerTextWithoutRemovingChildElements(
     histogramColumns,
     `${stars[currentStarIdx].percentage}%`,
   );
 
-  const histogramColumnsChildren = Array.from(
-    histogramColumns.children,
-  ) as HTMLSpanElement[];
+  const histogramColumnsChildren = getElements<HTMLSpanElement>(
+    "*",
+    histogramColumns,
+  );
   for (const [i, child] of histogramColumnsChildren.entries()) {
     child.innerText = `${stars[i].percentage}%`;
   }
@@ -122,12 +139,8 @@ function createStarItem(
  * Sets up event listeners for the popover.
  */
 function setPopoverEventListeners() {
-  const span = document.getElementById(
-    "notasliterarias-acrPopover",
-  ) as HTMLSpanElement;
-  const popover = document.getElementById(
-    "notasliterarias-popover",
-  ) as HTMLDivElement;
+  const span = getElement<HTMLSpanElement>(config.selectors.acrPopover);
+  const popover = getElement<HTMLDivElement>(config.selectors.popover);
 
   let hoverTimeout: number | null = null;
 
@@ -162,6 +175,6 @@ function setPopoverEventListeners() {
         popover.style.top = "auto";
         setAriaHidden(popover, "true");
       }
-    }, 200);
+    }, config.ui.popoverDelayInMs);
   });
 }

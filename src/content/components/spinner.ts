@@ -1,4 +1,5 @@
 import logger from "../../shared/logger";
+import { addStyles } from "../../shared/dom";
 
 import { getRatingReference } from "./rating";
 import spinnerCSS from "./spinner.css?raw";
@@ -52,11 +53,6 @@ export function removeLoadingSpinner() {
  * Inserts the CSS for spinner.
  */
 export function insertSpinnerStyles() {
-  const styleElement = document.createElement("style");
-  styleElement.type = "text/css";
-  styleElement.appendChild(document.createTextNode(spinnerCSS));
-
   logger.log("inserting spinner styles");
-
-  document.head.appendChild(styleElement);
+  addStyles(spinnerCSS);
 }

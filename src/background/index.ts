@@ -1,9 +1,9 @@
 import {
-  GOODREADS_ORIGIN,
   MessageType,
   type ContentMessage,
   type BackgroundResponse,
-} from "../shared/messages";
+} from "../shared/types";
+import { config, goodreadsURL } from "../shared/config";
 
 (function main() {
   browser.runtime.onMessage.addListener(messageHandler);
@@ -21,50 +21,45 @@ function messageHandler(
   sendResponse: (response: unknown) => void,
 ): true {
   const msg = message as ContentMessage;
-  switch (msg.msg) {
-    case MessageType.SearchCode:
-      getPageFromSearchCode(msg.code)
-        .then((resp) => {
-          sendResponse(resp);
-        })
-        .catch((error) => {
-          sendResponse({ err: error });
-        });
-      return true;
-    case MessageType.FetchURL:
-      getPageFromURL(msg.url)
-        .then((resp) => {
-          sendResponse(resp);
-        })
-        .catch((error) => {
-          sendResponse({ err: error });
-        });
-      return true;
-    default:
-      sendResponse({ err: "unhandled message type" });
-      return true;
+
+  const messageHandlers = {
+    [MessageType.SearchCode]: () => getPageFromSearchCode(msg.code),
+    [MessageType.FetchURL]: () => getPageFromURL(msg.url),
+  };
+
+  const handler = messageHandlers[msg.msg];
+
+  if (handler) {
+    handler()
+      .then(sendResponse)
+      .catch((error) => sendResponse({ err: error }));
+  } else {
+    sendResponse({ err: "unhandled message type" });
+  }
+
+  return true;
+}
+
+async function fetchPage(url: string): Promise<BackgroundResponse> {
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    return {
+      pageHTML: html,
+      url: response.url,
+    };
+  } catch (error) {
+    return { err: error };
   }
 }
 
 async function getPageFromSearchCode(
   code: string,
 ): Promise<BackgroundResponse> {
-  const url = `${GOODREADS_ORIGIN}/search?q=${code}`;
-  const response = await fetch(url);
-  const html = await response.text();
-  const resp: BackgroundResponse = {
-    pageHTML: html,
-    url: response.url,
-  };
-  return resp;
+  const url = goodreadsURL(`${config.goodreads.searchQuery}${code}`);
+  return fetchPage(url);
 }
 
 async function getPageFromURL(url: string): Promise<BackgroundResponse> {
-  const response = await fetch(url);
-  const html = await response.text();
-  const resp: BackgroundResponse = {
-    pageHTML: html,
-    url: response.url,
-  };
-  return resp;
+  return fetchPage(url);
 }

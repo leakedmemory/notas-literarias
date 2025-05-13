@@ -1,5 +1,6 @@
-import type { Reviews, Star } from "../shared/messages";
-import { GOODREADS_ORIGIN } from "../shared/messages";
+import type { Reviews, Star } from "../shared/types";
+import { config, goodreadsURL } from "../shared/config";
+import { getElement, getElements } from "../shared/dom";
 
 const parser = new DOMParser();
 
@@ -10,17 +11,17 @@ export function parseBookPage(html: string, url: string) {
 
 export function parseSearchPage(html: string): string {
   const doc = parser.parseFromString(html, "text/html");
-
-  const bookAnchorElement = doc.querySelector(
-    "a.bookTitle",
-  ) as HTMLAnchorElement;
+  const bookAnchorElement = getElement<HTMLAnchorElement>(
+    config.selectors.bookAnchor,
+    doc,
+  );
   if (!bookAnchorElement) {
     throw new Error("book not found for the given ASIN");
   }
 
   // href's origin is the extension
   const href = bookAnchorElement.href;
-  const url = `${GOODREADS_ORIGIN}${href.slice(href.indexOf("/book"))}`;
+  const url = goodreadsURL(href.slice(href.indexOf("/book")));
   return url;
 }
 
@@ -28,7 +29,7 @@ function parseReviews(doc: Document, url: string): Reviews {
   const reviews: Reviews = {
     rating: getRating(doc),
     amount: getAmountOfReviews(doc),
-    sectionURL: `${url}#CommunityReviews`,
+    sectionURL: `${url}${config.goodreads.communityReviews}`,
     stars: getStars(doc),
   };
 
@@ -43,9 +44,10 @@ function parseReviews(doc: Document, url: string): Reviews {
  * @throws If the rating is not found
  */
 function getRating(doc: Document): string {
-  const ratingElement = doc.querySelector(
-    'div.RatingStatistics__rating[aria-hidden="true"]',
-  ) as HTMLDivElement;
+  const ratingElement = getElement<HTMLDivElement>(
+    config.selectors.rating,
+    doc,
+  );
   if (!ratingElement) {
     throw new Error("rating not found");
   }
@@ -74,9 +76,10 @@ function roundRating(rating: string): string {
  * @throws If the ratings count is not found
  */
 function getAmountOfReviews(doc: Document): number {
-  const ratingsCountElement = doc.querySelector(
-    'span[data-testid="ratingsCount"][aria-hidden="true"]',
-  ) as HTMLSpanElement;
+  const ratingsCountElement = getElement<HTMLSpanElement>(
+    config.selectors.ratingsCount,
+    doc,
+  );
   if (!ratingsCountElement) {
     throw new Error("ratings count not found");
   }
@@ -98,11 +101,7 @@ function getAmountOfReviews(doc: Document): number {
  * @throws If the star ranks are not found
  */
 function getStars(doc: Document): Star[] {
-  const starsElement = Array.from(
-    doc.querySelectorAll(
-      "div.RatingsHistogram.RatingsHistogram__interactive > div > div.RatingsHistogram__labelTotal",
-    ),
-  ) as HTMLDivElement[];
+  const starsElement = getElements<HTMLDivElement>(config.selectors.stars, doc);
   if (!starsElement) {
     throw new Error("star ranks not found");
   }

@@ -1,3 +1,43 @@
+import { config, prefixID } from "./config";
+
+/**
+ * Get an element by selector without error handling.
+ */
+export function getElement<T extends Element>(
+  selector: string,
+  parent: Element | Document = document,
+): T | null {
+  return parent.querySelector(selector) as T | null;
+}
+
+/**
+ * Get elements by selector without error handling.
+ */
+export function getElements<T extends Element>(
+  selector: string,
+  parent: Element | Document = document,
+): T[] | null {
+  const result = Array.from(parent.querySelectorAll(selector)) as T[];
+  if (result.length === 0) {
+    return null;
+  }
+  return result;
+}
+
+/**
+ * Adds extension's prefix to element and all of its children with IDs.
+ */
+export function addExtensionPrefixToElementIDs(element: HTMLElement) {
+  if (element.id) {
+    element.id = prefixID(element.id);
+  }
+
+  const elementsWithIds = getElements<HTMLElement>("[id]", element);
+  for (const el of elementsWithIds) {
+    el.id = prefixID(el.id);
+  }
+}
+
 /**
  * Sets innerText of an element without removing its child elements.
  */
@@ -28,22 +68,10 @@ export function setAriaHidden(el: Element, value: "true" | "false") {
 }
 
 /**
- * Adds "notasliterarias-" prefix to element and all of its children with IDs.
- */
-export function addExtensionPrefixToElementIDs(element: HTMLElement) {
-  const prefix = "notasliterarias-";
-
-  element.id = `${prefix}${element.id}`;
-  for (const child of element.querySelectorAll("[id]")) {
-    child.id = `${prefix}${child.id}`;
-  }
-}
-
-/**
  * Removes all Amazon-related event attributes that could trigger popups.
  */
 export function removeAmazonEventAttributes(element: HTMLElement) {
-  const allElements = [element, ...Array.from(element.querySelectorAll("*"))];
+  const allElements = [element, ...getElements("*", element)];
 
   for (const el of allElements) {
     if (el instanceof HTMLElement) {
@@ -77,4 +105,14 @@ export function removeAmazonEventAttributes(element: HTMLElement) {
       }
     }
   }
+}
+
+/**
+ * Add styles to the document.
+ */
+export function addStyles(css: string) {
+  const style = document.createElement("style");
+  style.type = "text/css";
+  style.appendChild(document.createTextNode(css));
+  document.head.appendChild(style);
 }

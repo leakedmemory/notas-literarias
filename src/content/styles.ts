@@ -1,18 +1,14 @@
 import logger from "../shared/logger";
+import { addStyles } from "../shared/dom";
 
 import customStyles from "./index.css?raw";
 
 /**
- * Modifies the default product page style to better fit other book ratings.
+ * Modifies the default book page style to better fit other book ratings.
  */
 export function insertCustomStyles() {
-  const styleElement = document.createElement("style");
-  styleElement.type = "text/css";
-  styleElement.appendChild(document.createTextNode(customStyles));
-
-  logger.log("inserting custom product page styles");
-
-  document.head.appendChild(styleElement);
+  logger.log("inserting custom book page styles");
+  addStyles(customStyles);
 }
 
 /**

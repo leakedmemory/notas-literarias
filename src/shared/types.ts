@@ -1,11 +1,9 @@
-export const GOODREADS_ORIGIN = "https://www.goodreads.com";
-
 export enum CodeFormat {
-  ISBN,
-  ASIN,
+  ISBN = "ISBN",
+  ASIN = "ASIN",
 }
 
-export type Product = {
+export type Book = {
   code: string;
   format: CodeFormat;
 };
@@ -25,8 +23,8 @@ export type Reviews = {
 };
 
 export enum MessageType {
-  SearchCode,
-  FetchURL,
+  SearchCode = "SEARCH_CODE",
+  FetchURL = "FETCH_URL",
 }
 
 export type SearchCodeMessage = {

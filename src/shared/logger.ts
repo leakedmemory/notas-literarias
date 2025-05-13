@@ -24,9 +24,9 @@ const logger = {
    * Logs `obj`, identified by `name` and at debug level, in JSON format and
    * with the extension's prefix.
    */
-  pretty(obj: object, name?: string) {
+  pretty(obj: object, name = "obj") {
     console.debug(
-      `[${now()}] ${PREFIX}: ${name ?? "obj"} = ${JSON.stringify(obj, null, 2)}`,
+      `[${now()}] ${PREFIX}: ${name} = ${JSON.stringify(obj, null, 2)}`,
     );
   },
 };
