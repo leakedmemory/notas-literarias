@@ -13,7 +13,7 @@ const outDir = res("dist", isDev ? "dev" : "prod", target);
 
 async function copyManifest() {
   try {
-    const src = res("manifests", `${target}.json`);
+    const src = res("platforms", target, "manifest.json");
     const dest = res(outDir, "manifest.json");
 
     if (!existsSync(src)) {
