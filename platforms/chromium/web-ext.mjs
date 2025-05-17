@@ -1,5 +1,5 @@
 export default {
-  verbose: true,
+  verbose: false,
   sourceDir: "dist/dev/chromium/",
   run: {
     startUrl: ["amazon.com.br"],

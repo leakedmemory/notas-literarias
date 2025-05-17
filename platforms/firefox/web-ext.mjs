@@ -1,5 +1,5 @@
 export default {
-  verbose: true,
+  verbose: false,
   sourceDir: "dist/dev/firefox/",
   run: {
     startUrl: ["amazon.com.br"],
