@@ -10,7 +10,6 @@ export type Book = {
 
 export type Star = {
   rank: number;
-  selector: string;
   amount: number;
   percentage: string;
 };
@@ -18,8 +17,8 @@ export type Star = {
 export type Reviews = {
   rating: string;
   amount: number;
-  sectionURL: string;
-  stars?: Star[];
+  stars: Star[];
+  url: string;
 };
 
 export enum MessageType {

@@ -165,7 +165,7 @@ function changeCustomerReviewsRedirection(
     throw new Error("customer reviews element not found");
   }
 
-  customerReviewsElement.href = reviews.sectionURL;
+  customerReviewsElement.href = reviews.url;
   customerReviewsElement.target = "_blank";
   customerReviewsElement.rel = "noopener noreferrer";
 

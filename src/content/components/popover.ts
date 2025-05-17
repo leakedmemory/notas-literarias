@@ -51,7 +51,7 @@ export function insertPopover(reviews: Reviews) {
     config.selectors.popoverAcrLink,
     popoverBase,
   );
-  allRatings.href = reviews.sectionURL;
+  allRatings.href = reviews.url;
   allRatings.target = "_blank";
   allRatings.rel = "noopener noreferrer";
 
@@ -67,7 +67,7 @@ export function insertPopover(reviews: Reviews) {
 
   for (let i = 0; i < 5; i++) {
     const base = popoverStarItem.cloneNode(true) as HTMLLIElement;
-    createStarItem(base, reviews.stars as Star[], i, reviews.sectionURL);
+    createStarItem(base, reviews.stars as Star[], i, reviews.url);
     ul.appendChild(base);
   }
 

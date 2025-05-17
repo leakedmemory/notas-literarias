@@ -5,7 +5,7 @@ export const config = {
   },
 
   goodreads: {
-    communityReviews: "#CommunityReviews",
+    communityReviewsFilter: "#CommunityReviews",
     origin: "https://www.goodreads.com",
     searchQuery: "/search?q=",
   },

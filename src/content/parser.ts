@@ -29,8 +29,8 @@ function parseReviews(doc: Document, url: string): Reviews {
   const reviews: Reviews = {
     rating: getRating(doc),
     amount: getAmountOfReviews(doc),
-    sectionURL: `${url}${config.goodreads.communityReviews}`,
     stars: getStars(doc),
+    url: `${url}${config.goodreads.communityReviewsFilter}`,
   };
 
   return reviews;
@@ -107,12 +107,9 @@ function getStars(doc: Document): Star[] {
   }
 
   const stars: Star[] = starsElement.map((starRankElement, idx) => {
-    const selector = `div.RatingsHistogram.RatingsHistogram__interactive > div:nth-child(${idx + 1}) > div.RatingsHistogram__labelTotal`;
     const [amount, percentage] = starRankElement.innerText.split(" ");
-
     return {
       rank: 5 - idx,
-      selector: selector,
       amount: Number.parseInt(amount.replace(",", "")),
       percentage: percentage.slice(1, percentage.indexOf("%")),
     };
