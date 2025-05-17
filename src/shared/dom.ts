@@ -41,10 +41,7 @@ export function addExtensionPrefixToElementIDs(element: HTMLElement) {
 /**
  * Sets innerText of an element without removing its child elements.
  */
-export function setInnerTextWithoutRemovingChildElements(
-  el: HTMLElement,
-  txt: string,
-) {
+export function setInnerTextAndPreserveChildren(el: HTMLElement, txt: string) {
   const clone = el.cloneNode(true) as HTMLElement;
   el.innerText = txt;
   // for some reason, using without wrapping into an Array will not

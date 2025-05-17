@@ -3,7 +3,7 @@ import popoverStarItemHTML from "../../templates/popover/star-item.html?raw";
 
 import logger from "../../shared/logger";
 import {
-  setInnerTextWithoutRemovingChildElements,
+  setInnerTextAndPreserveChildren,
   setAriaHidden,
   getElement,
   getElements,
@@ -100,7 +100,7 @@ function createStarItem(
     config.selectors.popoverRatingColumnStars,
     base,
   );
-  setInnerTextWithoutRemovingChildElements(
+  setInnerTextAndPreserveChildren(
     columnStars,
     `${stars[currentStarIdx].rank} ${config.ui.stars}`,
   );
@@ -121,7 +121,7 @@ function createStarItem(
     config.selectors.popoverHistogramColumns,
     base,
   );
-  setInnerTextWithoutRemovingChildElements(
+  setInnerTextAndPreserveChildren(
     histogramColumns,
     `${stars[currentStarIdx].percentage}%`,
   );
@@ -142,13 +142,33 @@ function setPopoverEventListeners() {
   const span = getElement<HTMLSpanElement>(config.selectors.acrPopover);
   const popover = getElement<HTMLDivElement>(config.selectors.popover);
 
-  let hoverTimeout: number | null = null;
+  // NOTE: this shouldn't be here, but I don't really care
+  popover.style.transition = `opacity ${config.ui.popoverAnimationDurationInMs}ms linear`;
 
-  span.addEventListener("mouseenter", () => {
+  let hoverTimeout: number | null = null;
+  let hideDelayTimeout: number | null = null;
+  let spanHover = false;
+  let popoverHover = false;
+  let popoverActive = false;
+  let isHiding = false;
+
+  const shouldShowPopover = () =>
+    popoverActive && !isHiding && (spanHover || popoverHover);
+
+  const showPopover = () => {
+    if (isHiding) return;
+
+    if (hideDelayTimeout !== null) {
+      clearTimeout(hideDelayTimeout);
+      hideDelayTimeout = null;
+    }
+
     if (hoverTimeout !== null) {
       clearTimeout(hoverTimeout);
       hoverTimeout = null;
     }
+
+    popoverActive = true;
 
     // make popover visible to get width, but with 0 opacity first
     popover.style.display = "block";
@@ -164,17 +184,76 @@ function setPopoverEventListeners() {
     popover.style.top = `${top}px`;
     popover.style.opacity = "1";
     setAriaHidden(popover, "false");
-  });
+  };
 
-  span.addEventListener("mouseleave", () => {
+  const hidePopover = () => {
+    isHiding = true;
+
+    if (hoverTimeout !== null) {
+      clearTimeout(hoverTimeout);
+    }
+
     popover.style.opacity = "0";
+
     hoverTimeout = window.setTimeout(() => {
-      if (popover.style.opacity === "0") {
-        popover.style.display = "none";
-        popover.style.left = "auto";
-        popover.style.top = "auto";
-        setAriaHidden(popover, "true");
+      popover.style.display = "none";
+      popover.style.left = "auto";
+      popover.style.top = "auto";
+      setAriaHidden(popover, "true");
+      popoverActive = false;
+      isHiding = false;
+    }, config.ui.popoverAnimationDurationInMs);
+  };
+
+  const considerHiding = () => {
+    if (isHiding) return;
+
+    if (hideDelayTimeout !== null) {
+      clearTimeout(hideDelayTimeout);
+    }
+
+    hideDelayTimeout = window.setTimeout(() => {
+      if (!shouldShowPopover()) {
+        hidePopover();
       }
-    }, config.ui.popoverDelayInMs);
-  });
+      hideDelayTimeout = null;
+    }, config.ui.popoverDelayBeforeHidingInMs);
+  };
+
+  const handleSpanMouseEnter = () => {
+    spanHover = true;
+    showPopover();
+  };
+
+  const handleSpanMouseLeave = () => {
+    spanHover = false;
+    considerHiding();
+  };
+
+  const handlePopoverMouseEnter = () => {
+    if (isHiding) return;
+
+    if (hideDelayTimeout !== null) {
+      clearTimeout(hideDelayTimeout);
+      hideDelayTimeout = null;
+    }
+
+    if (hoverTimeout !== null) {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = null;
+    }
+
+    popoverHover = true;
+    popover.style.opacity = "1";
+  };
+
+  const handlePopoverMouseLeave = () => {
+    popoverHover = false;
+    considerHiding();
+  };
+
+  span.addEventListener("mouseenter", handleSpanMouseEnter);
+  span.addEventListener("mouseleave", handleSpanMouseLeave);
+  popover.addEventListener("mouseenter", handlePopoverMouseEnter);
+  popover.addEventListener("mouseleave", handlePopoverMouseLeave);
 }
