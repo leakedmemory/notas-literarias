@@ -7,7 +7,7 @@ import customStyles from "./index.css?raw";
  * Modifies the default book page style to better fit other book ratings.
  */
 export function insertCustomStyles() {
-  logger.log("inserting custom book page styles");
+  logger.log("inserindo estilos personalizados para a página de livro");
   addStyles(customStyles);
 }
 

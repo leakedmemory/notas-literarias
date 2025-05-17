@@ -24,7 +24,9 @@ import { parseBookPage, parseSearchPage } from "./parser";
  * Fetches reviews from Goodreads and inserts them into the page.
  */
 export async function fetchAndInsertReviews(book: Book) {
-  logger.log("trying to fetch goodreads rating");
+  logger.log(
+    `iniciando busca de avaliações do goodreads para ${book.format === CodeFormat.ISBN ? "ISBN" : "ASIN"}: ${book.code}`,
+  );
 
   insertLoadingSpinner();
   insertSpinnerStyles();
@@ -36,13 +38,13 @@ export async function fetchAndInsertReviews(book: Book) {
     };
 
     const searchResponse = await sendMessageToBackground(searchMsg);
-
     let reviews: Reviews;
 
     if (book.format === CodeFormat.ISBN) {
       reviews = parseBookPage(searchResponse.pageHTML, searchResponse.url);
     } else {
       const bookPageURL = parseSearchPage(searchResponse.pageHTML);
+
       const fetchMsg: FetchURLMessage = {
         msg: MessageType.FetchURL,
         url: bookPageURL,
@@ -52,10 +54,12 @@ export async function fetchAndInsertReviews(book: Book) {
       reviews = parseBookPage(fetchResponse.pageHTML, fetchResponse.url);
     }
 
-    logger.log(`goodreads rating: ${reviews.rating}`);
+    logger.log(
+      `avaliação do goodreads obtida: ${reviews.rating} (${reviews.amount} avaliações)`,
+    );
     insertReviews(reviews);
   } catch (error) {
-    logger.error(`${error} [while fetching goodreads rating]`);
+    logger.error(`erro ao buscar avaliação do goodreads: ${error}`);
   } finally {
     removeLoadingSpinner();
   }
@@ -69,11 +73,12 @@ async function sendMessageToBackground<T extends ContentMessage>(
       message,
     )) as BackgroundResponse;
     if (response.err) {
+      logger.error(`erro retornado pelo script de background: ${response.err}`);
       throw new Error(`${response.err}`);
     }
     return response;
   } catch (error) {
-    logger.error(`${error} [while communicating with background script]`);
+    logger.error(`erro ao comunicar com script de background: ${error}`);
     throw error;
   }
 }
@@ -85,13 +90,15 @@ function sendSearchCodeMessage(msg: SearchCodeMessage, codeFormat: CodeFormat) {
       const resp = response as BackgroundResponse;
       if (resp.err) {
         removeLoadingSpinner();
-        logger.error(`${resp.err} [while searching for book's code]`);
+        logger.error(`erro ao buscar código do livro: ${resp.err}`);
         return;
       }
 
       if (codeFormat === CodeFormat.ISBN) {
         const reviews = parseBookPage(resp.pageHTML, resp.url);
-        logger.log(`goodreads rating: ${reviews.rating}`);
+        logger.log(
+          `avaliação do goodreads obtida: ${reviews.rating} (${reviews.amount} avaliações)`,
+        );
         removeLoadingSpinner();
         insertReviews(reviews);
       } else {
@@ -105,7 +112,7 @@ function sendSearchCodeMessage(msg: SearchCodeMessage, codeFormat: CodeFormat) {
     })
     .catch((error) => {
       removeLoadingSpinner();
-      logger.error(`${error} [while fetching goodreads rating]`);
+      logger.error(`erro ao buscar avaliação do goodreads: ${error}`);
     });
 }
 
@@ -117,17 +124,19 @@ function sendFetchURLMessage(msg: FetchURLMessage) {
 
       const resp = response as BackgroundResponse;
       if (resp.err) {
-        logger.error(`${resp.err} [while searching book's code]`);
+        logger.error(`erro ao buscar código do livro: ${resp.err}`);
         return;
       }
 
       const reviews = parseBookPage(resp.pageHTML, resp.url);
-      logger.log(`goodreads rating: ${reviews.rating}`);
+      logger.log(
+        `avaliação do goodreads obtida: ${reviews.rating} (${reviews.amount} avaliações)`,
+      );
       insertReviews(reviews);
     })
     .catch((error) => {
       removeLoadingSpinner();
-      logger.error(`${error} [while fetching goodreads book page]`);
+      logger.error(`erro ao buscar página do goodreads: ${error}`);
     });
 }
 
@@ -139,7 +148,8 @@ function insertReviews(reviews: Reviews) {
     insertBookRatingElement(reviews);
     insertCustomStyles();
     insertPopover(reviews);
+    logger.log("avaliações inseridas com sucesso");
   } catch (err: unknown) {
-    logger.error(`${err} [while inserting goodreads rating]`);
+    logger.error(`erro ao inserir avaliação do goodreads: ${err}`);
   }
 }

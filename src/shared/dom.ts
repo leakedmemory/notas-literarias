@@ -1,4 +1,5 @@
 import { config, prefixID } from "./config";
+import logger from "./logger";
 
 /**
  * Get an element by selector without error handling.

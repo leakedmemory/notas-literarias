@@ -1,4 +1,5 @@
 import { type Book, CodeFormat } from "../shared/types";
+import logger from "../shared/logger";
 import { config } from "../shared/config";
 import { getElement } from "../shared/dom";
 
@@ -6,7 +7,8 @@ import { getElement } from "../shared/dom";
  * Checks if the current page is a book page.
  */
 export function isBookPage(): boolean {
-  return getElement(config.selectors.bookPage) !== null;
+  const isBook = getElement(config.selectors.bookPage) !== null;
+  return isBook;
 }
 
 /**
@@ -42,5 +44,6 @@ export function getBookInfo(details: HTMLSpanElement[]): Book | null {
     return book;
   }
 
+  logger.warn("nenhum código ISBN-13 ou ASIN encontrado nos detalhes do livro");
   return null;
 }

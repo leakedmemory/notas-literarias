@@ -17,7 +17,7 @@ import { generateStarClass } from "../styles";
  * Inserts the popover element into the page.
  */
 export function insertPopover(reviews: Reviews) {
-  logger.log("inserting goodreads popover");
+  logger.log("inserindo popover de avaliações do goodreads");
 
   const parser = new DOMParser();
   const popoverBase = parser.parseFromString(popoverBaseHTML, "text/html").body
@@ -27,7 +27,9 @@ export function insertPopover(reviews: Reviews) {
     config.selectors.popoverStarsFilled,
     popoverBase,
   );
-  starsFilled.classList.add(generateStarClass(reviews.rating, false));
+
+  const starsClass = generateStarClass(reviews.rating, false);
+  starsFilled.classList.add(starsClass);
 
   const ariaHidden = getElement<HTMLSpanElement>(
     config.selectors.popoverAriaHidden,

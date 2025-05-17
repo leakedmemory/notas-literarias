@@ -30,9 +30,8 @@ export function insertLoadingSpinner() {
   spinnerContainer.appendChild(spinner);
   spinnerContainer.appendChild(loadingText);
 
-  logger.log("inserting loading spinner");
-
   ratingRef.insertAdjacentElement("afterend", spinnerContainer);
+  logger.log("spinner de carregamento inserido");
 }
 
 /**
@@ -43,8 +42,6 @@ export function removeLoadingSpinner() {
     "notasliterarias-spinner_container",
   );
   if (spinnerContainer) {
-    logger.log("removing loading spinner");
-
     spinnerContainer.remove();
   }
 }
@@ -53,6 +50,5 @@ export function removeLoadingSpinner() {
  * Inserts the CSS for spinner.
  */
 export function insertSpinnerStyles() {
-  logger.log("inserting spinner styles");
   addStyles(spinnerCSS);
 }

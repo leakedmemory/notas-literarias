@@ -4,8 +4,10 @@ import {
   type BackgroundResponse,
 } from "../shared/types";
 import { config, goodreadsURL } from "../shared/config";
+import logger from "../shared/logger";
 
 (function main() {
+  logger.log("iniciando script de background da extensão notas literárias");
   browser.runtime.onMessage.addListener(messageHandler);
 })();
 
@@ -21,7 +23,6 @@ function messageHandler(
   sendResponse: (response: unknown) => void,
 ): true {
   const msg = message as ContentMessage;
-
   const messageHandlers = {
     [MessageType.SearchCode]: () => getPageFromSearchCode(msg.code),
     [MessageType.FetchURL]: () => getPageFromURL(msg.url),

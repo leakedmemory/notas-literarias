@@ -24,6 +24,7 @@ export function getRatingReference(): Element {
   }
 
   if (!ref) {
+    logger.error("elemento de referência de avaliação não encontrado");
     throw new Error("Rating reference element not found");
   }
 
@@ -37,19 +38,22 @@ export function getRatingReference(): Element {
  * @throws When some element is not found in the DOM.
  */
 export function insertBookRatingElement(reviews: Reviews) {
+  logger.log("inserindo elemento de avaliação do livro");
+
   const ratingRef = getRatingReference();
   const ratingElement = ratingRef.cloneNode(true) as HTMLDivElement;
+
   addExtensionPrefixToElementIDs(ratingElement);
 
   const popTitle = changePopTitle(ratingElement, reviews);
   changeRatingValue(ratingElement, popTitle);
   changeStarsRepresentation(ratingElement, reviews);
   changeCustomerReviewsRedirection(ratingElement, reviews);
+
   removeAmazonEventAttributes(ratingElement);
 
-  logger.log("inserting goodreads rating element");
-
   ratingRef.insertAdjacentElement("afterend", ratingElement);
+  logger.log("elemento de avaliação do goodreads inserido com sucesso");
 }
 
 /**
@@ -62,6 +66,7 @@ export function insertBookRatingElement(reviews: Reviews) {
 function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
   const title = getElement<HTMLSpanElement>(config.selectors.popTitle, rating);
   if (!title) {
+    logger.error("elemento de título não encontrado");
     throw new Error("title span element not found");
   }
 
@@ -83,6 +88,7 @@ function changeRatingValue(rating: HTMLElement, title: string) {
     rating,
   );
   if (!ratingValue) {
+    logger.error("elemento de valor de avaliação não encontrado");
     throw new Error("literal rating element not found");
   }
 
@@ -101,6 +107,7 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
   if (!stars) {
     stars = getElement<HTMLElement>(config.selectors.ratingStarsMini, rating);
     if (!stars) {
+      logger.error("elemento de representação de estrelas não encontrado");
       throw new Error("Stars representation element not found");
     }
     isMini = true;
@@ -109,23 +116,24 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
   // Class that controls how many stars are filled
   const starsFilledClass = Array.from(stars.classList)[2];
   if (!starsFilledClass.startsWith("a-star-")) {
+    logger.error("classe de estrelas não encontrada");
     throw new Error("Star class not found");
   }
 
-  stars.classList.replace(
-    starsFilledClass,
-    generateStarClass(reviews.rating, isMini),
-  );
+  const newStarsClass = generateStarClass(reviews.rating, isMini);
+  stars.classList.replace(starsFilledClass, newStarsClass);
 
   // Alt representation of the stars, which is a separate element
   const selector = isMini
     ? config.selectors.ratingStarsMiniAlt
     : config.selectors.ratingStarsAlt;
+
   const starsAlt =
     getElement<HTMLSpanElement>(selector, stars) ||
     (stars.firstElementChild as HTMLSpanElement);
 
   if (!starsAlt) {
+    logger.error("elemento alt de estrelas não encontrado");
     throw new Error("stars alt element not found");
   }
 
@@ -140,11 +148,17 @@ function changeRatingCount(rating: HTMLElement, ratingCount: number) {
   const match = currentText.match(/(\d{1,3}(?:[.,]\d{3})*(?:\d)*)/);
 
   if (match) {
+    const oldValue = match[0];
     const formattedRatingsCount = ratingCount
       .toLocaleString()
       .replace(",", ".");
 
-    rating.innerText = `${currentText.replace(match[0], formattedRatingsCount)} ${config.ui.goodreadsSource}`;
+    const newText = `${currentText.replace(oldValue, formattedRatingsCount)} ${config.ui.goodreadsSource}`;
+    rating.innerText = newText;
+  } else {
+    logger.warn(
+      `padrão de contagem não encontrado no texto atual: "${currentText}"`,
+    );
   }
 }
 
@@ -162,6 +176,7 @@ function changeCustomerReviewsRedirection(
     rating,
   );
   if (!customerReviewsElement) {
+    logger.error("elemento de avaliações de clientes não encontrado");
     throw new Error("customer reviews element not found");
   }
 
@@ -174,6 +189,9 @@ function changeCustomerReviewsRedirection(
     (customerReviewsElement.firstElementChild as HTMLSpanElement);
 
   if (!customerReviewsCountElement) {
+    logger.error(
+      "elemento de contagem de avaliações de clientes não encontrado",
+    );
     throw new Error("customer reviews count element not found");
   }
 

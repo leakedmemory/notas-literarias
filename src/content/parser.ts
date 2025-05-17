@@ -1,6 +1,7 @@
-import type { Reviews, Star } from "../shared/types";
+import logger from "../shared/logger";
 import { config, goodreadsURL } from "../shared/config";
 import { getElement, getElements } from "../shared/dom";
+import type { Reviews, Star } from "../shared/types";
 
 const parser = new DOMParser();
 
@@ -16,20 +17,28 @@ export function parseSearchPage(html: string): string {
     doc,
   );
   if (!bookAnchorElement) {
+    logger.error(
+      "livro não encontrado para o ASIN fornecido na página de resultados",
+    );
     throw new Error("book not found for the given ASIN");
   }
 
   // href's origin is the extension
   const href = bookAnchorElement.href;
   const url = goodreadsURL(href.slice(href.indexOf("/book")));
+
   return url;
 }
 
 function parseReviews(doc: Document, url: string): Reviews {
+  const rating = getRating(doc);
+  const amount = getAmountOfReviews(doc);
+  const stars = getStars(doc);
+
   const reviews: Reviews = {
-    rating: getRating(doc),
-    amount: getAmountOfReviews(doc),
-    stars: getStars(doc),
+    rating,
+    amount,
+    stars,
     url: `${url}${config.goodreads.communityReviewsFilter}`,
   };
 
@@ -49,10 +58,14 @@ function getRating(doc: Document): string {
     doc,
   );
   if (!ratingElement) {
+    logger.error("elemento de classificação não encontrado no documento");
     throw new Error("rating not found");
   }
 
-  return roundRating(ratingElement.innerText).replace(".", ",");
+  const rawRating = ratingElement.innerText;
+  const formattedRating = roundRating(rawRating).replace(".", ",");
+
+  return formattedRating;
 }
 
 /**
@@ -65,7 +78,9 @@ function roundRating(rating: string): string {
   const num = Number.parseFloat(rating);
   const scaled = num * 10;
   const rounded = Math.round(scaled);
-  return (rounded / 10).toFixed(1);
+  const result = (rounded / 10).toFixed(1);
+
+  return result;
 }
 
 /**
@@ -81,14 +96,13 @@ function getAmountOfReviews(doc: Document): number {
     doc,
   );
   if (!ratingsCountElement) {
+    logger.error("elemento de contagem de avaliações não encontrado");
     throw new Error("ratings count not found");
   }
 
-  const amount = Number.parseInt(
-    ratingsCountElement.innerHTML
-      .slice(0, ratingsCountElement.innerHTML.indexOf("<"))
-      .replace(",", ""),
-  );
+  const innerHTML = ratingsCountElement.innerHTML;
+  const rawAmount = innerHTML.slice(0, innerHTML.indexOf("<")).replace(",", "");
+  const amount = Number.parseInt(rawAmount);
 
   return amount;
 }
@@ -103,15 +117,21 @@ function getAmountOfReviews(doc: Document): number {
 function getStars(doc: Document): Star[] {
   const starsElement = getElements<HTMLDivElement>(config.selectors.stars, doc);
   if (!starsElement) {
+    logger.error("elementos de ranking de estrelas não encontrados");
     throw new Error("star ranks not found");
   }
 
   const stars: Star[] = starsElement.map((starRankElement, idx) => {
-    const [amount, percentage] = starRankElement.innerText.split(" ");
+    const text = starRankElement.innerText;
+    const [amount, percentage] = text.split(" ");
+    const rank = 5 - idx;
+    const parsedAmount = Number.parseInt(amount.replace(",", ""));
+    const parsedPercentage = percentage.slice(1, percentage.indexOf("%"));
+
     return {
-      rank: 5 - idx,
-      amount: Number.parseInt(amount.replace(",", "")),
-      percentage: percentage.slice(1, percentage.indexOf("%")),
+      rank,
+      amount: parsedAmount,
+      percentage: parsedPercentage,
     };
   });
 
