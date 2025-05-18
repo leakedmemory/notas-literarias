@@ -2,6 +2,44 @@
 
 Todas as principais mudanças deste projeto serão documentadas neste arquivo. Veja [conventional commits](https://www.conventionalcommits.org/) para as diretrizes de commit.
 
+## [0.5.0](https://codeberg.org/notas-literarias/notas-literarias/compare/v0.4.0..v0.5.0) - 2025-05-18
+
+### Recursos
+
+- **(firefox)** adiciona id para extensão e web-ext linting - ([9162b87](https://codeberg.org/notas-literarias/notas-literarias/commit/9162b87a990d3c098753ea2d3571563023af1251)) - leaked memory
+- adiciona suporte para navegadores chromium - ([4fcc4f4](https://codeberg.org/notas-literarias/notas-literarias/commit/4fcc4f4762ea454369394ed7043a582900bcc102)) - leaked memory
+- cria ícone para extensão - ([2368aa8](https://codeberg.org/notas-literarias/notas-literarias/commit/2368aa8e393d15627602334e565aa6423901f600)) - leaked memory
+- melhora logging - ([b265415](https://codeberg.org/notas-literarias/notas-literarias/commit/b265415fd48ec287846f1b04fdf1d21a45ea61bb)) - leaked memory
+- adiciona funcionalidade de abrir repositório ao clicar no ícone da extensão - ([0f84b1e](https://codeberg.org/notas-literarias/notas-literarias/commit/0f84b1e7d0add273059c7bb338b379988f740c1c)) - leaked memory
+- implementa sistema de empacotamento - ([9ef722e](https://codeberg.org/notas-literarias/notas-literarias/commit/9ef722ec99ec8b8d8014893d7f1eed9d451040d4)) - leaked memory
+- adiciona ícones adicionais para a página de gerenciamento de extensões - ([51bca1f](https://codeberg.org/notas-literarias/notas-literarias/commit/51bca1fd2883161da90994e2a7b2ccf044b56a07)) - leaked memory
+
+### Correções de Bugs
+
+- **(popover)** adiciona persistência em hover ao popover - ([74e2d31](https://codeberg.org/notas-literarias/notas-literarias/commit/74e2d3196c3d221568836b6d0ba966699928e4d6)) - leaked memory
+- **(popover)** mantém popover no local correto mesmo com scroll - ([b309b32](https://codeberg.org/notas-literarias/notas-literarias/commit/b309b32262fafb2a9a305aa423d0ed2e662cdfaa)) - leaked memory
+
+### Refatorações
+
+- **(logger)** cria função para pegar o tempo atual já formatado - ([ef45f1f](https://codeberg.org/notas-literarias/notas-literarias/commit/ef45f1ff027b53a3d02db68e74ef2c80d82a892c)) - leaked memory
+- **(popover)** melhora organização do componente - ([3f92b4a](https://codeberg.org/notas-literarias/notas-literarias/commit/3f92b4ac97dd86919120529ce8d094dfa72ba16b)) - leaked memory
+- move css do spinner para arquivo próprio - ([69c4a34](https://codeberg.org/notas-literarias/notas-literarias/commit/69c4a349a48dd42d43d9630793117204d5d291f3)) - leaked memory
+- elimina duplicação de código e melhora arquitetura da extensão - ([e406d94](https://codeberg.org/notas-literarias/notas-literarias/commit/e406d9477b9684570e94b8ea45b3ec16dde174b9)) - leaked memory
+- reorganiza estrutura de diretórios do projeto - ([add721b](https://codeberg.org/notas-literarias/notas-literarias/commit/add721b6e2c5beecc3c0ec1432456058a4f9a902)) - leaked memory
+- remove código de seletores de elemento - ([01a45cc](https://codeberg.org/notas-literarias/notas-literarias/commit/01a45cc257eafc19122e17c3df162a57052f2d6c)) - leaked memory
+
+### Documentação
+
+- atualiza changelog - ([9565057](https://codeberg.org/notas-literarias/notas-literarias/commit/9565057a696ed53f96dd5ccb8b8a15d1bde1918a)) - leaked memory
+
+### Tarefas Diversas
+
+- desativa log verboso do web-ext - ([e57aadb](https://codeberg.org/notas-literarias/notas-literarias/commit/e57aadb44ee12060346f875317bec80fb90a29d7)) - leaked memory
+- migra repositório para codeberg - ([986b7c1](https://codeberg.org/notas-literarias/notas-literarias/commit/986b7c15a06f92e1fbdd680e0b1279918a275bcd)) - leaked memory
+- atualiza dependências - ([31e3b96](https://codeberg.org/notas-literarias/notas-literarias/commit/31e3b96c13738a9e9ae55986d304fcf3cacf88e1)) - leaked memory
+- altera script do cliff - ([2d60aa2](https://codeberg.org/notas-literarias/notas-literarias/commit/2d60aa2de772d674108ed201d1cbd734bd89784b)) - leaked memory
+- aumenta versão para 0.5.0 - ([604ed31](https://codeberg.org/notas-literarias/notas-literarias/commit/604ed31d1af39a4662f4390fcc6337722c8e0c5e)) - leaked memory
+
 ## [0.4.0](https://codeberg.org/notas-literarias/notas-literarias/compare/v0.3.0..v0.4.0) - 2025-05-10
 
 ### Recursos
