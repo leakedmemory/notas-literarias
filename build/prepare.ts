@@ -4,17 +4,17 @@ import { dirname } from "node:path";
 
 import { res, isDev, target } from "./utils";
 
-const outDir = res("dist", isDev ? "dev" : "prod", target);
+const OUT_DIR = res("dist", isDev ? "dev" : "prod", target);
 
-(function main() {
-  copyManifest();
-  copyIcons();
+(async function main() {
+  await copyManifest();
+  await copyIcons();
 })();
 
 async function copyManifest() {
   try {
     const src = res("platforms", target, "manifest.json");
-    const dest = res(outDir, "manifest.json");
+    const dest = res(OUT_DIR, "manifest.json");
 
     if (!existsSync(src)) {
       console.error(`manifest not found for ${target}: ${src}`);
@@ -37,11 +37,11 @@ async function copyManifest() {
 async function copyIcons() {
   try {
     const src = res("icons");
-    const dest = res(outDir, "icons");
+    const dest = res(OUT_DIR, "icons");
 
-    if (!existsSync(outDir)) {
-      await mkdir(outDir, { recursive: true });
-      console.log(`created directory: ${outDir}`);
+    if (!existsSync(OUT_DIR)) {
+      await mkdir(OUT_DIR, { recursive: true });
+      console.log(`created directory: ${OUT_DIR}`);
     }
 
     await cp(src, dest, { recursive: true });

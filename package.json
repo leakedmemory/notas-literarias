@@ -1,5 +1,6 @@
 {
-  "name": "notas-literarias-webext",
+  "name": "notas-literarias",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.10.0",
@@ -16,6 +17,8 @@
     "build:chromium": "cross-env NODE_ENV='prod' BROWSER='chromium' pnpm run-p prepare build:lib:*",
     "build:lib:content": "vite build --config build/vite.config.content.ts",
     "build:lib:background": "vite build --config build/vite.config.background.ts",
+    "postbuild": "pnpm run pack",
+    "pack": "tsx build/package.ts",
     "lint:biome": "biome lint --write",
     "lint:manifest": "pnpm web-ext lint -s dist/prod/firefox",
     "fmt": "pnpm run-p fmt:*",
@@ -30,8 +33,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/archiver": "^6.0.3",
     "@types/node": "^22.15.17",
     "@types/webextension-polyfill": "^0.12.3",
+    "archiver": "^7.0.1",
     "cross-env": "^7.0.3",
     "git-cliff": "^2.8.0",
     "lefthook": "^1.11.12",
