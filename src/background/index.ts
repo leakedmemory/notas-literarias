@@ -9,6 +9,8 @@ import logger from "../shared/logger";
 (function main() {
   logger.log("iniciando script de background da extensão notas literárias");
   browser.runtime.onMessage.addListener(messageHandler);
+
+  openProjectRepoOnClick();
 })();
 
 /**
@@ -63,4 +65,12 @@ async function getPageFromSearchCode(
 
 async function getPageFromURL(url: string): Promise<BackgroundResponse> {
   return fetchPage(url);
+}
+
+function openProjectRepoOnClick() {
+  browser.action.onClicked.addListener((tab) => {
+    browser.tabs.create({
+      url: "https://codeberg.org/notas-literarias/notas-literarias",
+    });
+  });
 }

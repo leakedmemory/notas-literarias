@@ -18,6 +18,7 @@
       "64": "icons/icon-64x64.png"
     }
   },
+  "permissions": ["tabs"],
   "host_permissions": ["*://*.goodreads.com/*"],
   "background": {
     "scripts": ["background.global.js"]
