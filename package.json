@@ -26,7 +26,7 @@
     "fmt:prettier": "prettier '**/*.{html,md}' --write",
     "fix": "pnpm run lint:biome && pnpm run fmt",
     "clean": "rm -rf dist/",
-    "cliff": "pnpm git-cliff -c .cliff.toml -o"
+    "cliff": "pnpm git-cliff --unreleased --bump -c .cliff.toml --prepend CHANGELOG.md"
   },
   "dependencies": {
     "dayjs": "^1.11.13"
