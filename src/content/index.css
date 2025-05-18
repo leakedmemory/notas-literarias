@@ -2,14 +2,3 @@
 div#reviewFeatureGroup {
   margin-bottom: 7px;
 }
-
-/* Popover Animation */
-#notasliterarias-popover {
-  opacity: 0;
-  display: none;
-}
-
-#notasliterarias-popover.visible {
-  opacity: 1;
-  display: block;
-}

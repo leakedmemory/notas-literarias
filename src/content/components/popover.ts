@@ -77,7 +77,18 @@ export function insertPopover(reviews: Reviews) {
   container.appendChild(popoverBase);
   document.body.appendChild(container);
 
-  setPopoverEventListeners();
+  const span = getElement<HTMLSpanElement>(config.selectors.acrPopover);
+  const popover = getElement<HTMLDivElement>(config.selectors.popover);
+
+  setupPopoverStyles(popover);
+  setPopoverEventListeners(span, popover);
+}
+
+function setupPopoverStyles(popover: HTMLDivElement) {
+  popover.style.opacity = "0";
+  popover.style.display = "none";
+  popover.style.transition = `opacity ${config.ui.popoverAnimationDurationInMs}ms linear`;
+  popover.style.zIndex = "9999";
 }
 
 /**
@@ -140,122 +151,174 @@ function createStarItem(
 /**
  * Sets up event listeners for the popover.
  */
-function setPopoverEventListeners() {
+function setPopoverEventListeners(
+  span: HTMLSpanElement,
+  popover: HTMLDivElement,
+) {
+  const popoverState = createPopoverState();
+  setupSpanEventListeners(span, popover, popoverState);
+  setupPopoverEventListeners(popover, popoverState);
+}
+
+/**
+ * Creates and returns the state object for the popover.
+ */
+function createPopoverState() {
+  return {
+    hoverTimeout: null as number | null,
+    hideDelayTimeout: null as number | null,
+    spanHover: false,
+    popoverHover: false,
+    popoverActive: false,
+    isHiding: false,
+
+    shouldShowPopover() {
+      return (
+        this.popoverActive &&
+        !this.isHiding &&
+        (this.spanHover || this.popoverHover)
+      );
+    },
+  };
+}
+
+/**
+ * Sets up event listeners for the span element.
+ */
+function setupSpanEventListeners(
+  span: HTMLSpanElement,
+  popover: HTMLDivElement,
+  state: ReturnType<typeof createPopoverState>,
+) {
+  span.addEventListener("mouseenter", () => {
+    state.spanHover = true;
+    showPopover(popover, state);
+  });
+
+  span.addEventListener("mouseleave", () => {
+    state.spanHover = false;
+    considerHiding(popover, state);
+  });
+}
+
+/**
+ * Sets up event listeners for the popover element.
+ */
+function setupPopoverEventListeners(
+  popover: HTMLDivElement,
+  state: ReturnType<typeof createPopoverState>,
+) {
+  popover.addEventListener("mouseenter", () => {
+    if (state.isHiding) return;
+
+    if (state.hideDelayTimeout !== null) {
+      clearTimeout(state.hideDelayTimeout);
+      state.hideDelayTimeout = null;
+    }
+
+    if (state.hoverTimeout !== null) {
+      clearTimeout(state.hoverTimeout);
+      state.hoverTimeout = null;
+    }
+
+    state.popoverHover = true;
+    popover.style.opacity = "1";
+  });
+
+  popover.addEventListener("mouseleave", () => {
+    state.popoverHover = false;
+    considerHiding(popover, state);
+  });
+}
+
+/**
+ * Shows the popover.
+ */
+function showPopover(
+  popover: HTMLDivElement,
+  state: ReturnType<typeof createPopoverState>,
+) {
+  if (state.isHiding) return;
+
+  if (state.hideDelayTimeout !== null) {
+    clearTimeout(state.hideDelayTimeout);
+    state.hideDelayTimeout = null;
+  }
+
+  if (state.hoverTimeout !== null) {
+    clearTimeout(state.hoverTimeout);
+    state.hoverTimeout = null;
+  }
+
+  state.popoverActive = true;
+
+  // make popover visible to get width, but with 0 opacity first
+  popover.style.display = "block";
+  popover.style.opacity = "0";
+
+  positionPopover(popover);
+
+  popover.style.opacity = "1";
+  setAriaHidden(popover, "false");
+}
+
+/**
+ * Positions the popover relative to the span.
+ */
+function positionPopover(popover: HTMLDivElement) {
   const span = getElement<HTMLSpanElement>(config.selectors.acrPopover);
-  const popover = getElement<HTMLDivElement>(config.selectors.popover);
+  const spanRect = span.getBoundingClientRect();
+  const popoverRect = popover.getBoundingClientRect();
 
-  // NOTE: this shouldn't be here, but I don't really care
-  popover.style.transition = `opacity ${config.ui.popoverAnimationDurationInMs}ms linear`;
+  const left = spanRect.left + spanRect.width / 2 - popoverRect.width / 2;
+  const top = spanRect.bottom + 1;
 
-  let hoverTimeout: number | null = null;
-  let hideDelayTimeout: number | null = null;
-  let spanHover = false;
-  let popoverHover = false;
-  let popoverActive = false;
-  let isHiding = false;
+  popover.style.left = `${left}px`;
+  popover.style.top = `${top}px`;
+}
 
-  const shouldShowPopover = () =>
-    popoverActive && !isHiding && (spanHover || popoverHover);
+/**
+ * Considers hiding the popover after a delay.
+ */
+function considerHiding(
+  popover: HTMLDivElement,
+  state: ReturnType<typeof createPopoverState>,
+) {
+  if (state.isHiding) return;
 
-  const showPopover = () => {
-    if (isHiding) return;
+  if (state.hideDelayTimeout !== null) {
+    clearTimeout(state.hideDelayTimeout);
+  }
 
-    if (hideDelayTimeout !== null) {
-      clearTimeout(hideDelayTimeout);
-      hideDelayTimeout = null;
+  state.hideDelayTimeout = window.setTimeout(() => {
+    if (!state.shouldShowPopover()) {
+      hidePopover(popover, state);
     }
+    state.hideDelayTimeout = null;
+  }, config.ui.popoverDelayBeforeHidingInMs);
+}
 
-    if (hoverTimeout !== null) {
-      clearTimeout(hoverTimeout);
-      hoverTimeout = null;
-    }
+/**
+ * Hides the popover.
+ */
+function hidePopover(
+  popover: HTMLDivElement,
+  state: ReturnType<typeof createPopoverState>,
+) {
+  state.isHiding = true;
 
-    popoverActive = true;
+  if (state.hoverTimeout !== null) {
+    clearTimeout(state.hoverTimeout);
+  }
 
-    // make popover visible to get width, but with 0 opacity first
-    popover.style.display = "block";
-    popover.style.opacity = "0";
+  popover.style.opacity = "0";
 
-    const spanRect = span.getBoundingClientRect();
-    const popoverRect = popover.getBoundingClientRect();
-
-    const left = spanRect.left + spanRect.width / 2 - popoverRect.width / 2;
-    const top = spanRect.bottom + 1;
-
-    popover.style.left = `${left}px`;
-    popover.style.top = `${top}px`;
-    popover.style.opacity = "1";
-    setAriaHidden(popover, "false");
-  };
-
-  const hidePopover = () => {
-    isHiding = true;
-
-    if (hoverTimeout !== null) {
-      clearTimeout(hoverTimeout);
-    }
-
-    popover.style.opacity = "0";
-
-    hoverTimeout = window.setTimeout(() => {
-      popover.style.display = "none";
-      popover.style.left = "auto";
-      popover.style.top = "auto";
-      setAriaHidden(popover, "true");
-      popoverActive = false;
-      isHiding = false;
-    }, config.ui.popoverAnimationDurationInMs);
-  };
-
-  const considerHiding = () => {
-    if (isHiding) return;
-
-    if (hideDelayTimeout !== null) {
-      clearTimeout(hideDelayTimeout);
-    }
-
-    hideDelayTimeout = window.setTimeout(() => {
-      if (!shouldShowPopover()) {
-        hidePopover();
-      }
-      hideDelayTimeout = null;
-    }, config.ui.popoverDelayBeforeHidingInMs);
-  };
-
-  const handleSpanMouseEnter = () => {
-    spanHover = true;
-    showPopover();
-  };
-
-  const handleSpanMouseLeave = () => {
-    spanHover = false;
-    considerHiding();
-  };
-
-  const handlePopoverMouseEnter = () => {
-    if (isHiding) return;
-
-    if (hideDelayTimeout !== null) {
-      clearTimeout(hideDelayTimeout);
-      hideDelayTimeout = null;
-    }
-
-    if (hoverTimeout !== null) {
-      clearTimeout(hoverTimeout);
-      hoverTimeout = null;
-    }
-
-    popoverHover = true;
-    popover.style.opacity = "1";
-  };
-
-  const handlePopoverMouseLeave = () => {
-    popoverHover = false;
-    considerHiding();
-  };
-
-  span.addEventListener("mouseenter", handleSpanMouseEnter);
-  span.addEventListener("mouseleave", handleSpanMouseLeave);
-  popover.addEventListener("mouseenter", handlePopoverMouseEnter);
-  popover.addEventListener("mouseleave", handlePopoverMouseLeave);
+  state.hoverTimeout = window.setTimeout(() => {
+    popover.style.display = "none";
+    popover.style.left = "auto";
+    popover.style.top = "auto";
+    setAriaHidden(popover, "true");
+    state.popoverActive = false;
+    state.isHiding = false;
+  }, config.ui.popoverAnimationDurationInMs);
 }
