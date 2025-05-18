@@ -13,9 +13,6 @@ import { config } from "../../shared/config";
 
 import { generateStarClass } from "../styles";
 
-/**
- * Inserts the popover element into the page.
- */
 export function insertPopover(reviews: Reviews) {
   logger.log("inserindo popover de avaliações do goodreads");
 
@@ -77,23 +74,20 @@ export function insertPopover(reviews: Reviews) {
   container.appendChild(popoverBase);
   document.body.appendChild(container);
 
-  const span = getElement<HTMLSpanElement>(config.selectors.acrPopover);
+  const trigger = getElement<HTMLSpanElement>(config.selectors.acrPopover);
   const popover = getElement<HTMLDivElement>(config.selectors.popover);
 
   setupPopoverStyles(popover);
-  setPopoverEventListeners(span, popover);
+  setEventListeners(trigger, popover);
 }
 
-function setupPopoverStyles(popover: HTMLDivElement) {
+function setupPopoverStyles(popover: HTMLElement) {
   popover.style.opacity = "0";
   popover.style.display = "none";
   popover.style.transition = `opacity ${config.ui.popoverAnimationDurationInMs}ms linear`;
   popover.style.zIndex = "9999";
 }
 
-/**
- * Creates a star item for the popover.
- */
 function createStarItem(
   base: HTMLLIElement,
   stars: Star[],
@@ -148,64 +142,50 @@ function createStarItem(
   }
 }
 
-/**
- * Sets up event listeners for the popover.
- */
-function setPopoverEventListeners(
-  span: HTMLSpanElement,
-  popover: HTMLDivElement,
-) {
+function setEventListeners(trigger: HTMLElement, popover: HTMLElement) {
   const popoverState = createPopoverState();
-  setupSpanEventListeners(span, popover, popoverState);
+  setupTriggerEventListeners(trigger, popover, popoverState);
   setupPopoverEventListeners(popover, popoverState);
+  setupScrollEventListener(trigger, popover, popoverState);
 }
 
-/**
- * Creates and returns the state object for the popover.
- */
 function createPopoverState() {
   return {
     hoverTimeout: null as number | null,
     hideDelayTimeout: null as number | null,
-    spanHover: false,
-    popoverHover: false,
-    popoverActive: false,
+    isTriggerOnHover: false,
+    isPopoverOnHover: false,
+    isPopoverActive: false,
     isHiding: false,
 
     shouldShowPopover() {
       return (
-        this.popoverActive &&
+        this.isPopoverActive &&
         !this.isHiding &&
-        (this.spanHover || this.popoverHover)
+        (this.isTriggerOnHover || this.isPopoverOnHover)
       );
     },
   };
 }
 
-/**
- * Sets up event listeners for the span element.
- */
-function setupSpanEventListeners(
-  span: HTMLSpanElement,
-  popover: HTMLDivElement,
+function setupTriggerEventListeners(
+  trigger: HTMLElement,
+  popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
 ) {
-  span.addEventListener("mouseenter", () => {
-    state.spanHover = true;
-    showPopover(popover, state);
+  trigger.addEventListener("mouseenter", () => {
+    state.isTriggerOnHover = true;
+    showPopover(trigger, popover, state);
   });
 
-  span.addEventListener("mouseleave", () => {
-    state.spanHover = false;
+  trigger.addEventListener("mouseleave", () => {
+    state.isTriggerOnHover = false;
     considerHiding(popover, state);
   });
 }
 
-/**
- * Sets up event listeners for the popover element.
- */
 function setupPopoverEventListeners(
-  popover: HTMLDivElement,
+  popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
 ) {
   popover.addEventListener("mouseenter", () => {
@@ -221,21 +201,33 @@ function setupPopoverEventListeners(
       state.hoverTimeout = null;
     }
 
-    state.popoverHover = true;
+    state.isPopoverOnHover = true;
     popover.style.opacity = "1";
   });
 
   popover.addEventListener("mouseleave", () => {
-    state.popoverHover = false;
+    state.isPopoverOnHover = false;
     considerHiding(popover, state);
   });
 }
 
-/**
- * Shows the popover.
- */
+function setupScrollEventListener(
+  trigger: HTMLElement,
+  popover: HTMLElement,
+  state: ReturnType<typeof createPopoverState>,
+) {
+  const handleScroll = () => {
+    if (state.isPopoverActive && !state.isHiding) {
+      positionPopover(trigger, popover);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+}
+
 function showPopover(
-  popover: HTMLDivElement,
+  trigger: HTMLElement,
+  popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
 ) {
   if (state.isHiding) return;
@@ -250,38 +242,34 @@ function showPopover(
     state.hoverTimeout = null;
   }
 
-  state.popoverActive = true;
+  state.isPopoverActive = true;
 
-  // make popover visible to get width, but with 0 opacity first
+  // display popover to get width, but maintain 0 opacity
   popover.style.display = "block";
-  popover.style.opacity = "0";
+  popover.style.position = "fixed";
 
-  positionPopover(popover);
+  positionPopover(trigger, popover);
 
   popover.style.opacity = "1";
   setAriaHidden(popover, "false");
 }
 
 /**
- * Positions the popover relative to the span.
+ * Positions the popover relative to the span, accounting for page scroll.
  */
-function positionPopover(popover: HTMLDivElement) {
-  const span = getElement<HTMLSpanElement>(config.selectors.acrPopover);
-  const spanRect = span.getBoundingClientRect();
+function positionPopover(trigger: HTMLElement, popover: HTMLElement) {
+  const triggerRect = trigger.getBoundingClientRect();
   const popoverRect = popover.getBoundingClientRect();
 
-  const left = spanRect.left + spanRect.width / 2 - popoverRect.width / 2;
-  const top = spanRect.bottom + 1;
+  const left = triggerRect.left + triggerRect.width / 2 - popoverRect.width / 2;
+  const top = triggerRect.bottom + 1;
 
   popover.style.left = `${left}px`;
   popover.style.top = `${top}px`;
 }
 
-/**
- * Considers hiding the popover after a delay.
- */
 function considerHiding(
-  popover: HTMLDivElement,
+  popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
 ) {
   if (state.isHiding) return;
@@ -298,11 +286,8 @@ function considerHiding(
   }, config.ui.popoverDelayBeforeHidingInMs);
 }
 
-/**
- * Hides the popover.
- */
 function hidePopover(
-  popover: HTMLDivElement,
+  popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
 ) {
   state.isHiding = true;
@@ -311,14 +296,25 @@ function hidePopover(
     clearTimeout(state.hoverTimeout);
   }
 
+  const currentPosition = popover.getBoundingClientRect();
+  const scrollX = window.scrollX || window.pageXOffset;
+  const scrollY = window.scrollY || window.pageYOffset;
+
+  popover.style.position = "absolute";
+  popover.style.top = `${currentPosition.top + scrollY}px`;
+  popover.style.left = `${currentPosition.left + scrollX}px`;
+
   popover.style.opacity = "0";
 
   state.hoverTimeout = window.setTimeout(() => {
     popover.style.display = "none";
+    popover.style.position = "";
     popover.style.left = "auto";
     popover.style.top = "auto";
+
     setAriaHidden(popover, "true");
-    state.popoverActive = false;
+
+    state.isPopoverActive = false;
     state.isHiding = false;
   }, config.ui.popoverAnimationDurationInMs);
 }
