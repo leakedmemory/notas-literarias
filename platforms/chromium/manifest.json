@@ -5,7 +5,7 @@
   "short_name": "Notas Lit",
   "description": "Integra avaliações do Goodreads diretamente na página do livro na Amazon Brasil.",
   "version": "0.4.0",
-  "homepage_url": "https://github.com/leakedmemory/notas-literarias",
+  "homepage_url": "https://codeberg.org/notas-literarias/notas-literarias",
   "action": {
     "default_icon": {
       "16": "icons/icon-16x16.png",
