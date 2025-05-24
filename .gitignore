@@ -6,4 +6,5 @@ dist/
 tmp/
 
 .env
+.lycheecache
 src/auto-imports.d.ts

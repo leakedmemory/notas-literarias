@@ -5,3 +5,8 @@ parallel = true
 run = "pnpm run fix"
 glob = "*.{css,html,json,md,ts,mjs}"
 stage_fixed = true
+
+[pre-commit.commands.lychee]
+run = "lychee -c ./.lychee.toml {staged_files}"
+glob = "*.md"
+exclude = ["CHANGELOG.md"]
