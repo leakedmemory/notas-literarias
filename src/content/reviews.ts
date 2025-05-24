@@ -83,63 +83,6 @@ async function sendMessageToBackground<T extends ContentMessage>(
   }
 }
 
-function sendSearchCodeMessage(msg: SearchCodeMessage, codeFormat: CodeFormat) {
-  browser.runtime
-    .sendMessage(msg)
-    .then((response: unknown) => {
-      const resp = response as BackgroundResponse;
-      if (resp.err) {
-        removeLoadingSpinner();
-        logger.error(`erro ao buscar código do livro: ${resp.err}`);
-        return;
-      }
-
-      if (codeFormat === CodeFormat.ISBN) {
-        const reviews = parseBookPage(resp.pageHTML, resp.url);
-        logger.log(
-          `avaliação do goodreads obtida: ${reviews.rating} (${reviews.amount} avaliações)`,
-        );
-        removeLoadingSpinner();
-        insertReviews(reviews);
-      } else {
-        const bookPageURL = parseSearchPage(resp.pageHTML);
-        const newMsg: FetchURLMessage = {
-          msg: MessageType.FetchURL,
-          url: bookPageURL,
-        };
-        sendFetchURLMessage(newMsg);
-      }
-    })
-    .catch((error) => {
-      removeLoadingSpinner();
-      logger.error(`erro ao buscar avaliação do goodreads: ${error}`);
-    });
-}
-
-function sendFetchURLMessage(msg: FetchURLMessage) {
-  browser.runtime
-    .sendMessage(msg)
-    .then((response: unknown) => {
-      removeLoadingSpinner();
-
-      const resp = response as BackgroundResponse;
-      if (resp.err) {
-        logger.error(`erro ao buscar código do livro: ${resp.err}`);
-        return;
-      }
-
-      const reviews = parseBookPage(resp.pageHTML, resp.url);
-      logger.log(
-        `avaliação do goodreads obtida: ${reviews.rating} (${reviews.amount} avaliações)`,
-      );
-      insertReviews(reviews);
-    })
-    .catch((error) => {
-      removeLoadingSpinner();
-      logger.error(`erro ao buscar página do goodreads: ${error}`);
-    });
-}
-
 /**
  * Inserts reviews data into the page.
  */
