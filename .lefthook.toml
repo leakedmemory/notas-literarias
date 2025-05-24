@@ -5,7 +5,3 @@ parallel = true
 run = "pnpm run fix"
 glob = "*.{css,html,json,md,ts,mjs}"
 stage_fixed = true
-
-[pre-commit.commands.typos]
-run = "typos {staged_files}"
-exclude = ["CHANGELOG.md"]
