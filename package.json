@@ -18,6 +18,7 @@
     "build:lib:content": "vite build --config vite.config.content.ts",
     "build:lib:background": "vite build --config vite.config.background.ts",
     "pack": "pnpm run clean:pack && tsx scripts/pack.ts",
+    "release": "tsx scripts/release.ts",
     "lint:biome": "biome lint --write",
     "lint:manifest": "pnpm web-ext lint -s dist/prod/firefox/",
     "fmt": "pnpm run-p fmt:*",
