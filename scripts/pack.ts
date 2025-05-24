@@ -4,27 +4,31 @@ import { resolve } from "node:path";
 
 import archiver from "archiver";
 
-import { res, version } from "./utils";
+import { res, VERSION, TARGETS } from "./utils";
 
-const TARGETS = ["firefox", "chromium"];
 const OUT_DIR = res("dist", "prod");
 
 (async function main() {
   for (const target of TARGETS) {
     const targetDir = resolve(OUT_DIR, target);
     if (existsSync(targetDir)) {
-      await packageExtension(target, targetDir);
+      await packExtension(target, targetDir);
     } else {
       console.log(`build for target ${target} not found`);
     }
   }
 })();
 
-async function packageExtension(target: string, srcDir: string) {
-  const outputFile = resolve(
-    OUT_DIR,
-    `notas-literarias-${target}-${version}.zip`,
-  );
+async function packExtension(target: string, srcDir: string) {
+  let outputFile: string;
+  if (target === "firefox") {
+    outputFile = resolve(
+      OUT_DIR,
+      `notas-literarias-${target}-unsigned-${VERSION}.xpi`,
+    );
+  } else {
+    outputFile = resolve(OUT_DIR, `notas-literarias-${target}-${VERSION}.zip`);
+  }
 
   console.log(`packaging ${target} extension to ${outputFile}...`);
 

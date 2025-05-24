@@ -2,9 +2,9 @@ import { copyFile, mkdir, cp } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname } from "node:path";
 
-import { res, isDev, target } from "./utils";
+import { res, IS_DEV, TARGET } from "./utils";
 
-const OUT_DIR = res("dist", isDev ? "dev" : "prod", target);
+const OUT_DIR = res("dist", IS_DEV ? "dev" : "prod", TARGET);
 
 (async function main() {
   await copyManifest();
@@ -13,11 +13,11 @@ const OUT_DIR = res("dist", isDev ? "dev" : "prod", target);
 
 async function copyManifest() {
   try {
-    const src = res("platforms", target, "manifest.json");
+    const src = res("platforms", TARGET, "manifest.json");
     const dest = res(OUT_DIR, "manifest.json");
 
     if (!existsSync(src)) {
-      console.error(`manifest not found for ${target}: ${src}`);
+      console.error(`manifest not found for ${TARGET}: ${src}`);
       return;
     }
 
@@ -28,9 +28,9 @@ async function copyManifest() {
     }
 
     await copyFile(src, dest);
-    console.log(`successfully copied manifest for ${target}`);
+    console.log(`successfully copied manifest for ${TARGET}`);
   } catch (error) {
-    console.error(`error copying manifest for ${target}: ${error}`);
+    console.error(`error copying manifest for ${TARGET}: ${error}`);
   }
 }
 

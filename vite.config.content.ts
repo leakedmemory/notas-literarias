@@ -1,13 +1,13 @@
 import { mergeConfig, type UserConfig } from "vite";
 
 import { devConfig, prodConfig } from "./vite.config.base";
-import { res, packageName, isDev, target } from "./utils";
+import { res, PACKAGE_NAME, IS_DEV, TARGET } from "./scripts/utils";
 
 const contentConfig: UserConfig = {
   build: {
     lib: {
       entry: res("src", "content", "index.ts"),
-      name: `${packageName}-content`,
+      name: `${PACKAGE_NAME}-content`,
       formats: ["iife"],
     },
     rollupOptions: {
@@ -19,4 +19,4 @@ const contentConfig: UserConfig = {
   },
 };
 
-export default mergeConfig(isDev ? devConfig : prodConfig, contentConfig);
+export default mergeConfig(IS_DEV ? devConfig : prodConfig, contentConfig);

@@ -1,14 +1,14 @@
 import { type UserConfig, mergeConfig } from "vite";
 import AutoImport from "unplugin-auto-import/vite";
 
-import { res, packageName, target, isDev, version } from "./utils";
+import { res, PACKAGE_NAME, TARGET, IS_DEV, VERSION } from "./scripts/utils";
 
 const baseConfig: UserConfig = {
   define: {
-    __DEV__: isDev,
-    __NAME__: JSON.stringify(packageName),
-    __BROWSER__: target,
-    __VERSION__: JSON.stringify(version),
+    __DEV__: IS_DEV,
+    __NAME__: JSON.stringify(PACKAGE_NAME),
+    __BROWSER__: TARGET,
+    __VERSION__: JSON.stringify(VERSION),
   },
   plugins: [
     // ref: https://github.com/unplugin/unplugin-auto-import?tab=readme-ov-file#configuration
@@ -22,7 +22,7 @@ const baseConfig: UserConfig = {
     }),
   ],
   build: {
-    outDir: `dist/${isDev ? "dev" : "prod"}/${target}`,
+    outDir: `dist/${IS_DEV ? "dev" : "prod"}/${TARGET}`,
     emptyOutDir: false,
   },
   optimizeDeps: {
