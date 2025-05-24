@@ -2,7 +2,12 @@ import { config, prefixID } from "./config";
 import logger from "./logger";
 
 /**
- * Get an element by selector without error handling.
+ * Busca um elemento no DOM usando um seletor CSS sem tratamento de erro.
+ *
+ * @template T - Tipo do elemento HTML estendendo Element
+ * @param selector - Seletor CSS para localizar o elemento
+ * @param parent - Elemento pai ou documento onde buscar (padrão: document)
+ * @returns O elemento encontrado ou null se não existir
  */
 export function getElement<T extends Element>(
   selector: string,
@@ -12,7 +17,12 @@ export function getElement<T extends Element>(
 }
 
 /**
- * Get elements by selector without error handling.
+ * Busca múltiplos elementos no DOM usando um seletor CSS sem tratamento de erro.
+ *
+ * @template T - Tipo do elemento HTML estendendo Element
+ * @param selector - Seletor CSS para localizar os elementos
+ * @param parent - Elemento pai ou documento onde buscar (padrão: document)
+ * @returns Array com os elementos encontrados ou null se nenhum for encontrado
  */
 export function getElements<T extends Element>(
   selector: string,
@@ -26,7 +36,9 @@ export function getElements<T extends Element>(
 }
 
 /**
- * Adds extension's prefix to element and all of its children with IDs.
+ * Adiciona o prefixo da extensão aos IDs do elemento e de todos os seus filhos que possuem ID.
+ *
+ * @param element - O elemento HTML que terá seus IDs prefixados
  */
 export function addExtensionPrefixToElementIDs(element: HTMLElement) {
   if (element.id) {
@@ -40,20 +52,31 @@ export function addExtensionPrefixToElementIDs(element: HTMLElement) {
 }
 
 /**
- * Sets innerText of an element without removing its child elements.
+ * Define o texto interno de um elemento preservando seus elementos filhos.
+ *
+ * @param el - O elemento HTML que terá seu texto alterado
+ * @param txt - O novo texto a ser definido
+ *
+ * @example
+ * ```typescript
+ * // Se el contém: "Texto antigo <span>manter</span>"
+ * setInnerTextAndPreserveChildren(el, "Novo texto");
+ * // Resultado: "Novo texto <span>manter</span>"
+ * ```
  */
 export function setInnerTextAndPreserveChildren(el: HTMLElement, txt: string) {
   const clone = el.cloneNode(true) as HTMLElement;
   el.innerText = txt;
-  // for some reason, using without wrapping into an Array will not
-  // append all the children
   for (const c of Array.from(clone.children)) {
     el.appendChild(c);
   }
 }
 
 /**
- * Recursively sets the aria-hidden attribute on an element and all its children.
+ * Define recursivamente o atributo aria-hidden em um elemento e todos os seus filhos.
+ *
+ * @param el - O elemento que terá o atributo aria-hidden definido
+ * @param value - O valor do atributo aria-hidden ("true" ou "false")
  */
 export function setAriaHidden(el: Element, value: "true" | "false") {
   if (el.ariaHidden !== null) {
@@ -66,7 +89,11 @@ export function setAriaHidden(el: Element, value: "true" | "false") {
 }
 
 /**
- * Removes all Amazon-related event attributes that could trigger popups.
+ * Remove todos os atributos de evento relacionados à Amazon que podem disparar popups.
+ * Esta função limpa atributos que podem interferir com o funcionamento da extensão,
+ * removendo handlers de evento da Amazon que podem causar conflitos.
+ *
+ * @param element - O elemento HTML que terá seus atributos de evento removidos
  */
 export function removeAmazonEventAttributes(element: HTMLElement) {
   const allElements = [element, ...getElements("*", element)];
@@ -85,7 +112,6 @@ export function removeAmazonEventAttributes(element: HTMLElement) {
         }
       }
 
-      // remove amazon-specific classes that might be used as event selectors
       const classesToRemove = [];
       for (const cls of Array.from(el.classList)) {
         if (
@@ -106,7 +132,19 @@ export function removeAmazonEventAttributes(element: HTMLElement) {
 }
 
 /**
- * Add styles to the document.
+ * Adiciona estilos CSS ao documento criando um elemento <style> no <head>.
+ *
+ * @param css - String contendo o código CSS a ser adicionado
+ *
+ * @example
+ * ```typescript
+ * addStyles(`
+ *   .minha-classe {
+ *     color: red;
+ *     font-size: 14px;
+ *   }
+ * `);
+ * ```
  */
 export function addStyles(css: string) {
   const style = document.createElement("style");

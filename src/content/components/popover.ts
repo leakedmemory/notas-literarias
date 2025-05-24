@@ -13,6 +13,13 @@ import { config } from "../../shared/config";
 
 import { generateStarClass } from "../styles";
 
+/**
+ * Insere o popover de avaliações do Goodreads na página.
+ * Cria um popover interativo que mostra detalhes das avaliações quando o usuário
+ * passa o mouse sobre a avaliação principal. Inclui histograma de estrelas e links.
+ *
+ * @param reviews - Objeto contendo todas as informações de avaliação do Goodreads
+ */
 export function insertPopover(reviews: Reviews) {
   logger.log("inserindo popover de avaliações do goodreads");
 
@@ -81,6 +88,12 @@ export function insertPopover(reviews: Reviews) {
   setEventListeners(trigger, popover);
 }
 
+/**
+ * Configura os estilos iniciais do popover.
+ * Define propriedades CSS necessárias para animações e posicionamento correto.
+ *
+ * @param popover - O elemento HTML do popover
+ */
 function setupPopoverStyles(popover: HTMLElement) {
   popover.style.opacity = "0";
   popover.style.display = "none";
@@ -88,6 +101,15 @@ function setupPopoverStyles(popover: HTMLElement) {
   popover.style.zIndex = "9999";
 }
 
+/**
+ * Cria um item individual do histograma de estrelas no popover.
+ * Configura links, porcentagens, textos e acessibilidade para cada nível de estrela.
+ *
+ * @param base - Elemento HTML base do item de estrela (será modificado)
+ * @param stars - Array com informações de todas as estrelas
+ * @param currentStarIdx - Índice da estrela atual sendo processada (0-4)
+ * @param url - URL base para links do Goodreads
+ */
 function createStarItem(
   base: HTMLLIElement,
   stars: Star[],
@@ -142,6 +164,13 @@ function createStarItem(
   }
 }
 
+/**
+ * Configura todos os event listeners necessários para o funcionamento do popover.
+ * Inclui eventos de hover, scroll e gerenciamento de estado.
+ *
+ * @param trigger - Elemento que dispara a exibição do popover
+ * @param popover - Elemento do popover a ser exibido/ocultado
+ */
 function setEventListeners(trigger: HTMLElement, popover: HTMLElement) {
   const popoverState = createPopoverState();
   setupTriggerEventListeners(trigger, popover, popoverState);
@@ -149,6 +178,12 @@ function setEventListeners(trigger: HTMLElement, popover: HTMLElement) {
   setupScrollEventListener(trigger, popover, popoverState);
 }
 
+/**
+ * Cria e retorna um objeto de estado para controlar o comportamento do popover.
+ * Gerencia timeouts, estados de hover e lógica de exibição/ocultação.
+ *
+ * @returns Objeto com propriedades e métodos para gerenciar o estado do popover
+ */
 function createPopoverState() {
   return {
     hoverTimeout: null as number | null,
@@ -168,6 +203,14 @@ function createPopoverState() {
   };
 }
 
+/**
+ * Configura os event listeners para o elemento que dispara o popover.
+ * Gerencia eventos de mouseenter e mouseleave no trigger.
+ *
+ * @param trigger - Elemento que dispara a exibição do popover
+ * @param popover - Elemento do popover
+ * @param state - Estado compartilhado do popover
+ */
 function setupTriggerEventListeners(
   trigger: HTMLElement,
   popover: HTMLElement,
@@ -184,6 +227,13 @@ function setupTriggerEventListeners(
   });
 }
 
+/**
+ * Configura os event listeners para o próprio popover.
+ * Permite que o usuário mova o mouse para dentro do popover sem que ele desapareça.
+ *
+ * @param popover - Elemento do popover
+ * @param state - Estado compartilhado do popover
+ */
 function setupPopoverEventListeners(
   popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
@@ -211,6 +261,14 @@ function setupPopoverEventListeners(
   });
 }
 
+/**
+ * Configura listener para eventos de scroll da página.
+ * Reposiciona o popover quando a página é rolada para manter a posição correta.
+ *
+ * @param trigger - Elemento que dispara o popover
+ * @param popover - Elemento do popover
+ * @param state - Estado compartilhado do popover
+ */
 function setupScrollEventListener(
   trigger: HTMLElement,
   popover: HTMLElement,
@@ -225,6 +283,14 @@ function setupScrollEventListener(
   window.addEventListener("scroll", handleScroll, { passive: true });
 }
 
+/**
+ * Exibe o popover com animação e posicionamento correto.
+ * Cancela timeouts de ocultação e configura a posição relativa ao trigger.
+ *
+ * @param trigger - Elemento que dispara o popover
+ * @param popover - Elemento do popover
+ * @param state - Estado compartilhado do popover
+ */
 function showPopover(
   trigger: HTMLElement,
   popover: HTMLElement,
@@ -255,7 +321,11 @@ function showPopover(
 }
 
 /**
- * Positions the popover relative to the span, accounting for page scroll.
+ * Posiciona o popover relativo ao elemento trigger, considerando o scroll da página.
+ * Centraliza horizontalmente o popover em relação ao trigger e o posiciona logo abaixo.
+ *
+ * @param trigger - Elemento de referência para posicionamento
+ * @param popover - Elemento do popover a ser posicionado
  */
 function positionPopover(trigger: HTMLElement, popover: HTMLElement) {
   const triggerRect = trigger.getBoundingClientRect();
@@ -268,6 +338,13 @@ function positionPopover(trigger: HTMLElement, popover: HTMLElement) {
   popover.style.top = `${top}px`;
 }
 
+/**
+ * Avalia se o popover deve ser ocultado após um delay.
+ * Implementa lógica de debounce para evitar que o popover desapareça muito rapidamente.
+ *
+ * @param popover - Elemento do popover
+ * @param state - Estado compartilhado do popover
+ */
 function considerHiding(
   popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,
@@ -286,6 +363,13 @@ function considerHiding(
   }, config.ui.popoverDelayBeforeHidingInMs);
 }
 
+/**
+ * Oculta o popover com animação e limpa o estado.
+ * Gerencia a transição de posicionamento fixo para absoluto e restaura propriedades.
+ *
+ * @param popover - Elemento do popover
+ * @param state - Estado compartilhado do popover
+ */
 function hidePopover(
   popover: HTMLElement,
   state: ReturnType<typeof createPopoverState>,

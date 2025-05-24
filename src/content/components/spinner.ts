@@ -5,7 +5,10 @@ import { getRatingReference } from "./rating";
 import spinnerCSS from "./spinner.css?raw";
 
 /**
- * Inserts loading spinner into page.
+ * Insere um spinner de carregamento na página da Amazon.
+ * Cria um indicador visual para mostrar ao usuário que a extensão está
+ * buscando informações no Goodreads. O spinner é posicionado abaixo do
+ * elemento de avaliação da Amazon.
  */
 export function insertLoadingSpinner() {
   const ratingRef = getRatingReference();
@@ -35,7 +38,7 @@ export function insertLoadingSpinner() {
 }
 
 /**
- * Removes loading spinner from page.
+ * Remove o spinner de carregamento da página.
  */
 export function removeLoadingSpinner() {
   const spinnerContainer = document.getElementById(
@@ -47,7 +50,7 @@ export function removeLoadingSpinner() {
 }
 
 /**
- * Inserts the CSS for spinner.
+ * Insere os estilos CSS necessários para a animação do spinner.
  */
 export function insertSpinnerStyles() {
   addStyles(spinnerCSS);

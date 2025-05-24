@@ -5,11 +5,25 @@ import type { Reviews, Star } from "../shared/types";
 
 const parser = new DOMParser();
 
+/**
+ * Processa o HTML de uma página de livro do Goodreads e extrai as informações de avaliação.
+ *
+ * @param html - String contendo o HTML da página do livro
+ * @param url - URL da página do livro no Goodreads
+ * @returns Reviews contendo todas as informações de avaliação extraídas
+ */
 export function parseBookPage(html: string, url: string) {
   const doc = parser.parseFromString(html, "text/html");
   return parseReviews(doc, url);
 }
 
+/**
+ * Processa o HTML de uma página de busca do Goodreads e extrai a URL do primeiro livro encontrado.
+ *
+ * @param html - String contendo o HTML da página de resultados de busca
+ * @returns URL completa do primeiro livro encontrado nos resultados
+ * @throws Error se nenhum livro for encontrado na página de resultados
+ */
 export function parseSearchPage(html: string): string {
   const doc = parser.parseFromString(html, "text/html");
   const bookAnchorElement = getElement<HTMLAnchorElement>(
@@ -23,13 +37,21 @@ export function parseSearchPage(html: string): string {
     throw new Error("book not found for the given ASIN");
   }
 
-  // href's origin is the extension
+  // origem de href não server pois é a extensão
   const href = bookAnchorElement.href;
   const url = goodreadsURL(href.slice(href.indexOf("/book")));
 
   return url;
 }
 
+/**
+ * Extrai todas as informações de avaliação de um documento HTML do Goodreads.
+ * Combina avaliação média, quantidade total de avaliações e distribuição por estrelas.
+ *
+ * @param doc - Documento HTML parseado da página do Goodreads
+ * @param url - URL da página para construir o link das avaliações
+ * @returns Reviews completo com todas as informações extraídas
+ */
 function parseReviews(doc: Document, url: string): Reviews {
   const rating = getRating(doc);
   const amount = getAmountOfReviews(doc);
@@ -46,11 +68,11 @@ function parseReviews(doc: Document, url: string): Reviews {
 }
 
 /**
- * Gets the rating from a Goodreads document.
+ * Extrai a avaliação média de um documento HTML do Goodreads.
  *
- * @param doc - The document to parse
- * @returns The rating as a string
- * @throws If the rating is not found
+ * @param doc - O documento HTML parseado para extrair a avaliação
+ * @returns A avaliação formatada como string (com vírgula como separador decimal)
+ * @throws Error se o elemento de avaliação não for encontrado
  */
 function getRating(doc: Document): string {
   const ratingElement = getElement<HTMLDivElement>(
@@ -69,10 +91,11 @@ function getRating(doc: Document): string {
 }
 
 /**
- * Rounds a rating to a single decimal place.
+ * Arredonda uma avaliação para uma casa decimal.
+ * Utiliza arredondamento matemático padrão para garantir precisão.
  *
- * @param rating - The rating to round
- * @returns The rounded rating as a string
+ * @param rating - A avaliação a ser arredondada (como string)
+ * @returns A avaliação arredondada como string com uma casa decimal
  */
 function roundRating(rating: string): string {
   const num = Number.parseFloat(rating);
@@ -84,11 +107,12 @@ function roundRating(rating: string): string {
 }
 
 /**
- * Gets the amount of reviews from a Goodreads document.
+ * Extrai a quantidade total de avaliações de um documento HTML do Goodreads.
  *
- * @param doc - The document to parse
- * @returns The amount of reviews
- * @throws If the ratings count is not found
+ * @param doc - O documento HTML parseado para extrair a contagem
+ * @returns O número total de avaliações como inteiro
+ * @throws Error se o elemento de contagem não for encontrado
+ * ```
  */
 function getAmountOfReviews(doc: Document): number {
   const ratingsCountElement = getElement<HTMLSpanElement>(
@@ -108,11 +132,12 @@ function getAmountOfReviews(doc: Document): number {
 }
 
 /**
- * Gets stars information from a Goodreads document.
+ * Extrai as informações de distribuição de estrelas de um documento HTML do Goodreads.
+ * Processa cada nível de estrelas (5 a 1) com sua quantidade e porcentagem correspondente.
  *
- * @param doc - The document to parse
- * @returns An array of Star objects
- * @throws If the star ranks are not found
+ * @param doc - O documento HTML parseado para extrair as informações das estrelas
+ * @returns Array de objetos Star contendo rank, quantidade e porcentagem
+ * @throws Error se os elementos de ranking de estrelas não forem encontrados
  */
 function getStars(doc: Document): Star[] {
   const starsElement = getElements<HTMLDivElement>(config.selectors.stars, doc);

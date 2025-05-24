@@ -55,10 +55,22 @@ export const config = {
   },
 };
 
+/**
+ * Adiciona o prefixo da extensão a um ID fornecido.
+ *
+ * @param id - O ID ao qual será adicionado o prefixo da extensão
+ * @returns O ID com o prefixo da extensão concatenado
+ */
 export function prefixID(id: string): string {
   return `${config.extension.prefix}${id}`;
 }
 
+/**
+ * Constrói uma URL completa do Goodreads concatenando a origem com o caminho fornecido.
+ *
+ * @param path - O caminho relativo a ser concatenado com a URL base do Goodreads
+ * @returns A URL completa do Goodreads
+ */
 export function goodreadsURL(path: string): string {
   return `${config.goodreads.origin}${path}`;
 }

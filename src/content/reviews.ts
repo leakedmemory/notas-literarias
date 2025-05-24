@@ -21,7 +21,11 @@ import { insertCustomStyles } from "./styles";
 import { parseBookPage, parseSearchPage } from "./parser";
 
 /**
- * Fetches reviews from Goodreads and inserts them into the page.
+ * Busca avaliações do Goodreads e as insere na página da Amazon.
+ * Esta é a função principal que coordena todo o processo de busca e inserção.
+ * Gerencia diferentes fluxos dependendo se o livro tem ISBN ou ASIN.
+ *
+ * @param book - Objeto contendo as informações do livro
  */
 export async function fetchAndInsertReviews(book: Book) {
   logger.log(
@@ -65,6 +69,15 @@ export async function fetchAndInsertReviews(book: Book) {
   }
 }
 
+/**
+ * Envia uma mensagem para o script de background e aguarda a resposta.
+ * Funciona como uma camada de abstração para comunicação entre content script e background script.
+ *
+ * @template T - Tipo da mensagem estendendo ContentMessage
+ * @param message - A mensagem a ser enviada para o background script
+ * @returns Promise com a resposta do background script
+ * @throws Error se houver erro na comunicação ou resposta de erro do background
+ */
 async function sendMessageToBackground<T extends ContentMessage>(
   message: T,
 ): Promise<BackgroundResponse> {
@@ -84,7 +97,10 @@ async function sendMessageToBackground<T extends ContentMessage>(
 }
 
 /**
- * Inserts reviews data into the page.
+ * Insere os dados de avaliações na página da Amazon.
+ * Coordena a inserção do elemento de avaliação, estilos personalizados e popover.
+ *
+ * @param reviews - Objeto contendo todas as informações de avaliação do Goodreads
  */
 function insertReviews(reviews: Reviews) {
   try {

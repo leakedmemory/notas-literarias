@@ -9,10 +9,12 @@ import {
 import { generateStarClass } from "../styles";
 
 /**
- * Gets the element containing the rating value, the stars representation,
- * and how many reviews the book has.
+ * Obtém o elemento de referência que contém a avaliação da Amazon.
+ * Procura por diferentes seletores de container de avaliação para garantir compatibilidade
+ * com diferentes layouts da Amazon.
  *
- * @throws On `null` query selection.
+ * @returns O elemento que contém as informações de avaliação da Amazon
+ * @throws Error se nenhum elemento de referência for encontrado
  */
 export function getRatingReference(): Element {
   const selectors = config.selectors.ratingContainer.split(", ");
@@ -32,10 +34,12 @@ export function getRatingReference(): Element {
 }
 
 /**
- * Inserts `reviews` by copying the review element of the book page and
- * changing its properties.
+ * Insere o elemento de avaliação do Goodreads na página da Amazon.
+ * Clona o elemento de avaliação existente da Amazon, modifica suas propriedades
+ * para exibir dados do Goodreads e o insere logo após o elemento original.
  *
- * @throws When some element is not found in the DOM.
+ * @param reviews - Objeto contendo todas as informações de avaliação do Goodreads
+ * @throws Error quando algum elemento necessário não é encontrado no DOM
  */
 export function insertBookRatingElement(reviews: Reviews) {
   logger.log("inserindo elemento de avaliação do livro");
@@ -57,11 +61,13 @@ export function insertBookRatingElement(reviews: Reviews) {
 }
 
 /**
- * Changes the message that appears when hovering the rating.
+ * Altera a mensagem que aparece quando o usuário passa o mouse sobre a avaliação.
+ * Modifica o atributo title do elemento para mostrar a avaliação do Goodreads.
  *
- * @throws On `null` query selection.
- *
- * @returns The new title.
+ * @param rating - Elemento HTML da avaliação
+ * @param reviews - Objeto contendo as informações de avaliação do Goodreads
+ * @returns O novo título configurado no elemento
+ * @throws Error se o elemento de título não for encontrado
  */
 function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
   const title = getElement<HTMLSpanElement>(config.selectors.popTitle, rating);
@@ -78,9 +84,11 @@ function changePopTitle(rating: HTMLElement, reviews: Reviews): string {
 }
 
 /**
- * Changes the rating value before the stars.
+ * Altera o valor numérico da avaliação exibido antes das estrelas.
  *
- * @throws On `null` query selection.
+ * @param rating - Elemento HTML da avaliação
+ * @param title - String contendo o título com a nova avaliação
+ * @throws Error se o elemento de valor da avaliação não for encontrado
  */
 function changeRatingValue(rating: HTMLElement, title: string) {
   const ratingValue = getElement<HTMLSpanElement>(
@@ -96,9 +104,14 @@ function changeRatingValue(rating: HTMLElement, title: string) {
 }
 
 /**
- * Changes the stars representation to match the review rating.
+ * Altera a representação visual das estrelas para corresponder à avaliação do Goodreads.
+ * Substitui a classe CSS que controla quantas estrelas são preenchidas e atualiza
+ * o texto alternativo para acessibilidade.
  *
- * @throws On `null` query selection.
+ * @param rating - Elemento HTML da avaliação
+ * @param reviews - Objeto contendo as informações de avaliação do Goodreads
+ * @throws Error se o elemento de representação de estrelas não for encontrado
+ *
  */
 function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
   let isMini = false;
@@ -113,7 +126,7 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
     isMini = true;
   }
 
-  // Class that controls how many stars are filled
+  // classe que controla quantas estrelas estão preenchidas
   const starsFilledClass = Array.from(stars.classList)[2];
   if (!starsFilledClass.startsWith("a-star-")) {
     logger.error("classe de estrelas não encontrada");
@@ -123,7 +136,7 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
   const newStarsClass = generateStarClass(reviews.rating, isMini);
   stars.classList.replace(starsFilledClass, newStarsClass);
 
-  // Alt representation of the stars, which is a separate element
+  // representação alternativa do elemento (neste caso, outro elemento)
   const selector = isMini
     ? config.selectors.ratingStarsMiniAlt
     : config.selectors.ratingStarsAlt;
@@ -141,7 +154,12 @@ function changeStarsRepresentation(rating: HTMLElement, reviews: Reviews) {
 }
 
 /**
- * Changes the rating count and adds from which site the rating was taken.
+ * Altera o texto de contagem de avaliações e adiciona indicação da fonte (Goodreads).
+ * Substitui o número original de avaliações pelo número do Goodreads e adiciona
+ * a indicação "(goodreads)" para deixar claro a origem dos dados.
+ *
+ * @param rating - Elemento HTML contendo o texto da contagem
+ * @param ratingCount - Número total de avaliações do Goodreads
  */
 function changeRatingCount(rating: HTMLElement, ratingCount: number) {
   const currentText = rating.innerText;
@@ -163,9 +181,13 @@ function changeRatingCount(rating: HTMLElement, ratingCount: number) {
 }
 
 /**
- * Changes the rating count and adds from which site it was taken.
+ * Altera o redirecionamento do link de avaliações de clientes para o Goodreads.
+ * Modifica o link que normalmente levaria às avaliações da Amazon para que
+ * leve às avaliações do Goodreads, abrindo em nova aba com segurança.
  *
- * @throws On `null` query selection.
+ * @param rating - Elemento HTML da avaliação
+ * @param reviews - Objeto contendo as informações de avaliação do Goodreads
+ * @throws Error se o elemento de avaliações de clientes não for encontrado
  */
 function changeCustomerReviewsRedirection(
   rating: HTMLElement,

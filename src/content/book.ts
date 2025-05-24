@@ -4,7 +4,11 @@ import { config } from "../shared/config";
 import { getElement } from "../shared/dom";
 
 /**
- * Checks if the current page is a book page.
+ * Verifica se a página atual é uma página de livro na Amazon.
+ * A verificação é feita procurando pela presença do elemento que contém
+ * os detalhes do livro, que é específico das páginas de produto de livros.
+ *
+ * @returns true se a página atual for uma página de livro, false caso contrário
  */
 export function isBookPage(): boolean {
   const isBook = getElement(config.selectors.bookPage) !== null;
@@ -12,8 +16,12 @@ export function isBookPage(): boolean {
 }
 
 /**
- * Gets the ISBN-13 or ASIN code of the book. If both are present, the
- * ISBN-13 will be returned.
+ * Extrai as informações do livro (código ISBN-13 ou ASIN) dos detalhes da página.
+ * A função prioriza o ISBN-13 quando ambos estão presentes, pois facilita na
+ * busca no Goodreads. Processa a lista de detalhes em pares (chave, valor).
+ *
+ * @param details - Array de elementos HTML contendo os detalhes do livro
+ * @returns Book ou null se nenhum código for encontrado
  */
 export function getBookInfo(details: HTMLSpanElement[]): Book | null {
   const book: Book = { code: "", format: CodeFormat.ASIN };
@@ -24,10 +32,7 @@ export function getBookInfo(details: HTMLSpanElement[]): Book | null {
       continue;
     }
 
-    // normalize the text by removing all non-alphanumeric characters
-    // (looking at you `&rlm;` on chromium)
     const normalizedText = detail.innerText.replace(/[^A-Z0-9-]/g, "");
-
     if (normalizedText === "ISBN-13") {
       book.code = details[i + 1].innerText.trim();
       book.format = CodeFormat.ISBN;
