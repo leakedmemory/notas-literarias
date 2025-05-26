@@ -21,7 +21,6 @@
     "96": "icons/icon-96x96.png",
     "128": "icons/icon-128x128.png"
   },
-  "permissions": ["tabs"],
   "host_permissions": ["*://*.goodreads.com/*"],
   "background": {
     "service_worker": "background.global.js"
