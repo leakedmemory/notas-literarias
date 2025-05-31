@@ -31,10 +31,7 @@ export function parseSearchPage(html: string): string {
     doc,
   );
   if (!bookAnchorElement) {
-    logger.error(
-      "livro não encontrado para o ASIN fornecido na página de resultados",
-    );
-    throw new Error("book not found for the given ASIN");
+    throw new Error("livro não encontrado para o ASIN fornecido");
   }
 
   // origem de href não server pois é a extensão
@@ -80,8 +77,7 @@ function getRating(doc: Document): string {
     doc,
   );
   if (!ratingElement) {
-    logger.error("elemento de classificação não encontrado no documento");
-    throw new Error("rating not found");
+    throw new Error("elemento de classificação não encontrado");
   }
 
   const rawRating = ratingElement.innerText;
@@ -120,8 +116,7 @@ function getAmountOfReviews(doc: Document): number {
     doc,
   );
   if (!ratingsCountElement) {
-    logger.error("elemento de contagem de avaliações não encontrado");
-    throw new Error("ratings count not found");
+    throw new Error("elemento de contagem de avaliações não encontrado");
   }
 
   const innerHTML = ratingsCountElement.innerHTML;
@@ -142,8 +137,7 @@ function getAmountOfReviews(doc: Document): number {
 function getStars(doc: Document): Star[] {
   const starsElement = getElements<HTMLDivElement>(config.selectors.stars, doc);
   if (!starsElement) {
-    logger.error("elementos de ranking de estrelas não encontrados");
-    throw new Error("star ranks not found");
+    throw new Error("elementos de ranking de estrelas não encontrados");
   }
 
   const stars: Star[] = starsElement.map((starRankElement, idx) => {

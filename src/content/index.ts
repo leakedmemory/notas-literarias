@@ -18,13 +18,13 @@ import { fetchAndInsertReviews } from "./reviews";
 
   const details = getElements<HTMLSpanElement>(config.selectors.bookDetails);
   if (!details) {
-    logger.error("seção de detalhes do livro não encontrada");
+    logger.warn("seção de detalhes do livro não encontrada");
     return;
   }
 
   const bookInfo = getBookInfo(details);
   if (!bookInfo) {
-    logger.error("falha ao obter informações do livro");
+    logger.warn("não foi possível obter as informações do livro");
     return;
   }
 

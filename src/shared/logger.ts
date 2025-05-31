@@ -8,28 +8,31 @@ function now(): string {
 }
 
 const logger = {
-  // biome-ignore lint: accept explicit `any` in this case
-  log(msg: any) {
+  log(msg: string) {
     console.log(`[${now()}] ${PREFIX}: ${msg}`);
   },
 
-  // biome-ignore lint: accept explicit `any` in this case
-  info(msg: any) {
+  info(msg: string) {
     console.log(`[${now()}] ${PREFIX}: ${msg}`);
   },
 
-  // biome-ignore lint: accept explicit `any` in this case
-  warn(msg: any) {
-    console.warn(`[${now()}] ${PREFIX}: ${msg}`);
+  warn(msg: string, err?: Error) {
+    if (err) {
+      console.warn(`[${now()}] ${PREFIX}: ${msg}: ${err.message}`);
+    } else {
+      console.warn(`[${now()}] ${PREFIX}: ${msg}`);
+    }
   },
 
-  // biome-ignore lint: accept explicit `any` in this case
-  error(msg: any) {
-    console.error(`[${now()}] ${PREFIX}: ${msg}`);
+  error(msg: string, err?: Error) {
+    if (err) {
+      console.warn(`[${now()}] ${PREFIX}: ${msg}: ${err.message}`);
+    } else {
+      console.warn(`[${now()}] ${PREFIX}: ${msg}`);
+    }
   },
 
-  // biome-ignore lint: accept explicit `any` in this case
-  debug(msg: any) {
+  debug(msg: string) {
     console.debug(`[${now()}] ${PREFIX}: ${msg}`);
   },
 

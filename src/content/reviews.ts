@@ -63,7 +63,7 @@ export async function fetchAndInsertReviews(book: Book) {
     );
     insertReviews(reviews);
   } catch (error) {
-    logger.error(`erro ao buscar avaliação do goodreads: ${error}`);
+    logger.warn("erro ao buscar avaliação do goodreads", error);
   } finally {
     removeLoadingSpinner();
   }
@@ -86,13 +86,11 @@ async function sendMessageToBackground<T extends ContentMessage>(
       message,
     )) as BackgroundResponse;
     if (response.err) {
-      logger.error(`erro retornado pelo script de background: ${response.err}`);
-      throw new Error(`${response.err}`);
+      throw new Error(`script de background: ${response.err}`);
     }
     return response;
   } catch (error) {
-    logger.error(`erro ao comunicar com script de background: ${error}`);
-    throw error;
+    throw new Error(`erro na comunicação com script de background: ${error}`);
   }
 }
 
@@ -108,7 +106,7 @@ function insertReviews(reviews: Reviews) {
     insertCustomStyles();
     insertPopover(reviews);
     logger.log("avaliações inseridas com sucesso");
-  } catch (err: unknown) {
-    logger.error(`erro ao inserir avaliação do goodreads: ${err}`);
+  } catch (error) {
+    logger.warn("erro ao tentar inserir avaliação do goodreads", error);
   }
 }
