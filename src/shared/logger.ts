@@ -13,23 +13,15 @@ const logger = {
   },
 
   info(msg: string) {
-    console.log(`[${now()}] ${PREFIX}: ${msg}`);
+    console.info(`[${now()}] ${PREFIX}: ${msg}`);
   },
 
-  warn(msg: string, err?: Error) {
-    if (err) {
-      console.warn(`[${now()}] ${PREFIX}: ${msg}: ${err.message}`);
-    } else {
-      console.warn(`[${now()}] ${PREFIX}: ${msg}`);
-    }
+  warn(msg: string) {
+    console.warn(`[${now()}] ${PREFIX}: ${msg}`);
   },
 
-  error(msg: string, err?: Error) {
-    if (err) {
-      console.warn(`[${now()}] ${PREFIX}: ${msg}: ${err.message}`);
-    } else {
-      console.warn(`[${now()}] ${PREFIX}: ${msg}`);
-    }
+  error(msg: string) {
+    console.warn(`[${now()}] ${PREFIX}: ${msg}`);
   },
 
   debug(msg: string) {

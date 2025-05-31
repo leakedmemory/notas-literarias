@@ -168,7 +168,7 @@ function changeRatingCount(rating: HTMLElement, ratingCount: number) {
     const newText = `${currentText.replace(oldValue, formattedRatingsCount)} ${config.ui.goodreadsSource}`;
     rating.innerText = newText;
   } else {
-    logger.warn(
+    logger.error(
       `padrão de contagem não encontrado no texto atual: "${currentText}"`,
     );
   }

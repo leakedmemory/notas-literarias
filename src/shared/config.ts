@@ -13,8 +13,6 @@ export const config = {
   selectors: {
     acrPopover: "span#notasliterarias-acrPopover",
     bookAnchor: "a.bookTitle",
-    bookDetails: "div#detailBullets_feature_div > ul > li > span > span",
-    bookPage: "div#detailBullets_feature_div",
     customerReviews: "a#notasliterarias-acrCustomerReviewLink",
     customerReviewsCount: "a#notasliterarias-acrCustomerReviewLink > span",
     popover: "div#notasliterarias-popover",
@@ -30,6 +28,7 @@ export const config = {
     popoverStarsFilled: "i#notasliterarias-stars",
     popoverTotalReviewCount: "span#notasliterarias-total-review-count",
     popTitle: "span#notasliterarias-acrPopover",
+    productDetails: "div#detailBullets_feature_div > ul > li > span > span",
     rating: 'div.RatingStatistics__rating[aria-hidden="true"]',
     ratingContainer:
       "div#averageCustomerReviews, div#averageCustomerReviews_feature_div",

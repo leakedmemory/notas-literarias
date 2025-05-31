@@ -77,7 +77,7 @@ function getRating(doc: Document): string {
     doc,
   );
   if (!ratingElement) {
-    throw new Error("elemento de classificação não encontrado");
+    throw new Error("avaliação não encontrada");
   }
 
   const rawRating = ratingElement.innerText;

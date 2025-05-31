@@ -66,7 +66,7 @@ export async function fetchAndInsertReviews(book: Book) {
     );
     insertReviews(reviews);
   } catch (error) {
-    logger.warn("erro ao buscar avaliação do goodreads", error);
+    logger.info(`ao buscar avaliação do goodreads: ${error.message}`);
     insertNotFoundMessage();
   } finally {
     removeLoadingSpinner();
@@ -111,7 +111,7 @@ function insertReviews(reviews: Reviews) {
     insertPopover(reviews);
     logger.log("avaliações inseridas com sucesso");
   } catch (error) {
-    logger.warn("erro ao tentar inserir avaliação do goodreads", error);
+    logger.error(`ao tentar inserir avaliação do goodreads: ${error.message}`);
   }
 }
 
@@ -125,7 +125,9 @@ function insertNotFoundMessage() {
     const ratingRef = getRatingReference();
     ratingRef.insertAdjacentElement("afterend", messageEl);
   } catch (error) {
-    logger.warn(`falha ao inserir mensagem de não encontrado: ${error}`);
+    logger.error(
+      `ao tentar inserir mensagem de não encontrado: ${error.message}`,
+    );
   }
 }
 

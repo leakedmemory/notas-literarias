@@ -3,28 +3,25 @@ import { CodeFormat } from "../shared/types";
 import { config } from "../shared/config";
 import { getElements } from "../shared/dom";
 
-import { isBookPage, getBookInfo } from "./book";
+import { getBookInfo } from "./book";
 import { fetchAndInsertReviews } from "./reviews";
 
 (function main() {
-  logger.log("iniciando extensão notas literárias");
-
-  if (!isBookPage()) {
-    logger.warn("página atual não é uma página de livro, encerrando execução");
+  if (!isProductPage()) {
     return;
   }
 
-  logger.log("página de livro detectada, processando informações");
-
-  const details = getElements<HTMLSpanElement>(config.selectors.bookDetails);
+  const details = getElements<HTMLSpanElement>(config.selectors.productDetails);
   if (!details) {
-    logger.warn("seção de detalhes do livro não encontrada");
+    logger.log("seção de detalhes do produto não encontrada");
     return;
   }
 
   const bookInfo = getBookInfo(details);
   if (!bookInfo) {
-    logger.warn("não foi possível obter as informações do livro");
+    logger.warn(
+      "produto não é um livro ou não foi possível obter as informações do livro",
+    );
     return;
   }
 
@@ -36,3 +33,7 @@ import { fetchAndInsertReviews } from "./reviews";
 
   fetchAndInsertReviews(bookInfo);
 })();
+
+function isProductPage(): boolean {
+  return window.location.pathname.includes("/dp/");
+}
