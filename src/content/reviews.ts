@@ -15,7 +15,10 @@ import {
   removeLoadingSpinner,
   insertSpinnerStyles,
 } from "./components/spinner";
-import { insertBookRatingElement } from "./components/rating";
+import {
+  insertBookRatingElement,
+  getRatingReference,
+} from "./components/rating";
 import { insertPopover } from "./components/popover";
 import { insertCustomStyles } from "./styles";
 import { parseBookPage, parseSearchPage } from "./parser";
@@ -64,6 +67,7 @@ export async function fetchAndInsertReviews(book: Book) {
     insertReviews(reviews);
   } catch (error) {
     logger.warn("erro ao buscar avaliação do goodreads", error);
+    insertNotFoundMessage();
   } finally {
     removeLoadingSpinner();
   }
@@ -109,4 +113,63 @@ function insertReviews(reviews: Reviews) {
   } catch (error) {
     logger.warn("erro ao tentar inserir avaliação do goodreads", error);
   }
+}
+
+/**
+ * Insere uma mensagem informando que o livro não foi encontrado no Goodreads.
+ */
+function insertNotFoundMessage() {
+  try {
+    logger.log("inserindo mensagem de livro não encontrado");
+    const messageEl = createNotFoundMessageElement();
+    const ratingRef = getRatingReference();
+    ratingRef.insertAdjacentElement("afterend", messageEl);
+  } catch (error) {
+    logger.warn(`falha ao inserir mensagem de não encontrado: ${error}`);
+  }
+}
+
+/**
+ * Cria o elemento HTML da mensagem de "livro não encontrado".
+ *
+ * @returns HTMLElement contendo a mensagem formatada
+ */
+function createNotFoundMessageElement(): HTMLElement {
+  const container = document.createElement("div");
+  container.style.display = "flex";
+  container.style.alignItems = "center";
+  container.style.marginTop = "5px";
+  container.style.marginBottom = "5px";
+
+  const iconSrc = "icons/icon-16x16.png";
+  const iconSize = "16px";
+
+  const iconUrl = browser.runtime.getURL(iconSrc);
+  console.log("Icon URL:", iconUrl);
+
+  const icon = document.createElement("div");
+  icon.style.marginRight = "5px";
+  icon.style.flexShrink = "0";
+  icon.style.display = "flex";
+  icon.style.alignItems = "center";
+  icon.style.justifyContent = "center";
+  icon.style.width = iconSize;
+  icon.style.height = iconSize;
+
+  const iconImg = document.createElement("img");
+  iconImg.src = browser.runtime.getURL(iconSrc);
+  iconImg.style.width = iconSize;
+  iconImg.style.height = iconSize;
+  iconImg.style.display = "block";
+  icon.appendChild(iconImg);
+
+  const message = document.createElement("span");
+  message.innerText = "Livro não encontrado no Goodreads";
+  message.style.fontSize = "14px";
+  message.style.lineHeight = iconSize;
+
+  container.appendChild(icon);
+  container.appendChild(message);
+
+  return container;
 }
