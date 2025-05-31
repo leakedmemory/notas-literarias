@@ -1,5 +1,4 @@
-import { createWriteStream, existsSync } from "node:fs";
-import { readdir } from "node:fs/promises";
+import { createWriteStream, existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 import archiver from "archiver";
@@ -47,7 +46,7 @@ async function packExtension(target: string, srcDir: string) {
 
   archive.pipe(output);
 
-  const files = await readdir(srcDir, { recursive: true });
+  const files = readdirSync(srcDir, { recursive: true });
   for (const f of files) {
     const filePath = resolve(srcDir, f.toString());
     const archivePath = f.toString();

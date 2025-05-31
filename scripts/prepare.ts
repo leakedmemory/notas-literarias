@@ -1,5 +1,4 @@
-import { copyFile, mkdir, cp } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, copyFileSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
 import { res, IS_DEV, TARGET } from "./utils";
@@ -7,12 +6,12 @@ import { res, IS_DEV, TARGET } from "./utils";
 const OUT_DIR = res("dist", IS_DEV ? "dev" : "prod", TARGET);
 const ICON_SIZES = [16, 32, 48, 64, 96, 128];
 
-(async function main() {
-  await copyManifest();
-  await copyIcons();
+(function main() {
+  copyManifest();
+  copyIcons();
 })();
 
-async function copyManifest() {
+function copyManifest() {
   try {
     const src = res("platforms", TARGET, "manifest.json");
     const dest = res(OUT_DIR, "manifest.json");
@@ -24,24 +23,24 @@ async function copyManifest() {
 
     const destDir = dirname(dest);
     if (!existsSync(destDir)) {
-      await mkdir(destDir, { recursive: true });
+      mkdirSync(destDir, { recursive: true });
       console.log(`created directory: ${destDir}`);
     }
 
-    await copyFile(src, dest);
+    copyFileSync(src, dest);
     console.log(`successfully copied manifest for ${TARGET}`);
   } catch (error) {
     console.error(`error copying manifest for ${TARGET}: ${error}`);
   }
 }
 
-async function copyIcons() {
+function copyIcons() {
   try {
     const srcDir = res("icons");
     const destDir = res(OUT_DIR, "icons");
 
     if (!existsSync(destDir)) {
-      await mkdir(destDir, { recursive: true });
+      mkdirSync(destDir, { recursive: true });
       console.log(`created directory: ${destDir}`);
     }
 
@@ -55,7 +54,7 @@ async function copyIcons() {
         continue;
       }
 
-      await copyFile(src, dest);
+      copyFileSync(src, dest);
       console.log(`copied ${iconFilename} for ${TARGET}`);
     }
 
