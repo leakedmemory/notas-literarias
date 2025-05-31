@@ -1,5 +1,5 @@
 import { existsSync, copyFileSync, mkdirSync } from "node:fs";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 
 import { res, IS_DEV, TARGET } from "./utils";
 
@@ -14,7 +14,7 @@ const ICON_SIZES = [16, 32, 48, 64, 96, 128];
 function copyManifest() {
   try {
     const src = res("platforms", TARGET, "manifest.json");
-    const dest = res(OUT_DIR, "manifest.json");
+    const dest = join(OUT_DIR, "manifest.json");
 
     if (!existsSync(src)) {
       console.error(`manifest not found for ${TARGET}: ${src}`);
@@ -37,7 +37,7 @@ function copyManifest() {
 function copyIcons() {
   try {
     const srcDir = res("icons");
-    const destDir = res(OUT_DIR, "icons");
+    const destDir = join(OUT_DIR, "icons");
 
     if (!existsSync(destDir)) {
       mkdirSync(destDir, { recursive: true });
@@ -46,8 +46,8 @@ function copyIcons() {
 
     for (const size of ICON_SIZES) {
       const iconFilename = `icon-${size}x${size}.png`;
-      const src = res(srcDir, iconFilename);
-      const dest = res(destDir, iconFilename);
+      const src = join(srcDir, iconFilename);
+      const dest = join(destDir, iconFilename);
 
       if (!existsSync(src)) {
         console.warn(`icon not found: ${src}`);

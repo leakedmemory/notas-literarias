@@ -1,5 +1,10 @@
-import { createWriteStream, existsSync, readdirSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+  createWriteStream,
+  existsSync,
+  readdirSync,
+  unlinkSync,
+} from "node:fs";
+import { join } from "node:path";
 
 import archiver from "archiver";
 
@@ -9,7 +14,7 @@ const OUT_DIR = res("dist", "prod");
 
 (async function main() {
   for (const target of TARGETS) {
-    const targetDir = resolve(OUT_DIR, target);
+    const targetDir = join(OUT_DIR, target);
     if (existsSync(targetDir)) {
       await packExtension(target, targetDir);
     } else {
@@ -21,12 +26,18 @@ const OUT_DIR = res("dist", "prod");
 async function packExtension(target: string, srcDir: string) {
   let outputFile: string;
   if (target === "firefox") {
-    outputFile = resolve(
+    outputFile = join(
       OUT_DIR,
       `notas-literarias-${target}-unsigned-${VERSION}.xpi`,
     );
+
+    const amoFile = join(srcDir, ".amo-upload-uuid");
+    if (existsSync(amoFile)) {
+      unlinkSync(amoFile);
+      console.log(`removed .amo-upload-uuid file from ${target} build`);
+    }
   } else {
-    outputFile = resolve(OUT_DIR, `notas-literarias-${target}-${VERSION}.zip`);
+    outputFile = join(OUT_DIR, `notas-literarias-${target}-${VERSION}.zip`);
   }
 
   console.log(`packaging ${target} extension to ${outputFile}...`);
@@ -48,7 +59,7 @@ async function packExtension(target: string, srcDir: string) {
 
   const files = readdirSync(srcDir, { recursive: true });
   for (const f of files) {
-    const filePath = resolve(srcDir, f.toString());
+    const filePath = join(srcDir, f.toString());
     const archivePath = f.toString();
     archive.file(filePath, { name: archivePath });
   }

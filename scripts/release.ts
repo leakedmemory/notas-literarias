@@ -1,6 +1,6 @@
 import { execSync } from "node:child_process";
 import { existsSync, readdirSync, writeFileSync, renameSync } from "node:fs";
-import { resolve } from "node:path";
+import { join } from "node:path";
 
 import { res } from "./utils";
 import firefoxManifest from "../platforms/firefox/manifest.json";
@@ -70,7 +70,7 @@ function signFirefox(version: string) {
 
   const signCommand = [
     "web-ext sign",
-    `--source-dir ${resolve(OUT_DIR, "firefox")}`,
+    `--source-dir ${join(OUT_DIR, "firefox")}`,
     `--artifacts-dir ${OUT_DIR}`,
     `--api-key ${process.env.WEB_EXT_API_KEY}`,
     `--api-secret ${process.env.WEB_EXT_API_SECRET}`,
@@ -96,8 +96,8 @@ function renameSignedFile(version: string) {
   xpiFiles.splice(unsignedIndex, 1);
 
   const newName = `notas-literarias-firefox-signed-${version}.xpi`;
-  const newPath = resolve(OUT_DIR, newName);
-  const originalPath = resolve(OUT_DIR, xpiFiles[0]);
+  const newPath = join(OUT_DIR, newName);
+  const originalPath = join(OUT_DIR, xpiFiles[0]);
   renameSync(originalPath, newPath);
 }
 
