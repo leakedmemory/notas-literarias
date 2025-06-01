@@ -139,38 +139,19 @@ function insertNotFoundMessage() {
 function createNotFoundMessageElement(): HTMLElement {
   const container = document.createElement("div");
   container.style.display = "flex";
-  container.style.alignItems = "center";
   container.style.marginTop = "5px";
-  container.style.marginBottom = "5px";
 
   const iconSrc = "icons/icon-16x16.png";
   const iconSize = "16px";
 
-  const iconUrl = browser.runtime.getURL(iconSrc);
-  console.log("Icon URL:", iconUrl);
-
-  const icon = document.createElement("div");
-  icon.style.marginRight = "5px";
-  icon.style.flexShrink = "0";
-  icon.style.display = "flex";
-  icon.style.alignItems = "center";
-  icon.style.justifyContent = "center";
-  icon.style.width = iconSize;
-  icon.style.height = iconSize;
-
-  const iconImg = document.createElement("img");
-  iconImg.src = browser.runtime.getURL(iconSrc);
-  iconImg.style.width = iconSize;
-  iconImg.style.height = iconSize;
-  iconImg.style.display = "block";
-  icon.appendChild(iconImg);
+  const img = document.createElement("img");
+  img.src = browser.runtime.getURL(iconSrc);
+  img.style.marginRight = "5px";
+  container.appendChild(img);
 
   const message = document.createElement("span");
   message.innerText = "Livro não encontrado no Goodreads";
-  message.style.fontSize = "14px";
   message.style.lineHeight = iconSize;
-
-  container.appendChild(icon);
   container.appendChild(message);
 
   return container;
