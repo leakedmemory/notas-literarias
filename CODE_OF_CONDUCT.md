@@ -64,7 +64,7 @@ ou offline.
 Ocorrências de comportamentos abusivos, de assédio ou que sejam inaceitáveis por
 qualquer outro motivo poderão ser reportadas para a liderança da comunidade,
 responsável pela aplicação, via contato pelo email
-[leaked.memory+git@pm.me](mailto:leaked.memory+notasliterarias@pm.me?subject=Notas%20Liter%C3%A1rias%20-%20CoC)
+[leaked.memory+notasliterarias@pm.me](mailto:leaked.memory+notasliterarias@pm.me?subject=Notas%20Liter%C3%A1rias%20-%20CoC)
 com o assunto "Notas Literárias - CoC". Todas as reclamações serão revisadas e
 investigadas imediatamente e de maneira justa.
 
