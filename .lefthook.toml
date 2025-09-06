@@ -3,7 +3,7 @@ parallel = true
 
 [pre-commit.commands.lint-and-format]
 run = "pnpm run fix"
-glob = "*.{css,html,json,md,ts,mjs}"
+glob = "*.{css,html,json,ts,mjs,md,yaml,yml}"
 stage_fixed = true
 
 [pre-commit.commands.lychee]

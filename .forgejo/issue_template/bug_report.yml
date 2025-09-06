@@ -1,0 +1,107 @@
+name: Relatório de Bug
+description: Reporte um problema ou comportamento inesperado
+title: "[Bug]: "
+labels: ["bug"]
+assignees: ["leakedmemory"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reportar um bug! Preencha as informações abaixo para nos ajudar a entender e corrigir o problema.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do Problema
+      description: Descreva claramente o que está acontecendo
+      placeholder: A extensão não está mostrando as avaliações do Goodreads...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para Reproduzir
+      description: Como podemos reproduzir este problema?
+      placeholder: |
+        1. Vá para 'https://amazon.com.br/dp/...'
+        2. Clique em '...'
+        3. Veja o erro
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento Esperado
+      description: O que deveria acontecer?
+      placeholder: As avaliações do Goodreads deveriam aparecer ao lado da descrição do livro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Navegador
+      description: Qual navegador você está usando?
+      options:
+        - Firefox
+        - Chrome
+        - Edge
+        - Opera
+        - Outro (especifique nos comentários)
+    validations:
+      required: true
+
+  - type: input
+    id: browser-version
+    attributes:
+      label: Versão do Navegador
+      description: Qual versão do navegador?
+      placeholder: "Firefox 120.0"
+    validations:
+      required: true
+
+  - type: input
+    id: extension-version
+    attributes:
+      label: Versão da Extensão
+      description: Qual versão do Notas Literárias você está usando?
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Sistema Operacional
+      description: Qual sistema operacional você está usando?
+      options:
+        - Windows
+        - macOS
+        - Linux (especifique distribuição)
+        - Outro (especifique nos comentários)
+    validations:
+      required: true
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Erros do Console
+      description: |
+        Se houver erros no console do navegador (F12 > Console), cole-os aqui.
+        Dica: Pressione F12, vá na aba Console e procure por mensagens de erro em vermelho.
+      render: shell
+      placeholder: |
+        Uncaught TypeError: Cannot read property 'querySelector' of null
+            at content.js:42
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações Adicionais
+      description: |
+        Qualquer outra informação que possa ser útil:
+        - Capturas de tela
+        - Links específicos da Amazon onde o problema ocorre
+        - Outros detalhes relevantes

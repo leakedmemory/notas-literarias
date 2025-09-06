@@ -6,3 +6,7 @@ endOfLine = "lf"
 
 # html only
 singleAttributePerLine = false
+
+[[overrides]]
+files = ["*.yml", "*.yaml"]
+options = { printWidth = 120 }

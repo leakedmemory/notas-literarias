@@ -1,0 +1,85 @@
+name: Solicitação de Funcionalidade
+description: Sugira uma nova funcionalidade ou melhoria
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees: ["leakedmemory"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por sugerir uma melhoria! Descreva sua ideia para nos ajudar a entender como podemos melhorar a extensão.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema Relacionado
+      description: Existe algum problema que esta funcionalidade resolveria?
+      placeholder: "Fico frustrado quando não consigo ver as avaliações de livros em inglês..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução Proposta
+      description: Descreva a funcionalidade que você gostaria de ver implementada
+      placeholder: "Gostaria que a extensão também mostrasse avaliações do Goodreads para livros em outras línguas..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas Consideradas
+      description: Você pensou em outras maneiras de resolver este problema?
+      placeholder: "Pensei em usar outras fontes de avaliação além do Goodreads..."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade
+      description: Qual a importância desta funcionalidade para você?
+      options:
+        - Baixa - seria legal ter
+        - Média - melhoraria minha experiência
+        - Alta - muito importante para mim
+        - Crítica - não posso usar a extensão sem isso
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Escopo da Funcionalidade
+      description: Onde esta funcionalidade se aplicaria?
+      options:
+        - label: Interface da extensão (popover com avaliações)
+        - label: Detecção de livros (ISBN/ASIN)
+        - label: Integração com Goodreads
+        - label: Suporte a outros sites (além da Amazon)
+        - label: Configurações da extensão
+        - label: Performance/velocidade
+        - label: Outro (descreva nos comentários)
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Casos de Uso
+      description: Como você usaria esta funcionalidade? Dê exemplos específicos
+      placeholder: |
+        1. Quando estou...
+        2. Quando quero...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Informações Adicionais
+      description: |
+        Qualquer outra informação que possa ser útil:
+        - Mockups ou capturas de tela
+        - Links para funcionalidades similares em outras extensões
+        - Detalhes técnicos específicos

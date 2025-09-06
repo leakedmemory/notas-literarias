@@ -23,7 +23,7 @@
     "lint:manifest": "pnpm web-ext lint -s dist/prod/firefox/",
     "fmt": "pnpm run-p fmt:*",
     "fmt:biome": "biome format --write",
-    "fmt:prettier": "prettier '**/*.{html,md}' --write",
+    "fmt:prettier": "prettier '**/*.{html,md,yml,yaml}' --write",
     "fix": "pnpm run lint:biome && pnpm run fmt",
     "clean": "rimraf dist/",
     "clean:pack": "rimraf dist/prod/*.zip dist/prod/*.xpi",
