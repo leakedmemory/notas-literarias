@@ -36,7 +36,7 @@ footer = """
 """
 trim = true
 postprocessors = [
-  { pattern = '\$REPO', replace = "https://codeberg.org/notas-literarias/notas-literarias" },
+  { pattern = '\$REPO', replace = "https://codeberg.org/leakedmemory/notas-literarias" },
 ]
 
 [git]
@@ -45,17 +45,18 @@ filter_unconventional = true
 split_commits = false
 commit_preprocessors = []
 commit_parsers = [
-  { message = "^feat", group = "<!-- 0 -->Recursos" },
-  { message = "^fix", group = "<!-- 1 -->Correções de Bugs" },
-  { body = ".*security", group = "<!-- 2 -->Segurança" },
-  { message = "^perf", group = "<!-- 3 -->Performance" },
-  { message = "^refactor", group = "<!-- 4 -->Refatorações" },
+  { message = "^feat", group = "<!-- 00 -->Recursos" },
+  { message = "^fix", group = "<!-- 01 -->Correções de Bugs" },
+  { body = ".*security", group = "<!-- 02 -->Segurança" },
+  { message = "^perf", group = "<!-- 03 -->Performance" },
+  { message = "^refactor", group = "<!-- 04 -->Refatorações" },
   { message = "^revert", group = "<!-- 5 -->Reversões" },
-  { message = "^doc", group = "<!-- 6 -->Documentação" },
-  { message = "^test", group = "<!-- 7 -->Testes" },
+  { message = "^ci", group = "<!-- 06 -->CI" },
+  { message = "^doc", group = "<!-- 07 -->Documentação" },
+  { message = "^test", group = "<!-- 08 -->Testes" },
   { message = "^chore\\(version\\):", skip = true },
-  { message = "^chore", group = "<!-- 8 -->Tarefas Diversas" },
-  { message = "^style", group = "<!-- 9 -->Estilo" },
+  { message = "^chore", group = "<!-- 09 -->Tarefas Diversas" },
+  { message = "^style", group = "<!-- 10 -->Estilo" },
 ]
 filter_commits = false
 topo_order = false
