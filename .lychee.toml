@@ -1,6 +1,4 @@
-cache = true
 include_mail = true
-max_cache_age = "7d"
 max_concurrency = 12
 max_retries = 2
 no_progress = true
