@@ -1,7 +1,4 @@
 import { type Book, CodeFormat } from "../shared/types";
-import logger from "../shared/logger";
-import { config } from "../shared/config";
-import { getElement } from "../shared/dom";
 
 /**
  * Extrai as informações do produto (código ISBN-13 ou ASIN) dos detalhes da página.

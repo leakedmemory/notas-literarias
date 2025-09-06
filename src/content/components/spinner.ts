@@ -1,5 +1,5 @@
-import logger from "../../shared/logger";
 import { addStyles } from "../../shared/dom";
+import logger from "../../shared/logger";
 
 import { getRatingReference } from "./rating";
 import spinnerCSS from "./spinner.css?raw";

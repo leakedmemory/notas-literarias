@@ -1,7 +1,6 @@
 import { mergeConfig, type UserConfig } from "vite";
-
+import { IS_DEV, PACKAGE_NAME, res } from "./scripts/utils";
 import { devConfig, prodConfig } from "./vite.config.base";
-import { res, PACKAGE_NAME, IS_DEV, TARGET } from "./scripts/utils";
 
 const contentConfig: UserConfig = {
   build: {

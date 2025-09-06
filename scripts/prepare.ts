@@ -1,7 +1,7 @@
-import { existsSync, copyFileSync, mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { res, IS_DEV, TARGET } from "./utils";
+import { IS_DEV, res, TARGET } from "./utils";
 
 const OUT_DIR = res("dist", IS_DEV ? "dev" : "prod", TARGET);
 const ICON_SIZES = [16, 32, 48, 64, 96, 128];

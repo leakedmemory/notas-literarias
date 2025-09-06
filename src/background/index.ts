@@ -1,10 +1,10 @@
-import {
-  MessageType,
-  type ContentMessage,
-  type BackgroundResponse,
-} from "../shared/types";
 import { config, goodreadsURL } from "../shared/config";
 import logger from "../shared/logger";
+import {
+  type BackgroundResponse,
+  type ContentMessage,
+  MessageType,
+} from "../shared/types";
 
 (function main() {
   logger.log("iniciando script de background da extensão notas literárias");
@@ -19,7 +19,7 @@ import logger from "../shared/logger";
  * para sua função específica de tratamento. Garante que sempre retorne uma resposta.
  *
  * @param message - Mensagem recebida do content script
- * @param sender - Informações sobre o remetente da mensagem (não utilizado)
+ * @param _sender - Informações sobre o remetente da mensagem
  * @param sendResponse - Função callback para enviar resposta de volta
  * @returns true para indicar que a resposta será enviada de forma assíncrona
  *
@@ -27,8 +27,7 @@ import logger from "../shared/logger";
  */
 function messageHandler(
   message: unknown,
-  // @ts-ignore Unused parameter
-  sender: browser.Runtime.MessageSender,
+  _sender: browser.Runtime.MessageSender,
   sendResponse: (response: unknown) => void,
 ): true {
   const msg = message as ContentMessage;
@@ -101,7 +100,7 @@ async function getPageFromURL(url: string): Promise<BackgroundResponse> {
  * repositório do projeto no Codeberg.
  */
 function openProjectRepoOnClick() {
-  browser.action.onClicked.addListener((tab) => {
+  browser.action.onClicked.addListener((_tab) => {
     browser.tabs.create({
       url: "https://codeberg.org/notas-literarias/notas-literarias",
     });

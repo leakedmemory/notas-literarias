@@ -1,27 +1,25 @@
 import logger from "../shared/logger";
 import type {
+  BackgroundResponse,
   Book,
   ContentMessage,
-  SearchCodeMessage,
   FetchURLMessage,
-  BackgroundResponse,
   Reviews,
-  Star,
+  SearchCodeMessage,
 } from "../shared/types";
-import { MessageType, CodeFormat } from "../shared/types";
-
+import { CodeFormat, MessageType } from "../shared/types";
+import { insertPopover } from "./components/popover";
+import {
+  getRatingReference,
+  insertBookRatingElement,
+} from "./components/rating";
 import {
   insertLoadingSpinner,
-  removeLoadingSpinner,
   insertSpinnerStyles,
+  removeLoadingSpinner,
 } from "./components/spinner";
-import {
-  insertBookRatingElement,
-  getRatingReference,
-} from "./components/rating";
-import { insertPopover } from "./components/popover";
-import { insertCustomStyles } from "./styles";
 import { parseBookPage, parseSearchPage } from "./parser";
+import { insertCustomStyles } from "./styles";
 
 /**
  * Busca avaliações do Goodreads e as insere na página da Amazon.

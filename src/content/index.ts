@@ -1,7 +1,7 @@
-import logger from "../shared/logger";
-import { CodeFormat } from "../shared/types";
 import { config } from "../shared/config";
 import { getElements } from "../shared/dom";
+import logger from "../shared/logger";
+import { CodeFormat } from "../shared/types";
 
 import { getBookInfo } from "./book";
 import { fetchAndInsertReviews } from "./reviews";

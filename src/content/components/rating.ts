@@ -1,11 +1,11 @@
-import logger from "../../shared/logger";
-import type { Reviews } from "../../shared/types";
-import { getElement } from "../../shared/dom";
 import { config } from "../../shared/config";
 import {
   addExtensionPrefixToElementIDs,
+  getElement,
   removeAmazonEventAttributes,
 } from "../../shared/dom";
+import logger from "../../shared/logger";
+import type { Reviews } from "../../shared/types";
 import { generateStarClass } from "../styles";
 
 /**

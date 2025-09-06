@@ -1,7 +1,7 @@
-import { type UserConfig, mergeConfig } from "vite";
 import AutoImport from "unplugin-auto-import/vite";
+import { mergeConfig, type UserConfig } from "vite";
 
-import { res, PACKAGE_NAME, TARGET, IS_DEV, VERSION } from "./scripts/utils";
+import { IS_DEV, PACKAGE_NAME, res, TARGET, VERSION } from "./scripts/utils";
 
 const baseConfig: UserConfig = {
   define: {

@@ -1,5 +1,5 @@
-import logger from "../shared/logger";
 import { addStyles } from "../shared/dom";
+import logger from "../shared/logger";
 
 import customStyles from "./index.css?raw";
 
@@ -34,7 +34,7 @@ export function generateStarClass(rating: string, isMini: boolean): string {
   }
 
   // com meia estrela
-  if (Number.parseInt(rating[2]) >= 5) {
+  if (Number.parseInt(rating[2], 10) >= 5) {
     return `${prefix}${rating[0]}-5`;
   }
 

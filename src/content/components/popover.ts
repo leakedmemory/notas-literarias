@@ -1,15 +1,15 @@
-import popoverBaseHTML from "../../templates/popover/base.html?raw";
-import popoverStarItemHTML from "../../templates/popover/star-item.html?raw";
-
-import logger from "../../shared/logger";
+import { config } from "../../shared/config";
 import {
-  setInnerTextAndPreserveChildren,
-  setAriaHidden,
   getElement,
   getElements,
+  setAriaHidden,
+  setInnerTextAndPreserveChildren,
 } from "../../shared/dom";
+
+import logger from "../../shared/logger";
 import type { Reviews, Star } from "../../shared/types";
-import { config } from "../../shared/config";
+import popoverBaseHTML from "../../templates/popover/base.html?raw";
+import popoverStarItemHTML from "../../templates/popover/star-item.html?raw";
 
 import { generateStarClass } from "../styles";
 

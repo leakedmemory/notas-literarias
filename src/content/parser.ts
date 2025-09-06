@@ -1,4 +1,3 @@
-import logger from "../shared/logger";
 import { config, goodreadsURL } from "../shared/config";
 import { getElement, getElements } from "../shared/dom";
 import type { Reviews, Star } from "../shared/types";
@@ -121,7 +120,7 @@ function getAmountOfReviews(doc: Document): number {
 
   const innerHTML = ratingsCountElement.innerHTML;
   const rawAmount = innerHTML.slice(0, innerHTML.indexOf("<")).replace(",", "");
-  const amount = Number.parseInt(rawAmount);
+  const amount = Number.parseInt(rawAmount, 10);
 
   return amount;
 }
@@ -144,7 +143,7 @@ function getStars(doc: Document): Star[] {
     const text = starRankElement.innerText;
     const [amount, percentage] = text.split(" ");
     const rank = 5 - idx;
-    const parsedAmount = Number.parseInt(amount.replace(",", ""));
+    const parsedAmount = Number.parseInt(amount.replace(",", ""), 10);
     const parsedPercentage = percentage.slice(1, percentage.indexOf("%"));
 
     return {

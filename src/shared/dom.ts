@@ -1,5 +1,4 @@
-import { config, prefixID } from "./config";
-import logger from "./logger";
+import { prefixID } from "./config";
 
 /**
  * Busca um elemento no DOM usando um seletor CSS sem tratamento de erro.

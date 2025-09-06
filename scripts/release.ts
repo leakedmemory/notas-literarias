@@ -1,10 +1,9 @@
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, writeFileSync, renameSync } from "node:fs";
+import { readdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-
-import { res } from "./utils";
-import firefoxManifest from "../platforms/firefox/manifest.json";
 import chromiumManifest from "../platforms/chromium/manifest.json";
+import firefoxManifest from "../platforms/firefox/manifest.json";
+import { res } from "./utils";
 
 const OUT_DIR = res("dist", "prod");
 const SIGN_TIMEOUT = 600000; // 10 minutos

@@ -8,7 +8,7 @@ import { join } from "node:path";
 
 import archiver from "archiver";
 
-import { res, VERSION, TARGETS } from "./utils";
+import { res, TARGETS, VERSION } from "./utils";
 
 const OUT_DIR = res("dist", "prod");
 
