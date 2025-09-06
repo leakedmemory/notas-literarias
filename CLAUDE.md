@@ -87,3 +87,19 @@ This is a cross-browser web extension with a modular architecture:
 - Git hooks managed by Lefthook (`.lefthook.toml`)
 - Release automation with git-cliff for changelog generation
 - Icons in multiple sizes (16-128px) copied during build process
+
+## Git Hooks Configuration
+
+Lefthook runs parallel pre-commit hooks for optimal performance:
+
+- **`fix:biome`** - Lint and format TypeScript/JavaScript/CSS/JSON files
+- **`fmt:prettier`** - Format HTML/Markdown/YAML files
+- **`lychee`** - Check for broken links in Markdown files (excludes
+  CHANGELOG.md)
+
+All hooks use `stage_fixed = true` to automatically stage formatted changes. The
+`web-ext` tool handles auto-reload differently per browser:
+
+- **Firefox**: Full auto-reload on code changes
+- **Chromium/Chrome**: Manual reload required (press `R` in terminal or refresh
+  in `chrome://extensions/`)

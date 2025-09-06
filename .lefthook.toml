@@ -1,9 +1,14 @@
 [pre-commit]
 parallel = true
 
-[pre-commit.commands.lint-and-format]
-run = "pnpm run fix"
-glob = "*.{css,html,json,ts,mjs,md,yaml,yml}"
+[pre-commit.commands.lint-and-format-biome]
+run = "pnpm run fix:biome"
+glob = "*.{css,json,ts,mjs}"
+stage_fixed = true
+
+[pre-commit.commands.format-prettier]
+run = "pnpm run fmt:prettier"
+glob = "*.{html,md,yaml,yml}"
 stage_fixed = true
 
 [pre-commit.commands.lychee]

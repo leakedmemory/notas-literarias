@@ -71,9 +71,11 @@ src/
 ### Comandos Úteis
 
 ```bash
-pnpm lint:biome  # Corrige problemas de lint do código
-pnpm fmt         # Corrige formatação do código
-pnpm fix         # Corrige problemas de lint e formatação
+pnpm lint:biome    # Corrige problemas de lint do código
+pnpm fix:biome     # Corrige problemas de lint e formatação
+pnpm fmt           # Corrige formatação do código (biome + prettier)
+pnpm fmt:prettier  # Corrige formatação apenas de arquivos de responsabilidade do Prettier
+pnpm fmt:biome     # Corrige formatação apenas de arquivos de responsabilidade do Biome
 ```
 
 ## Processo de Contribuição

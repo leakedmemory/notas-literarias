@@ -24,7 +24,7 @@
     "fmt": "pnpm run-p fmt:*",
     "fmt:biome": "biome format --write",
     "fmt:prettier": "prettier '**/*.{html,md,yml,yaml}' --write",
-    "fix": "pnpm run lint:biome && pnpm run fmt",
+    "fix:biome": "biome check --write",
     "clean": "rimraf dist/",
     "clean:pack": "rimraf dist/prod/*.zip dist/prod/*.xpi",
     "changelog": "pnpm git-cliff --unreleased --bump -c .cliff.toml --prepend CHANGELOG.md"
