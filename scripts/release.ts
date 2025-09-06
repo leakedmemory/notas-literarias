@@ -3,10 +3,10 @@ import { readdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import chromiumManifest from "../platforms/chromium/manifest.json";
 import firefoxManifest from "../platforms/firefox/manifest.json";
-import { res } from "./utils";
+import { MINUTES_IN_MS, res } from "./utils";
 
 const OUT_DIR = res("dist", "prod");
-const SIGN_TIMEOUT = 600000; // 10 minutos
+const SIGN_TIMEOUT = 10 * MINUTES_IN_MS;
 
 (function main() {
   checkCurrentBranch();
