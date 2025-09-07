@@ -65,13 +65,20 @@ adicional!
 
 ## Demonstração
 
-<!-- TODO: Adicionar screenshots mostrando:
-- Página da Amazon sem a extensão
-- Página da Amazon com as avaliações do Goodreads visíveis
-- Exemplo do popover com mais detalhes
--->
+### Durante o carregamento
 
-_Screenshots serão adicionados em breve_
+![Carregando avaliações](screenshots/loading.jpg) _A extensão mostra um spinner
+enquanto busca as informações no Goodreads_
+
+### Livro encontrado
+
+![Avaliações encontradas](screenshots/found.jpg) _Avaliações do Goodreads
+exibidas ao lado dos detalhes do produto na Amazon_
+
+### Livro não encontrado
+
+![Livro não encontrado](screenshots/not-found.jpg) _Mensagem exibida quando o
+livro não é encontrado no banco de dados do Goodreads_
 
 ## Perguntas Frequentes (FAQ)
 

@@ -61,13 +61,20 @@ The extension works automatically --- no additional configuration needed!
 
 ## Demo
 
-<!-- TODO: Add screenshots showing:
-- Amazon page without the extension
-- Amazon page with Goodreads ratings visible
-- Example of the popover with more details
--->
+### During loading
 
-_Screenshots will be added soon_
+![Loading ratings](screenshots/loading.jpg) _The extension shows a spinner while
+fetching information from Goodreads_
+
+### Book found
+
+![Ratings found](screenshots/found.jpg) _Goodreads ratings displayed next to the
+product details on Amazon_
+
+### Book not found
+
+![Book not found](screenshots/not-found.jpg) _Message displayed when the book is
+not found in the Goodreads database_
 
 ## Frequently Asked Questions (FAQ)
 
