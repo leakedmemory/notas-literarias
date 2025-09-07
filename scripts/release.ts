@@ -1,12 +1,8 @@
 import { execSync } from "node:child_process";
-import { readdirSync, renameSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { writeFileSync } from "node:fs";
 import chromiumManifest from "../platforms/chromium/manifest.json";
 import firefoxManifest from "../platforms/firefox/manifest.json";
-import { MINUTES_IN_MS, res } from "./utils";
-
-const OUT_DIR = res("dist", "prod");
-const SIGN_TIMEOUT = 10 * MINUTES_IN_MS;
+import { res } from "./utils";
 
 (function main() {
   checkCurrentBranch();
@@ -19,7 +15,6 @@ const SIGN_TIMEOUT = 10 * MINUTES_IN_MS;
   execCommand(`git tag v${version} -m "versão ${version}"`);
   execCommand("pnpm run build");
   execCommand("pnpm run pack");
-  signFirefox(version);
 })();
 
 function checkCurrentBranch() {
@@ -57,47 +52,6 @@ function updateManifestsVersions(version: string) {
 
   writeFileSync(firefoxPath, JSON.stringify(firefoxManifest, null, 2));
   writeFileSync(chromiumPath, JSON.stringify(chromiumManifest, null, 2));
-}
-
-function signFirefox(version: string) {
-  if (!process.env.WEB_EXT_API_KEY || !process.env.WEB_EXT_API_SECRET) {
-    console.log(
-      "skipping firefox signing: AMO credentials not found in environment",
-    );
-    return;
-  }
-
-  const signCommand = [
-    "web-ext sign",
-    `--source-dir ${join(OUT_DIR, "firefox")}`,
-    `--artifacts-dir ${OUT_DIR}`,
-    `--api-key ${process.env.WEB_EXT_API_KEY}`,
-    `--api-secret ${process.env.WEB_EXT_API_SECRET}`,
-    "--channel unlisted",
-    `--timeout ${SIGN_TIMEOUT}`,
-  ].join(" ");
-  execCommand(signCommand);
-  renameSignedFile(version);
-}
-
-function renameSignedFile(version: string) {
-  const xpiFiles = readdirSync(OUT_DIR).filter((file) => file.endsWith(".xpi"));
-  if (xpiFiles.length !== 2) {
-    throw new Error(`more than 2 .xpi files found in ${OUT_DIR}`);
-  }
-
-  const unsignedFileName = `notas-literarias-firefox-unsigned-${version}.xpi`;
-  const unsignedIndex = xpiFiles.indexOf(unsignedFileName);
-  if (unsignedIndex === -1) {
-    throw new Error(`unsigned file ${unsignedFileName} not found`);
-  }
-
-  xpiFiles.splice(unsignedIndex, 1);
-
-  const newName = `notas-literarias-firefox-signed-${version}.xpi`;
-  const newPath = join(OUT_DIR, newName);
-  const originalPath = join(OUT_DIR, xpiFiles[0]);
-  renameSync(originalPath, newPath);
 }
 
 function commit(msg: string) {

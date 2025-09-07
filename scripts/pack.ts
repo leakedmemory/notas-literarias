@@ -1,9 +1,4 @@
-import {
-  createWriteStream,
-  existsSync,
-  readdirSync,
-  unlinkSync,
-} from "node:fs";
+import { createWriteStream, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 import archiver from "archiver";
@@ -24,21 +19,11 @@ const OUT_DIR = res("dist", "prod");
 })();
 
 async function packExtension(target: string, srcDir: string) {
-  let outputFile: string;
-  if (target === "firefox") {
-    outputFile = join(
-      OUT_DIR,
-      `notas-literarias-${target}-unsigned-${VERSION}.xpi`,
-    );
-
-    const amoFile = join(srcDir, ".amo-upload-uuid");
-    if (existsSync(amoFile)) {
-      unlinkSync(amoFile);
-      console.log(`removed .amo-upload-uuid file from ${target} build`);
-    }
-  } else {
-    outputFile = join(OUT_DIR, `notas-literarias-${target}-${VERSION}.zip`);
-  }
+  const extension = target === "firefox" ? "xpi" : "zip";
+  const outputFile = join(
+    OUT_DIR,
+    `notas-literarias-${target}-${VERSION}.${extension}`,
+  );
 
   console.log(`packaging ${target} extension to ${outputFile}...`);
 
