@@ -20,7 +20,7 @@
     "pack": "pnpm run clean:pack && tsx scripts/pack.ts",
     "release": "tsx scripts/release.ts",
     "lint:biome": "biome lint --write",
-    "lint:manifest": "pnpm web-ext lint -s dist/prod/firefox/",
+    "lint:manifest": "pnpm build:firefox && pnpm web-ext lint -s dist/prod/firefox/",
     "fmt": "pnpm run-p fmt:*",
     "fmt:biome": "biome format --write",
     "fmt:prettier": "prettier '**/*.{html,md,yml,yaml}' --write",
