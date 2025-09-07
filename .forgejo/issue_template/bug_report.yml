@@ -40,6 +40,19 @@ body:
       required: true
 
   - type: dropdown
+    id: os
+    attributes:
+      label: Sistema Operacional
+      description: Qual sistema operacional você está usando?
+      options:
+        - Windows
+        - macOS
+        - Linux (especifique distribuição)
+        - Outro (especifique nos comentários)
+    validations:
+      required: true
+
+  - type: dropdown
     id: browser
     attributes:
       label: Navegador
@@ -63,24 +76,20 @@ body:
       required: true
 
   - type: input
+    id: browser-packaging
+    attributes:
+      label: Método de Instalação do Navegador
+      description: Como o navegador foi instalado? (opcional)
+      placeholder: "Flatpak, Snap, APT, site oficial..."
+    validations:
+      required: false
+
+  - type: input
     id: extension-version
     attributes:
       label: Versão da Extensão
       description: Qual versão do Notas Literárias você está usando?
-      placeholder: "1.0.0"
-    validations:
-      required: true
-
-  - type: dropdown
-    id: os
-    attributes:
-      label: Sistema Operacional
-      description: Qual sistema operacional você está usando?
-      options:
-        - Windows
-        - macOS
-        - Linux (especifique distribuição)
-        - Outro (especifique nos comentários)
+      placeholder: "1.1.0"
     validations:
       required: true
 
@@ -93,8 +102,7 @@ body:
         Dica: Pressione F12, vá na aba Console e procure por mensagens de erro em vermelho.
       render: shell
       placeholder: |
-        Uncaught TypeError: Cannot read property 'querySelector' of null
-            at content.js:42
+        Uncaught TypeError: Cannot read property 'querySelector' of null at content.js:42
 
   - type: textarea
     id: additional
