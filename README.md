@@ -1,5 +1,7 @@
 # Notas Literárias
 
+**Languages:** [Português](README.md) | [English](README.en.md)
+
 Uma extensão de navegador que mostra as avaliações e notas do Goodreads quando
 você está navegando por livros na Amazon Brasil, ajudando você a tomar decisões
 mais informadas sobre suas compras.

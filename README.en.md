@@ -1,5 +1,7 @@
 # Notas Literárias
 
+**Languages:** [Português](README.md) | [English](README.en.md)
+
 A browser extension that displays Goodreads ratings and reviews when you're
 browsing books on Amazon Brazil, helping you make more informed purchasing
 decisions.
