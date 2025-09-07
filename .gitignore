@@ -10,3 +10,5 @@ tmp/
 .env
 .lycheecache
 src/auto-imports.d.ts
+
+notas-literarias-source-code.zip
