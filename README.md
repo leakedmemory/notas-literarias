@@ -4,6 +4,10 @@ Uma extensão de navegador que mostra as avaliações e notas do Goodreads quand
 você está navegando por livros na Amazon Brasil, ajudando você a tomar decisões
 mais informadas sobre suas compras.
 
+> **Repositório Principal**: Este projeto é hospedado no
+> [Codeberg](https://codeberg.org/leakedmemory/notas-literarias). As versões no
+> GitHub e GitLab são apenas mirrors para maior acessibilidade.
+
 ## Funcionalidades
 
 - **Detecção automática**: Identifica automaticamente páginas de livros na
