@@ -59,7 +59,7 @@ function updateVersions(version: string) {
 }
 
 function commit(msg: string) {
-  execCommand(`git add --all && git commit -m "${msg}"`);
+  execCommand(`git add --all && git commit --no-verify -m "${msg}"`);
 }
 
 function execCommand(args: string): string {
