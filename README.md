@@ -102,6 +102,49 @@ Todas as consultas são feitas anonimamente usando apenas códigos ISBN ou ASIN.
 Sim, mas você pode precisar ativar essa opção nas configurações de extensões do
 seu navegador.
 
+## Build
+
+### Pré-requisitos
+
+- **Node.js** LTS ou mais recente
+- **pnpm** 10.15+
+
+### Configuração do Ambiente
+
+```bash
+# Clone o repositório
+git clone https://codeberg.org/leakedmemory/notas-literarias.git
+cd notas-literarias
+
+# Instale as dependências
+pnpm install
+```
+
+### Comandos de Build
+
+```bash
+# Build para Firefox e Chromium
+pnpm build
+
+# Build apenas para Firefox
+pnpm build:firefox
+
+# Build apenas para Chromium
+pnpm build:chromium
+
+# Criar pacotes distribuíveis (.xpi para Firefox, .zip para Chromium)
+pnpm pack
+```
+
+### Estrutura do Build
+
+Os arquivos de build são gerados em:
+
+- `dist/prod/firefox/` - Build do Firefox
+- `dist/prod/chromium/` - Build do Chromium
+- `dist/prod/*.xpi` - Pacote Firefox (após `pnpm pack`)
+- `dist/prod/*.zip` - Pacote Chromium (após `pnpm pack`)
+
 ## Problemas e Sugestões
 
 Encontrou um bug ou tem uma ideia para melhorar a extensão?
