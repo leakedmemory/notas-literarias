@@ -2,6 +2,26 @@
 
 Todas as principais mudanças deste projeto serão documentadas neste arquivo. Veja [conventional commits](https://www.conventionalcommits.org/) para as diretrizes de commit.
 
+## [1.0.1](https://codeberg.org/leakedmemory/notas-literarias/compare/v1.0.0..v1.0.1) - 2025-09-07
+
+### Correções de Bugs
+
+- muda link de home da extensão para o atual - ([f4588ca](https://codeberg.org/leakedmemory/notas-literarias/commit/f4588ca4766237b342ec8272a003a05e0713b1ae)) - leaked memory
+
+### Refatorações
+
+- remove assinatura com web-ext - ([c6036d9](https://codeberg.org/leakedmemory/notas-literarias/commit/c6036d915810778f0eb89701a78ffff74a8b3cc2)) - leaked memory
+
+### CI
+
+- adiciona hook de pre-push para lint de manifesto - ([5d49899](https://codeberg.org/leakedmemory/notas-literarias/commit/5d49899cc4125b0237f8fe0245227d666fccff50)) - leaked memory
+
+### Tarefas Diversas
+
+- muda target do script para não rodar com `pnpm install` - ([f569c89](https://codeberg.org/leakedmemory/notas-literarias/commit/f569c89a2219a66f1ded7d0522f8a727dc0c126f)) - leaked memory
+- builda versão do firefox antes de lint do manifesto - ([dce7824](https://codeberg.org/leakedmemory/notas-literarias/commit/dce7824a27e4dd8040d32c04ff4ecf3623f3deef)) - leaked memory
+- aumenta versão para 1.0.1 - ([770aea6](https://codeberg.org/leakedmemory/notas-literarias/commit/770aea67609cda5a80bf8582094f4da078715885)) - leaked memory
+
 ## [1.0.0](https://codeberg.org/leakedmemory/notas-literarias/compare/v0.5.0..v1.0.0) - 2025-09-06
 
 ### Recursos
