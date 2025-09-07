@@ -28,30 +28,18 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/*"
-      ],
-      "matches": [
-        "*://*.amazon.com.br/*"
-      ]
+      "resources": ["icons/*"],
+      "matches": ["*://*.amazon.com.br/*"]
     }
   ],
-  "host_permissions": [
-    "*://*.goodreads.com/*"
-  ],
+  "host_permissions": ["*://*.goodreads.com/*"],
   "background": {
-    "scripts": [
-      "background.global.js"
-    ]
+    "scripts": ["background.global.js"]
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://*.amazon.com.br/*"
-      ],
-      "js": [
-        "content.global.js"
-      ]
+      "matches": ["*://*.amazon.com.br/*"],
+      "js": ["content.global.js"]
     }
   ]
 }
