@@ -15,3 +15,9 @@ stage_fixed = true
 run = "lychee -c ./.lychee.toml {staged_files}"
 glob = "*.md"
 exclude = ["CHANGELOG.md"]
+
+[pre-push]
+parallel = true
+
+[pre-push.commands.lint-manifest]
+run = "pnpm run lint:manifest"
