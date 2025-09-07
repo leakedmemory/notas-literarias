@@ -16,6 +16,7 @@ import { res } from "./utils";
   execCommand(`git tag v${version} -m "versão ${version}"`);
   execCommand("pnpm run build");
   execCommand("pnpm run pack");
+  execCommand("pnpm run pack:source");
 })();
 
 function checkCurrentBranch() {
