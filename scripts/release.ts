@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
+import packageJson from "../package.json";
 import chromiumManifest from "../platforms/chromium/manifest.json";
 import firefoxManifest from "../platforms/firefox/manifest.json";
 import { res } from "./utils";
@@ -33,7 +34,7 @@ function checkStatus() {
 
 function bumpVersion(): string {
   const version = getBumpedVersion();
-  updateManifestsVersions(version);
+  updateVersions(version);
   return version;
 }
 
@@ -43,13 +44,16 @@ function getBumpedVersion(): string {
   return version.slice(1);
 }
 
-function updateManifestsVersions(version: string) {
+function updateVersions(version: string) {
+  const packagePath = res("package.json");
   const firefoxPath = res("platforms", "firefox", "manifest.json");
   const chromiumPath = res("platforms", "chromium", "manifest.json");
 
+  packageJson.version = version;
   firefoxManifest.version = version;
   chromiumManifest.version = version;
 
+  writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
   writeFileSync(firefoxPath, JSON.stringify(firefoxManifest, null, 2));
   writeFileSync(chromiumPath, JSON.stringify(chromiumManifest, null, 2));
 }
