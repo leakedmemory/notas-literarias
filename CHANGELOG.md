@@ -2,6 +2,27 @@
 
 Todas as principais mudanças deste projeto serão documentadas neste arquivo. Veja [conventional commits](https://www.conventionalcommits.org/) para as diretrizes de commit.
 
+## [1.1.0](https://codeberg.org/leakedmemory/notas-literarias/compare/v1.0.1..v1.1.0) - 2025-09-07
+
+### Recursos
+
+- ignora hooks do git durante commits de release - ([cb80402](https://codeberg.org/leakedmemory/notas-literarias/commit/cb804027362dc20db802c912fcd441890d16763b)) - leaked memory
+- adiciona script pack:source para criar zip do código fonte para AMO - ([5b827de](https://codeberg.org/leakedmemory/notas-literarias/commit/5b827de01781b7341123df943bd36127fc972f80)) - leaked memory
+
+### Correções de Bugs
+
+- atualiza package.json durante release para manter versões sincronizadas - ([5f5156d](https://codeberg.org/leakedmemory/notas-literarias/commit/5f5156de332d379eeaa49280eacf075218214992)) - leaked memory
+
+### Documentação
+
+- adiciona seção de build no README para submissão ao AMO - ([d34e315](https://codeberg.org/leakedmemory/notas-literarias/commit/d34e3157fafa80c17732c575d65e2888629503f7)) - leaked memory
+- adiciona aviso sobre repositório principal no Codeberg - ([a993891](https://codeberg.org/leakedmemory/notas-literarias/commit/a993891dca94f206699117ef8836883342fa1106)) - leaked memory
+- adiciona README em inglês com seção sobre foco no Amazon Brasil - ([a07751a](https://codeberg.org/leakedmemory/notas-literarias/commit/a07751ac47bd176af1de7d6a7ea2959a9f92c978)) - leaked memory
+
+### Tarefas Diversas
+
+- aumenta versão para 1.1.0 - ([6fcdbf9](https://codeberg.org/leakedmemory/notas-literarias/commit/6fcdbf984122fc52a7304b59a8d099ae8f8029d8)) - leaked memory
+
 ## [1.0.1](https://codeberg.org/leakedmemory/notas-literarias/compare/v1.0.0..v1.0.1) - 2025-09-07
 
 ### Correções de Bugs
