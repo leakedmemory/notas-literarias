@@ -28,7 +28,8 @@ decisions.
 
 The easiest way to install is through your browser's official extension store:
 
-_Store links will be added here_
+- [Firefox Add-ons](https://addons.mozilla.org/addon/notas-literarias/)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/notas-liter%C3%A1rias/ghlonbgoholpohkjdebhhiknpgjpoodi)
 
 ### Manual Installation
 
