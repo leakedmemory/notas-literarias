@@ -102,7 +102,7 @@ async function getPageFromURL(url: string): Promise<BackgroundResponse> {
 function openProjectRepoOnClick() {
   browser.action.onClicked.addListener((_tab) => {
     browser.tabs.create({
-      url: "https://codeberg.org/notas-literarias/notas-literarias",
+      url: "https://codeberg.org/leakedmemory/notas-literarias",
     });
   });
 }
