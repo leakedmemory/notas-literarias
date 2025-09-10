@@ -30,7 +30,8 @@ mais informadas sobre suas compras.
 A maneira mais fácil de instalar é através da loja oficial de extensões do seu
 navegador:
 
-_Links para as lojas serão adicionados aqui_
+- [Firefox Add-ons](https://addons.mozilla.org/addon/notas-literarias/)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/notas-liter%C3%A1rias/ghlonbgoholpohkjdebhhiknpgjpoodi)
 
 ### Instalação Manual
 
