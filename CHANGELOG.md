@@ -2,6 +2,28 @@
 
 Todas as principais mudanças deste projeto serão documentadas neste arquivo. Veja [conventional commits](https://www.conventionalcommits.org/) para as diretrizes de commit.
 
+## [1.1.1](https://codeberg.org/leakedmemory/notas-literarias/compare/v1.1.0..v1.1.1) - 2025-09-10
+
+### Correções de Bugs
+
+- atualiza link ao clicar no ícone da extensão - ([81dbbb4](https://codeberg.org/leakedmemory/notas-literarias/commit/81dbbb4ab62f864fef46d5d2db8610531f875f05)) - leaked memory
+
+### Documentação
+
+- renomeia README_EN.md para README.en.md e adiciona seletor de idiomas - ([71e7d80](https://codeberg.org/leakedmemory/notas-literarias/commit/71e7d807ffafeee615b72f2bfac9a8a9a8fce6d1)) - leaked memory
+- adiciona diretório screenshots e seção de demonstração nos READMEs - ([1e456e8](https://codeberg.org/leakedmemory/notas-literarias/commit/1e456e8297622f20e99da28acac8dc6ada99f852)) - leaked memory
+- adiciona link da extensão nas lojas no readme - ([9c266fb](https://codeberg.org/leakedmemory/notas-literarias/commit/9c266fbd49c331511516b098e363d51fa9c4eaf4)) - leaked memory
+
+### Tarefas Diversas
+
+- executa pack:source automaticamente durante release - ([a3b302d](https://codeberg.org/leakedmemory/notas-literarias/commit/a3b302d079a9ee0e5ddb31506c5d3e95968349af)) - leaked memory
+- melhora campo de método de instalação do navegador no template de bug - ([33b959e](https://codeberg.org/leakedmemory/notas-literarias/commit/33b959e4fe85a621e02fe502c359e270a1875fd7)) - leaked memory
+- aumenta versão para 1.1.1 - ([b8eebc2](https://codeberg.org/leakedmemory/notas-literarias/commit/b8eebc2330a758027e921cad143fdcffd78e3426)) - leaked memory
+
+### Estilo
+
+- formatação de json - ([8108b7c](https://codeberg.org/leakedmemory/notas-literarias/commit/8108b7c3c17d2ba6de9e79b492ae0b8cf93ad173)) - leaked memory
+
 ## [1.1.0](https://codeberg.org/leakedmemory/notas-literarias/compare/v1.0.1..v1.1.0) - 2025-09-07
 
 ### Recursos
